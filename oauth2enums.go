@@ -1,5 +1,7 @@
 package oauth2_oidc_sdk
 
+import "strings"
+
 const (
 	ParameterClientId            = "client_id"
 	ParameterState               = "state"
@@ -45,15 +47,16 @@ const (
 type ScopeTypeArray []ScopeType
 
 func (values ScopeTypeArray) StaringValue() string {
-	var finalValue string
+	var buf strings.Builder
 	for _, id := range values {
-		if len(finalValue) > 0 {
-			finalValue = finalValue + " " + id.StaringValue()
+		if buf.Len() > 0 {
+			buf.WriteString(id.StaringValue())
 		} else {
-			finalValue = id.StaringValue()
+			buf.WriteString(" ")
+			buf.WriteString(id.StaringValue())
 		}
 	}
-	return finalValue
+	return buf.String()
 }
 
 type GrantType string
@@ -69,18 +72,6 @@ const (
 	GTClientCredential      GrantType = "client_credentials"
 )
 
-type ResponseMode string
-
-func (rm ResponseMode) StaringValue() string {
-	return string(rm)
-}
-
-const (
-	ResponseModeQuery    ResponseMode = "query"
-	ResponseModeFragment ResponseMode = "fragment"
-	ResponseModePost     ResponseMode = "post"
-)
-
 type PromptType string
 
 func (st PromptType) StaringValue() string {
@@ -88,22 +79,34 @@ func (st PromptType) StaringValue() string {
 }
 
 const (
-	PromptTypeNone          PromptType = "none"
-	PromptTypeConsent       PromptType = "consent"
-	PromptTypeLogin         PromptType = "login"
-	PromptTypeSelectAccount PromptType = "select_account"
+	PromptNone          PromptType = "none"
+	PromptConsent       PromptType = "consent"
+	PromptLogin         PromptType = "login"
+	PromptSelectAccount PromptType = "select_account"
 )
 
 type PromptTypeArray []PromptType
 
 func (values PromptTypeArray) StaringValue() string {
-	var finalValue string
+	var buf strings.Builder
 	for _, id := range values {
-		if len(finalValue) > 0 {
-			finalValue = finalValue + " " + id.StaringValue()
+		if buf.Len() > 0 {
+			buf.WriteString(id.StaringValue())
 		} else {
-			finalValue = id.StaringValue()
+			buf.WriteString(" ")
+			buf.WriteString(id.StaringValue())
 		}
 	}
-	return finalValue
+	return buf.String()
 }
+
+type CodeChallengeMethodType string
+
+func (rm CodeChallengeMethodType) StaringValue() string {
+	return string(rm)
+}
+
+const (
+	CodeChallengeMethodPlain CodeChallengeMethodType = "plain"
+	CodeChallengeMethodS256  CodeChallengeMethodType = "S256"
+)

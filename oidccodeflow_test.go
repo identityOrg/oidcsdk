@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestCode(t *testing.T) {
+func TestOIdcCode(t *testing.T) {
 	ar := AuthenticationRequest{}
 	reqUrl, _ := url.Parse("http://localhost:8080")
 	ar.RequestUri = *reqUrl
@@ -14,6 +14,12 @@ func TestCode(t *testing.T) {
 	ar.ResponseType = ResponseTypeIdTokenToken
 	ar.State = RandomIdString(10)
 	ar.Scopes = ScopeTypeArray{ScopeTypeOpenId, ScopeTypeProfile, ScopeTypeOfflineAccess}
+	ar.Prompt = PromptTypeArray{PromptConsent, PromptLogin, PromptSelectAccount}
+	ar.ResponseMode = ResponseModeQuery
+	ar.CodeChallengeMethod = CodeChallengeMethodS256
+	ar.CodeChallenge = RandomIdString(16)
+	ar.Display = DisplayPage
+	ar.MaxAge = 120
 	render := ar.Render()
 	fmt.Println(render.String())
 }
