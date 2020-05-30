@@ -12,7 +12,7 @@ const (
 
 type ResponseModeType string
 
-func (rm ResponseModeType) StaringValue() string {
+func (rm ResponseModeType) String() string {
 	return string(rm)
 }
 
@@ -24,7 +24,7 @@ const (
 
 type DisplayType string
 
-func (rm DisplayType) StaringValue() string {
+func (rm DisplayType) String() string {
 	return string(rm)
 }
 

@@ -1,6 +1,10 @@
 package oauth2_oidc_sdk
 
-import "strings"
+import (
+	"net/url"
+	"reflect"
+	"strings"
+)
 
 const (
 	ParameterClientId            = "client_id"
@@ -15,98 +19,95 @@ const (
 )
 
 type Id interface {
-	StaringValue() string
+	String() string
 }
 
-type ResponseType string
+type ResponseTypeArray []string
 
-func (rt ResponseType) StaringValue() string {
-	return string(rt)
-}
-
-const (
-	ResponseTypeCode             ResponseType = "code"
-	ResponseTypeToken            ResponseType = "token"
-	ResponseTypeIdToken          ResponseType = "id_token"
-	ResponseTypeIdTokenToken     ResponseType = "id_token token"
-	ResponseTypeIdTokenTokenCode ResponseType = "id_token token code"
-)
-
-type ScopeType string
-
-func (st ScopeType) StaringValue() string {
-	return string(st)
+func (values ResponseTypeArray) String() string {
+	return strings.Join(values, " ")
 }
 
 const (
-	ScopeTypeOpenId        ScopeType = "openid"
-	ScopeTypeProfile       ScopeType = "profile"
-	ScopeTypeOfflineAccess ScopeType = "offline_access"
+	ResponseTypeCode    = "code"
+	ResponseTypeToken   = "token"
+	ResponseTypeIdToken = "id_token"
 )
 
-type ScopeTypeArray []ScopeType
+const (
+	ScopeTypeOpenId        = "openid"
+	ScopeTypeProfile       = "profile"
+	ScopeTypeOfflineAccess = "offline_access"
+)
 
-func (values ScopeTypeArray) StaringValue() string {
-	var buf strings.Builder
-	for _, id := range values {
-		if buf.Len() > 0 {
-			buf.WriteString(id.StaringValue())
-		} else {
-			buf.WriteString(" ")
-			buf.WriteString(id.StaringValue())
+type ScopeTypeArray []string
+
+func (values ScopeTypeArray) String() string {
+	return strings.Join(values, " ")
+}
+
+const (
+	GTAuthorizationCode     = "authorization_code"
+	GTImplicit              = "implicit"
+	GTResourceOwnerPassword = "password"
+	GTClientCredential      = "client_credentials"
+)
+
+const (
+	PromptNone          = "none"
+	PromptConsent       = "consent"
+	PromptLogin         = "login"
+	PromptSelectAccount = "select_account"
+)
+
+type PromptTypeArray []string
+
+func (values PromptTypeArray) String() string {
+	return strings.Join(values, " ")
+}
+
+func SpacesStringArrayEncoder(value reflect.Value) string {
+	var strValues []string
+	if reflect.Slice == value.Kind() {
+		for i := 0; i < value.Len(); i++ {
+			strValues = append(strValues, value.Index(i).String())
 		}
 	}
-	return buf.String()
+	return strings.Join(strValues, " ")
 }
 
-type GrantType string
-
-func (gt GrantType) StaringValue() string {
-	return string(gt)
-}
-
-const (
-	GTAuthorizationCode     GrantType = "authorization_code"
-	GTImplicit              GrantType = "implicit"
-	GTResourceOwnerPassword GrantType = "password"
-	GTClientCredential      GrantType = "client_credentials"
-)
-
-type PromptType string
-
-func (st PromptType) StaringValue() string {
-	return string(st)
-}
-
-const (
-	PromptNone          PromptType = "none"
-	PromptConsent       PromptType = "consent"
-	PromptLogin         PromptType = "login"
-	PromptSelectAccount PromptType = "select_account"
-)
-
-type PromptTypeArray []PromptType
-
-func (values PromptTypeArray) StaringValue() string {
-	var buf strings.Builder
-	for _, id := range values {
-		if buf.Len() > 0 {
-			buf.WriteString(id.StaringValue())
-		} else {
-			buf.WriteString(" ")
-			buf.WriteString(id.StaringValue())
-		}
+func SpacesStringArrayDecoder(s string) reflect.Value {
+	split := strings.Split(s, " ")
+	value := make([]string, 0)
+	for _, v := range split {
+		value = append(value, v)
 	}
-	return buf.String()
-}
-
-type CodeChallengeMethodType string
-
-func (rm CodeChallengeMethodType) StaringValue() string {
-	return string(rm)
+	return reflect.ValueOf(value)
 }
 
 const (
-	CodeChallengeMethodPlain CodeChallengeMethodType = "plain"
-	CodeChallengeMethodS256  CodeChallengeMethodType = "S256"
+	CodeChallengeMethodPlain = "plain"
+	CodeChallengeMethodS256  = "S256"
 )
+
+type UrlType url.URL
+
+func (ut UrlType) String() string {
+	var ulUt url.URL
+	ulUt = url.URL(ut)
+	return ulUt.String()
+}
+
+func UrlEncoder(value reflect.Value) string {
+	strValue := value.MethodByName("String").Call([]reflect.Value{})
+	return strValue[0].String()
+}
+
+func UrlDecoder(s string) reflect.Value {
+	var z reflect.Value
+	parse, err := url.Parse(s)
+	if err != nil {
+		return z
+	}
+	return reflect.ValueOf(UrlType(*parse))
+}

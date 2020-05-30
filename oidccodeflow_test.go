@@ -9,9 +9,9 @@ import (
 func TestOIdcCode(t *testing.T) {
 	ar := AuthenticationRequest{}
 	reqUrl, _ := url.Parse("http://localhost:8080")
-	ar.RequestUri = *reqUrl
+	ar.RequestUri = UrlType(*reqUrl)
 	ar.ClientId = RandomIdString(20)
-	ar.ResponseType = ResponseTypeIdTokenToken
+	ar.ResponseType = ResponseTypeArray{ResponseTypeCode}
 	ar.State = RandomIdString(10)
 	ar.Scopes = ScopeTypeArray{ScopeTypeOpenId, ScopeTypeProfile, ScopeTypeOfflineAccess}
 	ar.Prompt = PromptTypeArray{PromptConsent, PromptLogin, PromptSelectAccount}

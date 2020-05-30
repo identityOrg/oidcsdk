@@ -24,7 +24,7 @@ func (ar AuthenticationRequest) Render() url.URL {
 	renderUrl := ar.AuthorizationRequest.Render()
 	queryValue := renderUrl.Query()
 	queryValue.Add(ParameterNonce, ar.Nonce)
-	queryValue.Add(ParameterDisplay, ar.Display.StaringValue())
+	queryValue.Add(ParameterDisplay, ar.Display.String())
 	queryValue.Add(ParameterMaxAge, strconv.Itoa(ar.MaxAge))
 	queryValue.Add(ParameterIdTokenHint, ar.IdTokenHint)
 	queryValue.Add(ParameterLoginHint, ar.LoginHint)
