@@ -9,9 +9,20 @@
   revision = "124d17ef95858a10835ce95502446cb5a9e9f715"
   version = "v1.1.0"
 
+[[projects]]
+  digest = "1:41b00533ad3d8b3f54b6a02fc093b211feeffb068a3148a7e7084cd7aeef18ec"
+  name = "github.com/magiconair/properties"
+  packages = ["assert"]
+  pruneopts = "UT"
+  revision = "de8848e004dd33dc07a2947b3d76f618a7fc7ef1"
+  version = "v1.8.1"
+
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  input-imports = ["github.com/gorilla/schema"]
+  input-imports = [
+    "github.com/gorilla/schema",
+    "github.com/magiconair/properties/assert",
+  ]
   solver-name = "gps-cdcl"
   solver-version = 1

@@ -20,21 +20,6 @@ type (
 	}
 )
 
-func (ar AuthorizationRequest) Render() url.URL {
-	renderUrl := ar.RequestUri
-	queryValue := url.Values{}
-	queryValue.Add(ParameterClientId, ar.ClientId)
-	queryValue.Add(ParameterState, ar.State)
-	queryValue.Add(ParameterResponseType, ar.ResponseType.String())
-	queryValue.Add(ParameterScope, ar.Scopes.String())
-	queryValue.Add(ParameterRedirectUri, ar.RedirectUri.String())
-	queryValue.Add(ParameterCodeChallenge, ar.CodeChallenge)
-	queryValue.Add(ParameterCodeChallengeMethod, ar.CodeChallengeMethod)
-	queryValue.Add(ParameterPrompt, ar.Prompt.String())
-	renderUrl.RawQuery = queryValue.Encode()
-	return url.URL(renderUrl)
-}
-
 func (ar AuthorizationRequest) InferGrantType() string {
 	for _, rt := range ar.ResponseType {
 		if rt == ResponseTypeCode {
@@ -54,8 +39,20 @@ func (ar AuthorizationRequest) InferResponseMode() ResponseModeType {
 	return ResponseModeFragment
 }
 
-func ParseAuthorizationRequest(reqUrl url.URL) (AuthorizationRequest, error) {
-	//query := reqUrl.Query()
-	request := AuthorizationRequest{}
-	return request, nil
+func (ar AuthorizationRequest) Render() (*url.URL, error) {
+	var renderUrl = url.URL(ar.RequestUri)
+	values := url.Values{}
+	err := createFormEncoder().Encode(ar, values)
+	if err != nil {
+		return nil, err
+	}
+	renderUrl.RawQuery = values.Encode()
+	return &renderUrl, nil
+}
+
+func (ar *AuthorizationRequest) Parse(reqUrl url.URL) error {
+	query := reqUrl.Query()
+	reqUrl.RawQuery = ""
+	ar.RequestUri = UrlType(reqUrl)
+	return createFormDecoder().Decode(ar, query)
 }
