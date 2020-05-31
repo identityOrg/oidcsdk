@@ -1,15 +1,5 @@
 package oauth2_oidc_sdk
 
-const (
-	ParameterNonce       = "nonce"
-	ParameterDisplay     = "display"
-	ParameterMaxAge      = "max_age"
-	ParameterIdTokenHint = "id_token_hint"
-	ParameterLoginHint   = "login_hint"
-	ParameterAcrValues   = "acr_values"
-	ParameterPurpose     = "purpose"
-)
-
 type ResponseModeType string
 
 func (rm ResponseModeType) String() string {

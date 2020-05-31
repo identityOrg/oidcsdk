@@ -26,7 +26,7 @@ func TestAuthenticationRequest_Render(t *testing.T) {
 }
 
 func TestAuthenticationRequest_Parse(t *testing.T) {
-	testUrl, _ := url.Parse("http://localhost:8080?client_id=8tjpe883tv1p0s3gbngo&code_challenge=&code_challenge_method=&prompt=login&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Fredirect&response_type=token&scope=openid+profile+offline_access&state=mptwwwp0fa&display=popup")
+	testUrl, _ := url.Parse("http://localhost:8080?acr_values=&client_id=i8paocx7nzyy0cici9e0&code_challenge=stppsjnszj8bdi26&code_challenge_method=S256&display=page&id_token_hint=&login_hint=&max_age=120&nonce=&prompt=consent+login+select_account&purpose=&redirect_uri=&response_mode=query&response_type=code&scope=openid+profile+offline_access&state=fj1aihb076&display=popup")
 	ar := AuthenticationRequest{}
 	err := ar.Parse(*testUrl)
 	if err != nil {

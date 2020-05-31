@@ -6,14 +6,14 @@ import (
 
 type AuthenticationRequest struct {
 	AuthorizationRequest
-	ResponseMode ResponseModeType
-	Nonce        string
-	Display      DisplayType
-	MaxAge       int
-	IdTokenHint  string
-	LoginHint    string
-	AcrValues    string
-	Purpose      string
+	ResponseMode ResponseModeType `schema:"response_mode"`
+	Nonce        string           `schema:"nonce"`
+	Display      DisplayType      `schema:"display"`
+	MaxAge       int              `schema:"max_age"`
+	IdTokenHint  string           `schema:"id_token_hint"`
+	LoginHint    string           `schema:"login_hint"`
+	AcrValues    string           `schema:"acr_values"`
+	Purpose      string           `schema:"purpose"`
 }
 type AuthenticationResponse struct {
 	AuthorizationResponse

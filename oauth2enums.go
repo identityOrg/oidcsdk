@@ -6,18 +6,6 @@ import (
 	"strings"
 )
 
-const (
-	ParameterClientId            = "client_id"
-	ParameterState               = "state"
-	ParameterScope               = "scope"
-	ParameterResponseType        = "response_type"
-	ParameterRedirectUri         = "redirect_uri"
-	ParameterCodeChallenge       = "code_challenge"
-	ParameterCodeChallengeMethod = "code_challenge_method"
-	ParameterResource            = "resource"
-	ParameterPrompt              = "prompt"
-)
-
 type Id interface {
 	String() string
 }
