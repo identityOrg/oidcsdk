@@ -1,7 +1,7 @@
 package oauth2_oidc_sdk
 
 import (
-	"github.com/magiconair/properties/assert"
+	"github.com/stretchr/testify/assert"
 	"net/url"
 	"testing"
 )

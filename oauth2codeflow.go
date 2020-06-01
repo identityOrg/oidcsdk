@@ -16,7 +16,21 @@ type (
 		CodeChallengeMethod string            `schema:"code_challenge_method"`
 		Prompt              PromptTypeArray   `schema:"prompt"`
 	}
-	AuthorizationResponse struct {
+	AuthorizationSuccessResponse struct {
+		RedirectUri       UrlType          `schema:"-"`
+		State             string           `schema:"state"`
+		ResponseMode      ResponseModeType `schema:"-"`
+		AuthorizationCode string           `schema:"authorization_code"`
+		AccessToken       string           `schema:"access_token"`
+	}
+	AuthorizationErrorResponse struct {
+		RedirectUri    UrlType          `schema:"-"`
+		State          string           `schema:"state"`
+		ResponseMode   ResponseModeType `schema:"-"`
+		ErrorCode      string           `schema:"code"`
+		Description    string           `schema:"description"`
+		HttpStatusCode int              `schema:"-"`
+		Url            UrlType          `schema:"uri"`
 	}
 )
 
@@ -55,4 +69,66 @@ func (ar *AuthorizationRequest) Parse(reqUrl url.URL) error {
 	reqUrl.RawQuery = ""
 	ar.RequestUri = UrlType(reqUrl)
 	return createFormDecoder().Decode(ar, query)
+}
+
+func (asr AuthorizationSuccessResponse) Render() (*url.URL, error) {
+	var renderUrl = url.URL(asr.RedirectUri)
+	values := url.Values{}
+	err := createFormEncoder().Encode(asr, values)
+	if err != nil {
+		return nil, err
+	}
+	if asr.ResponseMode == ResponseModeFragment {
+		renderUrl.Fragment = values.Encode()
+	} else {
+		renderUrl.RawQuery = values.Encode()
+	}
+	return &renderUrl, nil
+}
+
+func (asr *AuthorizationSuccessResponse) Parse(reqUrl url.URL) error {
+	var query url.Values
+	if reqUrl.RawQuery != "" {
+		asr.ResponseMode = ResponseModeQuery
+		query = reqUrl.Query()
+	} else if reqUrl.Fragment != "" {
+		asr.ResponseMode = ResponseModeFragment
+		reqUrl.RawQuery = reqUrl.Fragment
+		query = reqUrl.Query()
+		reqUrl.Fragment = ""
+	}
+	reqUrl.RawQuery = ""
+	asr.RedirectUri = UrlType(reqUrl)
+	return createFormDecoder().Decode(asr, query)
+}
+
+func (aer AuthorizationErrorResponse) Render() (*url.URL, error) {
+	var renderUrl = url.URL(aer.RedirectUri)
+	values := url.Values{}
+	err := createFormEncoder().Encode(aer, values)
+	if err != nil {
+		return nil, err
+	}
+	if aer.ResponseMode == ResponseModeFragment {
+		renderUrl.Fragment = values.Encode()
+	} else {
+		renderUrl.RawQuery = values.Encode()
+	}
+	return &renderUrl, nil
+}
+
+func (aer *AuthorizationErrorResponse) Parse(reqUrl url.URL) error {
+	var query url.Values
+	if reqUrl.RawQuery != "" {
+		aer.ResponseMode = ResponseModeQuery
+		query = reqUrl.Query()
+	} else if reqUrl.Fragment != "" {
+		aer.ResponseMode = ResponseModeFragment
+		reqUrl.RawQuery = reqUrl.Fragment
+		query = reqUrl.Query()
+		reqUrl.Fragment = ""
+	}
+	reqUrl.RawQuery = ""
+	aer.RedirectUri = UrlType(reqUrl)
+	return createFormDecoder().Decode(aer, query)
 }

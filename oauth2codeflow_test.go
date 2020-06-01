@@ -1,7 +1,7 @@
 package oauth2_oidc_sdk
 
 import (
-	"github.com/magiconair/properties/assert"
+	"github.com/stretchr/testify/assert"
 	"net/url"
 	"testing"
 )
@@ -31,4 +31,56 @@ func TestAuthorizationRequest_Parse(t *testing.T) {
 	}
 	assert.Equal(t, ar.RequestUri.String(), "http://localhost:8080")
 	assert.Equal(t, ar.Prompt, PromptTypeArray{PromptLogin})
+}
+
+func TestAuthorizationSuccessResponse_Parse(t *testing.T) {
+	testUrl, _ := url.Parse("http://localhost:8080/redirect#access_token=dms6hg26hj&authorization_code=4kungm3qc4yqbyfn5oae&state=21xr4opsq0")
+	asr := AuthorizationSuccessResponse{}
+	err := asr.Parse(*testUrl)
+	if err != nil {
+		t.Fail()
+	}
+	assert.Equal(t, asr.ResponseMode.String(), ResponseModeFragment.String())
+}
+
+func TestAuthorizationSuccessResponse_Render(t *testing.T) {
+	redUri, _ := url.Parse("http://localhost:8080/redirect")
+	asr := AuthorizationSuccessResponse{
+		RedirectUri:       UrlType(*redUri),
+		State:             RandomIdString(10),
+		ResponseMode:      ResponseModeQuery,
+		AuthorizationCode: RandomIdString(20),
+		AccessToken:       RandomIdString(10),
+	}
+
+	render, err := asr.Render()
+	if err != nil {
+		t.Fatal("render failed")
+	}
+
+	assert.Greater(t, len(render.RawQuery), 0)
+	assert.Len(t, render.Fragment, 0)
+
+	values := render.Query()
+
+	assert.NotNil(t, values.Get("access_token"))
+}
+
+func TestAuthorizationSuccessResponse_Render2(t *testing.T) {
+	redUri, _ := url.Parse("http://localhost:8080/redirect")
+	asr := AuthorizationSuccessResponse{
+		RedirectUri:       UrlType(*redUri),
+		State:             RandomIdString(10),
+		ResponseMode:      ResponseModeFragment,
+		AuthorizationCode: RandomIdString(20),
+		AccessToken:       RandomIdString(10),
+	}
+
+	render, err := asr.Render()
+	if err != nil {
+		t.Fatal("render failed")
+	}
+
+	assert.Greater(t, len(render.Fragment), 0)
+	assert.Len(t, render.RawQuery, 0)
 }
