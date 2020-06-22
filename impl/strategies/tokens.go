@@ -1,4 +1,4 @@
-package tokens
+package strategies
 
 import (
 	"crypto"
@@ -45,6 +45,10 @@ func (ds *DefaultStrategy) ValidateRefreshToken(token string, signature string) 
 	return ds.validate(token, signature)
 }
 
+func (ds *DefaultStrategy) SignRefreshToken(token string) string {
+	return ds.sigh(token)
+}
+
 func (ds *DefaultStrategy) GenerateAccessToken() (token string, signature string) {
 	return ds.generateAndSign(ds.AccessTokenEntropy)
 }
@@ -72,6 +76,10 @@ func (ds *DefaultStrategy) generateAndSign(length uint8) (code string, signature
 	return
 }
 
+func (ds *DefaultStrategy) SignAuthCode(code string) string {
+	return ds.sigh(code)
+}
+
 func (ds *DefaultStrategy) validate(code string, signature string) (err error) {
 	codeBytes, err := base64.URLEncoding.DecodeString(code)
 	if err != nil {
@@ -89,4 +97,12 @@ func generate(length uint8) (codeByte []byte) {
 	codeByte = make([]byte, length)
 	_, _ = rand2.Read(codeByte)
 	return
+}
+
+func (ds *DefaultStrategy) sigh(code string) (signature string) {
+	signed, err := rsa.SignPKCS1v15(rand2.Reader, ds.PrivateKey, crypto.SHA256, []byte(code))
+	if err != nil {
+		panic(err)
+	}
+	signature = base64.URLEncoding.EncodeToString(signed)
 }

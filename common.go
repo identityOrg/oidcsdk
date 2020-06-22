@@ -11,8 +11,8 @@ type (
 		AccessTokenLifespan  time.Duration
 		RefreshTokenLifespan time.Duration
 	}
-	Configurable interface {
-		Configure(manager IManager, config Config, arg ...interface{})
+	IConfigurable interface {
+		Configure(strategy interface{}, config Config, arg ...interface{})
 	}
 
 	IError interface {

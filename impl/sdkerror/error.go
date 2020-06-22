@@ -1,6 +1,8 @@
 package sdkerror
 
-import sdk "oauth2-oidc-sdk"
+import (
+	sdk "oauth2-oidc-sdk"
+)
 
 type DefaultError struct {
 	Code        string
@@ -12,7 +14,7 @@ type DefaultError struct {
 func (d *DefaultError) WithDescription(desc string) sdk.IError {
 	clone := DefaultError{
 		Code:        d.Code,
-		Description: desc,
+		Description: d.Description + ": " + desc,
 		Status:      d.Status,
 	}
 	return &clone

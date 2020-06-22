@@ -6,7 +6,7 @@ import (
 	"net/http/httptest"
 	"net/url"
 	sdk "oauth2-oidc-sdk"
-	"oauth2-oidc-sdk/impl/tokens"
+	"oauth2-oidc-sdk/impl/strategies"
 	"oauth2-oidc-sdk/util"
 	"strings"
 	"testing"
@@ -15,7 +15,7 @@ import (
 func TestDefaultManager(t *testing.T) {
 	config := sdk.Config{}
 	private, public := util.GenerateRSAKeyPair()
-	strategy := tokens.NewDefaultStrategy(private, public)
+	strategy := strategies.NewDefaultStrategy(private, public)
 	got := DefaultManager(config, strategy, nil)
 	rw := httptest.NewRecorder()
 	form := url.Values{}

@@ -13,7 +13,7 @@ type (
 		GetState() string
 		GetRedirectURI() string
 		GetGrantType() string
-		GetClientId() string
+		GetClientID() string
 		GetClientSecret() string
 		GetAuthorizationCode() string
 		GetRefreshToken() string

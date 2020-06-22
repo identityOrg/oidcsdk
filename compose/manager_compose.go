@@ -30,8 +30,8 @@ func DefaultManager(config sdk.Config, strategy interface{}, args ...interface{}
 	dManager.IDTokenStrategy = strategy.(sdk.IIDTokenStrategy)
 
 	for _, arg := range args {
-		if configurable, ok := arg.(sdk.Configurable); ok {
-			configurable.Configure(&dManager, config, args)
+		if configurable, ok := arg.(sdk.IConfigurable); ok {
+			configurable.Configure(strategy, config, args)
 		}
 		if element, ok := arg.(sdk.IUserStore); ok {
 			dManager.UserStore = element

@@ -22,6 +22,7 @@ type (
 	IAuthorizationCodeStrategy interface {
 		GenerateAuthCode() (code string, signature string)
 		ValidateAuthCode(code string, signature string) error
+		SignAuthCode(code string) string
 	}
 	IAccessTokenStrategy interface {
 		GenerateAccessToken() (token string, signature string)
@@ -30,6 +31,7 @@ type (
 	IRefreshTokenStrategy interface {
 		GenerateRefreshToken() (token string, signature string)
 		ValidateRefreshToken(token string, signature string) error
+		SignRefreshToken(token string) string
 	}
 	IIDTokenStrategy interface {
 		GenerateIDToken(profile IProfile, client IClient, transactionClaims map[string]interface{}) (idToken string, err error)

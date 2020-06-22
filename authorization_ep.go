@@ -18,6 +18,7 @@ type (
 		GetRequestedScopes() Arguments
 		GetRequestedAudience() Arguments
 		GetForm() *url.Values
+		SetRedirectURI(uri string)
 	}
 
 	IAuthenticationResponse interface {

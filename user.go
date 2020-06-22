@@ -4,6 +4,9 @@ type (
 	IProfile interface {
 		GetUsername() string
 		GetSubject() string
+		GetRedirectURI() string
+		GetScope() Arguments
+		GetAudience() Arguments
 		GetClaims() map[string]interface{}
 	}
 

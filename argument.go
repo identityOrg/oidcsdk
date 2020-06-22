@@ -78,3 +78,7 @@ func (r Arguments) MatchesExact(items ...string) bool {
 
 	return true
 }
+
+func (r Arguments) String() string {
+	return strings.Join(r, " ")
+}
