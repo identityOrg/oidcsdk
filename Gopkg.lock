@@ -10,6 +10,14 @@
   version = "v1.1.1"
 
 [[projects]]
+  digest = "1:582b704bebaa06b48c29b0cec224a6058a09c86883aaddabde889cd1a5f73e1b"
+  name = "github.com/google/uuid"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "0cd6bf5da1e1c83f8b45653022c74f71af0538a4"
+  version = "v1.1.1"
+
+[[projects]]
   digest = "1:345ad428d03cc89fa5498d61383d0d7f39afbe8731ca135c0ec92782285121d3"
   name = "github.com/gorilla/schema"
   packages = ["."]
@@ -34,6 +42,31 @@
   version = "v1.6.0"
 
 [[projects]]
+  branch = "master"
+  digest = "1:5cdf4eb6946922ebe638b90e548e1a86085b778d9daf0889951b39f44e6bbe6c"
+  name = "golang.org/x/crypto"
+  packages = [
+    "ed25519",
+    "ed25519/internal/edwards25519",
+    "pbkdf2",
+  ]
+  pruneopts = "UT"
+  revision = "70a84ac30bf957c7df57edd1935d2081871515e1"
+
+[[projects]]
+  digest = "1:fc84ccf964a50c111e3241112516d784ae15f14793d8a8d8b52fe2e26b3f53b4"
+  name = "gopkg.in/square/go-jose.v2"
+  packages = [
+    ".",
+    "cipher",
+    "json",
+    "jwt",
+  ]
+  pruneopts = "UT"
+  revision = "3a5ee095dcb5030a9de84fb92c222ac652fff176"
+  version = "v2.5.1"
+
+[[projects]]
   branch = "v3"
   digest = "1:f87d6c8edf5e57ae4a355abc05aca1dbf38b073068bba96c1fbbff852a1e2fd3"
   name = "gopkg.in/yaml.v3"
@@ -45,8 +78,11 @@
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
+    "github.com/google/uuid",
     "github.com/gorilla/schema",
     "github.com/stretchr/testify/assert",
+    "gopkg.in/square/go-jose.v2",
+    "gopkg.in/square/go-jose.v2/jwt",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1
