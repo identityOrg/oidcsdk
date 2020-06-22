@@ -16,7 +16,7 @@ func TestDefaultManager(t *testing.T) {
 	config := sdk.Config{}
 	private, public := util.GenerateRSAKeyPair()
 	strategy := strategies.NewDefaultStrategy(private, public)
-	got := DefaultManager(config, strategy, nil)
+	got := DefaultManager(config, strategy, CreateDefaultSequence()...)
 	rw := httptest.NewRecorder()
 	form := url.Values{}
 	form.Set("grant_type", "password")

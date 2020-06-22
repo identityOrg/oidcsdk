@@ -31,7 +31,7 @@ func DefaultManager(config sdk.Config, strategy interface{}, args ...interface{}
 
 	for _, arg := range args {
 		if configurable, ok := arg.(sdk.IConfigurable); ok {
-			configurable.Configure(strategy, config, args)
+			configurable.Configure(strategy, config, args...)
 		}
 		if element, ok := arg.(sdk.IUserStore); ok {
 			dManager.UserStore = element
@@ -41,15 +41,6 @@ func DefaultManager(config sdk.Config, strategy interface{}, args ...interface{}
 		}
 		if element, ok := arg.(sdk.ITokenStore); ok {
 			dManager.TokenStore = element
-		}
-		if element, ok := arg.(sdk.IIDTokenStrategy); ok {
-			dManager.IDTokenStrategy = element
-		}
-		if element, ok := arg.(sdk.IAccessTokenStrategy); ok {
-			dManager.AccessTokenStrategy = element
-		}
-		if element, ok := arg.(sdk.IRefreshTokenStrategy); ok {
-			dManager.RefreshTokenStrategy = element
 		}
 		if element, ok := arg.(sdk.IAuthEPHandler); ok {
 			dManager.AuthEPHandlers = append(dManager.AuthEPHandlers, element)

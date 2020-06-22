@@ -131,7 +131,7 @@ func (d *DefaultTokenRequest) GetGrantType() string {
 	return d.GrantType
 }
 
-func (d *DefaultTokenRequest) GetClientId() string {
+func (d *DefaultTokenRequest) GetClientID() string {
 	return d.ClientId
 }
 

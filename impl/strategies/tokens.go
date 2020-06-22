@@ -105,4 +105,5 @@ func (ds *DefaultStrategy) sigh(code string) (signature string) {
 		panic(err)
 	}
 	signature = base64.URLEncoding.EncodeToString(signed)
+	return
 }
