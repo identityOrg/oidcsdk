@@ -5,6 +5,7 @@ import (
 	"github.com/hashicorp/go-memdb"
 	sdk "oauth2-oidc-sdk"
 	client2 "oauth2-oidc-sdk/impl/client"
+	"oauth2-oidc-sdk/impl/userprofile"
 )
 
 type InMemoryDB struct {
@@ -52,6 +53,18 @@ func (i *InMemoryDB) GetClaims(username string, scopes sdk.Arguments, claimsIDs 
 
 func (i *InMemoryDB) IsConsentRequired(username string, client sdk.IClient, scopes sdk.Arguments, audience sdk.Arguments) bool {
 	panic("implement me")
+}
+
+func (i *InMemoryDB) FetchUserProfile(username string) sdk.IProfile {
+	return &userprofile.DefaultProfile{
+		Username: username,
+	}
+}
+
+func (i *InMemoryDB) FetchClientProfile(username string) sdk.IProfile {
+	return &userprofile.DefaultProfile{
+		Username: username,
+	}
 }
 
 func (i *InMemoryDB) Configure(interface{}, sdk.Config, ...interface{}) {

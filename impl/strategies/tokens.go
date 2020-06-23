@@ -5,9 +5,11 @@ import (
 	rand2 "crypto/rand"
 	"crypto/rsa"
 	"encoding/base64"
+	"github.com/google/uuid"
 	"gopkg.in/square/go-jose.v2"
 	"gopkg.in/square/go-jose.v2/jwt"
 	sdk "oauth2-oidc-sdk"
+	"time"
 )
 
 type DefaultStrategy struct {
@@ -16,24 +18,37 @@ type DefaultStrategy struct {
 	AccessTokenEntropy  uint8
 	AccessCodeEntropy   uint8
 	RefreshTokenEntropy uint8
+	Issuer              string
 }
 
 func NewDefaultStrategy(privateKey *rsa.PrivateKey, publicKey *rsa.PublicKey) *DefaultStrategy {
 	return &DefaultStrategy{PrivateKey: privateKey, PublicKey: publicKey}
 }
 
-func (ds *DefaultStrategy) GenerateIDToken(profile sdk.IProfile, client sdk.IClient,
+func (ds *DefaultStrategy) GenerateIDToken(profile sdk.IProfile, client sdk.IClient, expiry time.Time,
 	transactionClaims map[string]interface{}) (idToken string, err error) {
-	client.GetIDTokenSigningAlg()
 	key := jose.SigningKey{
 		Algorithm: client.GetIDTokenSigningAlg(),
 		Key:       ds.PrivateKey,
 	}
+
 	signer, err := jose.NewSigner(key, (&jose.SignerOptions{}).WithType("JWT"))
 	if err != nil {
 		return
 	}
-	idToken, err = jwt.Signed(signer).Claims(transactionClaims).FullSerialize()
+
+	currentTime := time.Now()
+
+	standardClaims := jwt.Claims{
+		Issuer:    ds.Issuer,
+		Subject:   profile.GetUsername(),
+		Audience:  []string(profile.GetAudience()),
+		NotBefore: jwt.NewNumericDate(currentTime),
+		IssuedAt:  jwt.NewNumericDate(currentTime),
+		Expiry:    jwt.NewNumericDate(expiry),
+		ID:        uuid.New().String(),
+	}
+	idToken, err = jwt.Signed(signer).Claims(standardClaims).Claims(transactionClaims).FullSerialize()
 	return
 }
 

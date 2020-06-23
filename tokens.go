@@ -15,9 +15,9 @@ type (
 		AuthorizationCodeSignature string
 		AccessTokenSignature       string
 		RefreshTokenSignature      string
-		RefreshTokenExpiry         *time.Time
-		AccessTokenExpiry          *time.Time
-		AuthorizationCodeExpiry    *time.Time
+		RefreshTokenExpiry         time.Time
+		AccessTokenExpiry          time.Time
+		AuthorizationCodeExpiry    time.Time
 	}
 	IAuthorizationCodeStrategy interface {
 		GenerateAuthCode() (code string, signature string)
@@ -34,6 +34,7 @@ type (
 		SignRefreshToken(token string) string
 	}
 	IIDTokenStrategy interface {
-		GenerateIDToken(profile IProfile, client IClient, transactionClaims map[string]interface{}) (idToken string, err error)
+		GenerateIDToken(profile IProfile, client IClient, expiry time.Time,
+			transactionClaims map[string]interface{}) (idToken string, err error)
 	}
 )

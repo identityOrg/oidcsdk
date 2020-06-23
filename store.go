@@ -15,10 +15,12 @@ type (
 		Authenticate(username string, credential []byte) (err error)
 		GetClaims(username string, scopes Arguments, claimsIDs []string) (map[string]interface{}, error)
 		IsConsentRequired(username string, client IClient, scopes Arguments, audience Arguments) bool
+		FetchUserProfile(username string) IProfile
 	}
 
 	IClientStore interface {
 		GetClient(clientID string) (client IClient, err error)
+		FetchClientProfile(clientID string) IProfile
 	}
 
 	ITransactionalStore interface {

@@ -28,7 +28,11 @@ type (
 		SetClient(client IClient)
 		GetProfile() IProfile
 		SetProfile(profile IProfile)
-		GetIssuedTokens() *Tokens
+		GetIssuedTokens() Tokens
+		IssueAccessToken(token string, signature string, expiry time.Time)
+		IssueRefreshToken(token string, signature string, expiry time.Time)
+		IssueAuthorizationCode(code string, signature string, expiry time.Time)
+		IssueIDToken(token string)
 	}
 
 	AuthenticationRequestContextFactory func(r *http.Request) (IAuthenticationRequestContext, IError)

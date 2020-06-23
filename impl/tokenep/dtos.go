@@ -26,11 +26,37 @@ type (
 		GrantedAudience   sdk.Arguments
 		Client            sdk.IClient
 		Profile           sdk.IProfile
-		IssuedTokens      *sdk.Tokens
+		IssuedTokens      sdk.Tokens
 		Error             sdk.IError
 		Form              *url.Values
 	}
 )
+
+func (d *DefaultTokenRequest) GetIssuedTokens() sdk.Tokens {
+	return d.IssuedTokens
+}
+
+func (d *DefaultTokenRequest) IssueAccessToken(token string, signature string, expiry time.Time) {
+	d.IssuedTokens.AccessToken = token
+	d.IssuedTokens.AccessTokenSignature = signature
+	d.IssuedTokens.AccessTokenExpiry = expiry
+}
+
+func (d *DefaultTokenRequest) IssueAuthorizationCode(code string, signature string, expiry time.Time) {
+	d.IssuedTokens.AuthorizationCode = code
+	d.IssuedTokens.AuthorizationCodeSignature = signature
+	d.IssuedTokens.AuthorizationCodeExpiry = expiry
+}
+
+func (d *DefaultTokenRequest) IssueRefreshToken(token string, signature string, expiry time.Time) {
+	d.IssuedTokens.RefreshToken = token
+	d.IssuedTokens.RefreshTokenSignature = signature
+	d.IssuedTokens.RefreshTokenExpiry = expiry
+}
+
+func (d *DefaultTokenRequest) IssueIDToken(token string) {
+	d.IssuedTokens.IDToken = token
+}
 
 func (d *DefaultTokenRequest) GetUsername() string {
 	return d.Username
@@ -74,10 +100,6 @@ func (d *DefaultTokenRequest) GetProfile() sdk.IProfile {
 
 func (d *DefaultTokenRequest) SetProfile(profile sdk.IProfile) {
 	d.Profile = profile
-}
-
-func (d *DefaultTokenRequest) GetIssuedTokens() *sdk.Tokens {
-	return d.IssuedTokens
 }
 
 func (d *DefaultTokenRequest) GetForm() *url.Values {

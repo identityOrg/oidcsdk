@@ -7,10 +7,15 @@ import (
 )
 
 type DefaultUserValidator struct {
-	UserStore sdk.IUserStore
+	UserStore   sdk.IUserStore
+	ClientStore sdk.IClientStore
 }
 
-func (d *DefaultUserValidator) HandleTokenEP(ctx context.Context, requestContext sdk.ITokenRequestContext) sdk.IError {
+func (d *DefaultUserValidator) HandleAuthEP(ctx context.Context, requestContext sdk.IAuthenticationRequestContext) sdk.IError {
+	return sdkerror.UnSupportedGrantType
+}
+
+func (d *DefaultUserValidator) HandleTokenEP(_ context.Context, requestContext sdk.ITokenRequestContext) sdk.IError {
 	grantType := requestContext.GetGrantType()
 	if grantType == "password" {
 		username := requestContext.GetUsername()
@@ -19,9 +24,15 @@ func (d *DefaultUserValidator) HandleTokenEP(ctx context.Context, requestContext
 		if err != nil {
 			return sdkerror.InvalidGrant.WithDescription("user authentication failed")
 		}
-		requestContext.GetProfile().SetUsername(username)
+		profile := d.UserStore.FetchUserProfile(username)
+		profile.SetScope(requestContext.GetGrantedScopes())
+		profile.SetAudience(requestContext.GetGrantedAudience())
+		requestContext.SetProfile(profile)
 	} else if grantType == "client_credentials" {
-		requestContext.GetProfile().SetUsername(requestContext.GetClientID())
+		profile := d.ClientStore.FetchClientProfile(requestContext.GetClientID())
+		profile.SetScope(requestContext.GetGrantedScopes())
+		profile.SetAudience(requestContext.GetGrantedAudience())
+		requestContext.SetProfile(profile)
 	}
 	return nil
 }
@@ -31,8 +42,11 @@ func (d *DefaultUserValidator) Configure(_ interface{}, _ sdk.Config, args ...in
 		if us, ok := arg.(sdk.IUserStore); ok {
 			d.UserStore = us
 		}
+		if cs, ok := arg.(sdk.IClientStore); ok {
+			d.ClientStore = cs
+		}
 	}
-	if d.UserStore == nil {
+	if d.UserStore == nil || d.ClientStore == nil {
 		panic("failed to init DefaultUserValidator")
 	}
 }
