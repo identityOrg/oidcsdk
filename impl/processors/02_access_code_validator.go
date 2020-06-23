@@ -11,18 +11,18 @@ type DefaultAccessCodeValidator struct {
 	AuthCodeStrategy sdk.IAuthorizationCodeStrategy
 }
 
-func (d *DefaultAccessCodeValidator) HandleTokenEP(_ context.Context, request sdk.ITokenRequest, response sdk.ITokenResponse) sdk.IError {
-	if request.GetGrantType() == "authorization_code" {
-		if request.GetAuthorizationCode() == "" {
+func (d *DefaultAccessCodeValidator) HandleTokenEP(_ context.Context, requestContext sdk.ITokenRequestContext) sdk.IError {
+	if requestContext.GetGrantType() == "authorization_code" {
+		if requestContext.GetAuthorizationCode() == "" {
 			return sdkerror.InvalidGrant.WithDescription("'authorization_code' not provided")
 		}
 
-		authCode := request.GetAuthorizationCode()
+		authCode := requestContext.GetAuthorizationCode()
 		authCodeSignature := d.AuthCodeStrategy.SignAuthCode(authCode)
 		if profile, err := d.TokenStore.GetProfileWithAuthCodeSign(authCodeSignature); err != nil {
 			return sdkerror.InvalidGrant.WithDescription("invalid 'authorization_code'")
 		} else {
-			response.SetProfile(profile)
+			requestContext.SetProfile(profile)
 		}
 	}
 	return nil

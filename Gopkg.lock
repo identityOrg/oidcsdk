@@ -2,14 +2,6 @@
 
 
 [[projects]]
-  digest = "1:ffe9824d294da03b391f44e1ae8281281b4afc1bdaa9588c9097785e3af10cec"
-  name = "github.com/davecgh/go-spew"
-  packages = ["spew"]
-  pruneopts = "UT"
-  revision = "8991bc29aa16c548c550c7ff78260e27b9ab7c73"
-  version = "v1.1.1"
-
-[[projects]]
   digest = "1:582b704bebaa06b48c29b0cec224a6058a09c86883aaddabde889cd1a5f73e1b"
   name = "github.com/google/uuid"
   packages = ["."]
@@ -18,28 +10,28 @@
   version = "v1.1.1"
 
 [[projects]]
-  digest = "1:345ad428d03cc89fa5498d61383d0d7f39afbe8731ca135c0ec92782285121d3"
-  name = "github.com/gorilla/schema"
+  digest = "1:31a307024e88018be0f93aadc0c275fa155a8a8c9d94a7ac6132c4a3b8147b11"
+  name = "github.com/hashicorp/go-immutable-radix"
   packages = ["."]
   pruneopts = "UT"
-  revision = "124d17ef95858a10835ce95502446cb5a9e9f715"
-  version = "v1.1.0"
+  revision = "e47f517af50356c81b117418760ac7dfd7b7af62"
+  version = "v1.2.0"
 
 [[projects]]
-  digest = "1:0028cb19b2e4c3112225cd871870f2d9cf49b9b4276531f03438a88e94be86fe"
-  name = "github.com/pmezard/go-difflib"
-  packages = ["difflib"]
+  digest = "1:b8b88ade35269baf0f44933fd180b3dc84a79b1ddc84ef346c5bf810e5de8b6f"
+  name = "github.com/hashicorp/go-memdb"
+  packages = ["."]
   pruneopts = "UT"
-  revision = "792786c7400a136282c1664665ae0a8db921c6c2"
-  version = "v1.0.0"
+  revision = "ac8c839d3bac603f96bbb715e0d267c565567d0f"
+  version = "v1.2.1"
 
 [[projects]]
-  digest = "1:0bd81087c12be521236e09538226d5541a3d600930e42b9533d245ce3126ee28"
-  name = "github.com/stretchr/testify"
-  packages = ["assert"]
+  digest = "1:7fae9ec96d10b2afce0da23c378c8b3389319b7f92fa092f2621bba3078cfb4b"
+  name = "github.com/hashicorp/golang-lru"
+  packages = ["simplelru"]
   pruneopts = "UT"
-  revision = "004e3cb72213e5e727e4e08f668ee6c8f27e5d32"
-  version = "v1.6.0"
+  revision = "14eae340515388ca95aa8e7b86f0de668e981f54"
+  version = "v0.5.4"
 
 [[projects]]
   branch = "master"
@@ -66,21 +58,12 @@
   revision = "3a5ee095dcb5030a9de84fb92c222ac652fff176"
   version = "v2.5.1"
 
-[[projects]]
-  branch = "v3"
-  digest = "1:f87d6c8edf5e57ae4a355abc05aca1dbf38b073068bba96c1fbbff852a1e2fd3"
-  name = "gopkg.in/yaml.v3"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "2ff61e1afc866138abf1a8adf3cc89721090ac31"
-
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
     "github.com/google/uuid",
-    "github.com/gorilla/schema",
-    "github.com/stretchr/testify/assert",
+    "github.com/hashicorp/go-memdb",
     "gopkg.in/square/go-jose.v2",
     "gopkg.in/square/go-jose.v2/jwt",
   ]

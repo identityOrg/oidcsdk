@@ -6,6 +6,7 @@ import (
 	"net/http/httptest"
 	"net/url"
 	sdk "oauth2-oidc-sdk"
+	"oauth2-oidc-sdk/impl/memdbstore"
 	"oauth2-oidc-sdk/impl/strategies"
 	"oauth2-oidc-sdk/util"
 	"strings"
@@ -16,7 +17,9 @@ func TestDefaultManager(t *testing.T) {
 	config := sdk.Config{}
 	private, public := util.GenerateRSAKeyPair()
 	strategy := strategies.NewDefaultStrategy(private, public)
-	got := DefaultManager(config, strategy, CreateDefaultSequence()...)
+	sequence := CreateDefaultSequence()
+	sequence = append(sequence, memdbstore.NewInMemoryDB())
+	got := DefaultManager(config, strategy, sequence...)
 	rw := httptest.NewRecorder()
 	form := url.Values{}
 	form.Set("grant_type", "password")

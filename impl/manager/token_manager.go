@@ -8,22 +8,17 @@ import (
 
 func (d *DefaultManager) ProcessTokenEP(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Background()
-	if tokenRequest, iError := d.TokenRequestFactory(r); iError != nil {
+	if tokenRequestContext, iError := d.TokenRequestContextFactory(r); iError != nil {
 		d.handleTokenEPError(w, iError)
 		return
 	} else {
-		if tokenResponse, iError := d.TokenResponseFactory(tokenRequest); iError != nil {
-			d.handleTokenEPError(w, iError)
-			return
-		} else {
-			for _, handler := range d.TokenEPHandlers {
-				if iError := handler.HandleTokenEP(ctx, tokenRequest, tokenResponse); iError != nil {
-					d.handleTokenEPError(w, iError)
-				}
+		for _, handler := range d.TokenEPHandlers {
+			if iError := handler.HandleTokenEP(ctx, tokenRequestContext); iError != nil {
+				d.handleTokenEPError(w, iError)
 			}
-			if err := d.TokenResponseWriter(tokenResponse, w); err != nil {
-				d.ErrorStrategy(err, w)
-			}
+		}
+		if err := d.TokenResponseWriter(tokenRequestContext, w); err != nil {
+			d.ErrorStrategy(err, w)
 		}
 	}
 }

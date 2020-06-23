@@ -7,29 +7,31 @@ import (
 )
 
 type (
-	IAuthenticationRequest interface {
+	IAuthenticationRequestContext interface {
 		GetRequestID() string
 		GetRequestedAt() time.Time
 		GetState() string
 		GetClientID() string
 		GetRedirectURI() string
 		GetResponseType() Arguments
+		GetResponseMode() string
 		GetNonce() string
 		GetRequestedScopes() Arguments
 		GetRequestedAudience() Arguments
 		GetForm() *url.Values
 		SetRedirectURI(uri string)
+		GetGrantedScopes() Arguments
+		GetGrantedAudience() Arguments
+		GrantScope(scope string)
+		GrantAudience(audience string)
+		GetClient() IClient
+		SetClient(client IClient)
+		GetProfile() IProfile
+		SetProfile(profile IProfile)
+		GetIssuedTokens() *Tokens
 	}
 
-	IAuthenticationResponse interface {
-		ITokenResponse
-		GetState() string
-		GetRedirectURI() string
-		GetResponseMode() string
-	}
-
-	AuthenticationRequestFactory  func(r *http.Request) (IAuthenticationRequest, IError)
-	AuthenticationResponseFactory func(request IAuthenticationRequest) (IAuthenticationResponse, IError)
-	AuthenticationResponseWriter  func(response IAuthenticationResponse, w http.ResponseWriter) error
-	AuthenticationErrorWriter     func(err IError, w http.ResponseWriter) error
+	AuthenticationRequestContextFactory func(r *http.Request) (IAuthenticationRequestContext, IError)
+	AuthenticationResponseWriter        func(requestContext IAuthenticationRequestContext, w http.ResponseWriter) error
+	AuthenticationErrorWriter           func(err IError, w http.ResponseWriter) error
 )

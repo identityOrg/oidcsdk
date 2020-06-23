@@ -11,18 +11,18 @@ type DefaultRefreshTokenValidator struct {
 	TokenStore           sdk.ITokenStore
 }
 
-func (d *DefaultRefreshTokenValidator) HandleTokenEP(_ context.Context, request sdk.ITokenRequest, response sdk.ITokenResponse) sdk.IError {
-	if request.GetGrantType() == "refresh_token" {
-		if request.GetRefreshToken() == "" {
+func (d *DefaultRefreshTokenValidator) HandleTokenEP(_ context.Context, requestContext sdk.ITokenRequestContext) sdk.IError {
+	if requestContext.GetGrantType() == "refresh_token" {
+		if requestContext.GetRefreshToken() == "" {
 			return sdkerror.InvalidGrant.WithDescription("'refresh_token' not provided")
 		}
 
-		refreshToken := request.GetAuthorizationCode()
+		refreshToken := requestContext.GetAuthorizationCode()
 		refreshTokenSignature := d.RefreshTokenStrategy.SignRefreshToken(refreshToken)
 		if profile, err := d.TokenStore.GetProfileWithRefreshTokenSign(refreshTokenSignature); err != nil {
 			return sdkerror.InvalidGrant.WithDescription("invalid 'refresh_token'")
 		} else {
-			response.SetProfile(profile)
+			requestContext.SetProfile(profile)
 		}
 	}
 	return nil

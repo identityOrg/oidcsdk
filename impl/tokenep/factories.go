@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-func DefaultTokenRequestFactory(r *http.Request) (sdk.ITokenRequest, sdk.IError) {
+func DefaultTokenRequestContextFactory(r *http.Request) (sdk.ITokenRequestContext, sdk.IError) {
 	if r.Method != http.MethodPost {
 		return nil, sdkerror.InvalidRequest.WithDescription("only HTTP method post supported")
 	}
@@ -53,10 +53,4 @@ func DefaultTokenRequestFactory(r *http.Request) (sdk.ITokenRequest, sdk.IError)
 	reqStruct.RequestID = uuid.New().String()
 	reqStruct.RequestedAt = time.Now()
 	return &reqStruct, nil
-}
-
-func DefaultTokenResponseFactory(request sdk.ITokenRequest) (sdk.ITokenResponse, sdk.IError) {
-	return &DefaultTokenResponse{
-		RequestID: request.GetRequestID(),
-	}, nil
 }

@@ -9,11 +9,11 @@ import (
 type DefaultScopeValidator struct {
 }
 
-func (d *DefaultScopeValidator) HandleAuthEP(_ context.Context, request sdk.IAuthenticationRequest, response sdk.IAuthenticationResponse) sdk.IError {
-	if client := response.GetClient(); client == nil {
+func (d *DefaultScopeValidator) HandleAuthEP(_ context.Context, requestContext sdk.IAuthenticationRequestContext) sdk.IError {
+	if client := requestContext.GetClient(); client == nil {
 		return sdkerror.UnAuthorizedClient.WithDescription("client not resolved")
 	} else {
-		requestedScopes := request.GetRequestedScopes()
+		requestedScopes := requestContext.GetRequestedScopes()
 		approvedScopes := client.GetApprovedScopes()
 		for _, scope := range requestedScopes {
 			found := false
@@ -30,28 +30,29 @@ func (d *DefaultScopeValidator) HandleAuthEP(_ context.Context, request sdk.IAut
 	}
 }
 
-func (d *DefaultScopeValidator) HandleTokenEP(_ context.Context, request sdk.ITokenRequest, response sdk.ITokenResponse) sdk.IError {
-	if request.GetGrantType() == "authorization_code" {
-		profile := response.GetProfile()
-		if profile.GetScope().MatchesExact(request.GetRequestedScopes()...) {
-			for _, s := range request.GetRequestedScopes() {
-				response.GrantScope(s)
+func (d *DefaultScopeValidator) HandleTokenEP(_ context.Context, requestContext sdk.ITokenRequestContext) sdk.IError {
+	grantType := requestContext.GetGrantType()
+	if grantType == "authorization_code" {
+		profile := requestContext.GetProfile()
+		if profile.GetScope().MatchesExact(requestContext.GetRequestedScopes()...) {
+			for _, s := range requestContext.GetRequestedScopes() {
+				requestContext.GrantScope(s)
 			}
 			return nil
 		} else {
 			return sdkerror.InvalidScope.WithDescription("mismatch in requested scope")
 		}
-	} else if request.GetGrantType() == "password" || request.GetGrantType() == "client_credentials" {
-		approvedScopes := response.GetClient().GetApprovedScopes()
-		for _, requestedScope := range request.GetRequestedScopes() {
+	} else if grantType == "password" || grantType == "client_credentials" {
+		approvedScopes := requestContext.GetClient().GetApprovedScopes()
+		for _, requestedScope := range requestContext.GetRequestedScopes() {
 			if approvedScopes.Has(requestedScope) {
-				response.GrantScope(requestedScope)
+				requestContext.GrantScope(requestedScope)
 			}
 		}
-	} else if request.GetGrantType() == "refresh_token" {
-		scope := response.GetProfile().GetScope()
+	} else if grantType == "refresh_token" {
+		scope := requestContext.GetProfile().GetScope()
 		for _, s := range scope {
-			response.GrantScope(s)
+			requestContext.GrantScope(s)
 		}
 	}
 	return nil

@@ -5,21 +5,16 @@ import (
 	"oauth2-oidc-sdk/impl/manager"
 	"oauth2-oidc-sdk/impl/strategies"
 	"oauth2-oidc-sdk/impl/tokenep"
-	"oauth2-oidc-sdk/impl/tokens"
 )
 
 func DefaultManager(config sdk.Config, strategy interface{}, args ...interface{}) sdk.IManager {
 	dManager := manager.DefaultManager{}
 	dManager.Config = config
-	dManager.TokenResponseFactory = tokenep.DefaultTokenResponseFactory
-	dManager.TokenRequestFactory = tokenep.DefaultTokenRequestFactory
+	dManager.TokenRequestContextFactory = tokenep.DefaultTokenRequestContextFactory
 	dManager.TokenResponseWriter = tokenep.DefaultTokenResponseWriter
 	dManager.TokenErrorWriter = tokenep.DefaultTokenErrorWriter
 
-	dManager.TokensFactory = tokens.DefaultTokensFactory
-
-	dManager.AuthenticationResponseFactory = nil
-	dManager.AuthenticationRequestFactory = nil
+	dManager.AuthenticationRequestContextFactory = nil
 	dManager.AuthenticationResponseWriter = nil
 	dManager.AuthenticationErrorWriter = nil
 

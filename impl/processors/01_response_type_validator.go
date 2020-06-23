@@ -9,12 +9,12 @@ import (
 type DefaultResponseTypeValidator struct {
 }
 
-func (d *DefaultResponseTypeValidator) HandleAuthEP(_ context.Context, request sdk.IAuthenticationRequest, response sdk.IAuthenticationResponse) sdk.IError {
-	responseTypes := request.GetResponseType()
+func (d *DefaultResponseTypeValidator) HandleAuthEP(_ context.Context, requestContext sdk.IAuthenticationRequestContext) sdk.IError {
+	responseTypes := requestContext.GetResponseType()
 	if len(responseTypes) == 0 {
 		return sdkerror.InvalidRequest.WithDescription("no response type provided")
 	}
-	approvedGrantTypes := response.GetClient().GetApprovedGrantTypes()
+	approvedGrantTypes := requestContext.GetClient().GetApprovedGrantTypes()
 
 	for _, responseType := range responseTypes {
 		if responseType == "code" {

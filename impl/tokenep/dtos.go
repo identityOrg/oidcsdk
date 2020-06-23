@@ -22,18 +22,13 @@ type (
 		RefreshToken      string
 		RequestedScopes   sdk.Arguments
 		RequestedAudience sdk.Arguments
+		GrantedScopes     sdk.Arguments
+		GrantedAudience   sdk.Arguments
+		Client            sdk.IClient
+		Profile           sdk.IProfile
+		IssuedTokens      *sdk.Tokens
+		Error             sdk.IError
 		Form              *url.Values
-	}
-	DefaultTokenResponse struct {
-		RequestID       string
-		GrantedScopes   sdk.Arguments
-		GrantedAudience sdk.Arguments
-		Success         bool
-		Client          sdk.IClient
-		Profile         sdk.IProfile
-		IssuedTokens    sdk.ITokens
-		Error           sdk.IError
-		Form            *url.Values
 	}
 )
 
@@ -45,74 +40,48 @@ func (d *DefaultTokenRequest) GetPassword() string {
 	return d.Password
 }
 
-func (d *DefaultTokenResponse) GetRequestID() string {
+func (d *DefaultTokenRequest) GetRequestID() string {
 	return d.RequestID
 }
 
-func (d *DefaultTokenResponse) GetGrantedScopes() sdk.Arguments {
+func (d *DefaultTokenRequest) GetGrantedScopes() sdk.Arguments {
 	return d.GrantedScopes
 }
 
-func (d *DefaultTokenResponse) GetGrantedAudience() sdk.Arguments {
+func (d *DefaultTokenRequest) GetGrantedAudience() sdk.Arguments {
 	return d.GrantedAudience
 }
 
-func (d *DefaultTokenResponse) GrantScope(scope string) {
+func (d *DefaultTokenRequest) GrantScope(scope string) {
 	d.GrantedScopes = util.AppendUnique(d.GrantedScopes, scope)
 }
 
-func (d *DefaultTokenResponse) GrantAudience(audience string) {
+func (d *DefaultTokenRequest) GrantAudience(audience string) {
 	d.GrantedAudience = util.AppendUnique(d.GrantedAudience, audience)
 }
 
-func (d *DefaultTokenResponse) IsSuccess() bool {
-	return d.Success
-}
-
-func (d *DefaultTokenResponse) SetSuccess(success bool) {
-	d.Success = success
-}
-
-func (d *DefaultTokenResponse) GetClient() sdk.IClient {
+func (d *DefaultTokenRequest) GetClient() sdk.IClient {
 	return d.Client
 }
 
-func (d *DefaultTokenResponse) SetClient(client sdk.IClient) {
+func (d *DefaultTokenRequest) SetClient(client sdk.IClient) {
 	d.Client = client
 }
 
-func (d *DefaultTokenResponse) GetProfile() sdk.IProfile {
+func (d *DefaultTokenRequest) GetProfile() sdk.IProfile {
 	return d.Profile
 }
 
-func (d *DefaultTokenResponse) SetProfile(profile sdk.IProfile) {
+func (d *DefaultTokenRequest) SetProfile(profile sdk.IProfile) {
 	d.Profile = profile
 }
 
-func (d *DefaultTokenResponse) GetIssuedTokens() sdk.ITokens {
+func (d *DefaultTokenRequest) GetIssuedTokens() *sdk.Tokens {
 	return d.IssuedTokens
 }
 
-func (d *DefaultTokenResponse) IssueTokens(tokens sdk.ITokens) {
-	d.IssuedTokens = tokens
-}
-
-func (d *DefaultTokenResponse) GetError() sdk.IError {
-	return d.Error
-}
-
-func (d *DefaultTokenResponse) SetError(err sdk.IError) {
-	d.Error = err
-}
-
-func (d *DefaultTokenResponse) GetForm() *url.Values {
+func (d *DefaultTokenRequest) GetForm() *url.Values {
 	return d.Form
-}
-
-// starting request
-
-func (d *DefaultTokenRequest) GetRequestID() string {
-	return d.RequestID
 }
 
 func (d *DefaultTokenRequest) GetRequestedAt() time.Time {
@@ -153,8 +122,4 @@ func (d *DefaultTokenRequest) GetRequestedScopes() sdk.Arguments {
 
 func (d *DefaultTokenRequest) GetRequestedAudience() sdk.Arguments {
 	return d.RequestedAudience
-}
-
-func (d *DefaultTokenRequest) GetForm() *url.Values {
-	return d.Form
 }

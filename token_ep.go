@@ -7,7 +7,7 @@ import (
 )
 
 type (
-	ITokenRequest interface {
+	ITokenRequestContext interface {
 		GetRequestID() string
 		GetRequestedAt() time.Time
 		GetState() string
@@ -21,30 +21,19 @@ type (
 		GetPassword() string
 		GetRequestedScopes() Arguments
 		GetRequestedAudience() Arguments
-		GetForm() *url.Values
-	}
-
-	ITokenResponse interface {
-		GetRequestID() string
 		GetGrantedScopes() Arguments
 		GetGrantedAudience() Arguments
 		GrantScope(scope string)
 		GrantAudience(audience string)
-		IsSuccess() bool
-		SetSuccess(success bool)
 		GetClient() IClient
 		SetClient(client IClient)
 		GetProfile() IProfile
 		SetProfile(profile IProfile)
-		GetIssuedTokens() ITokens
-		IssueTokens(tokens ITokens)
-		GetError() IError
-		SetError(err IError)
+		GetIssuedTokens() *Tokens
 		GetForm() *url.Values
 	}
 
-	TokenRequestFactory  func(r *http.Request) (ITokenRequest, IError)
-	TokenResponseFactory func(request ITokenRequest) (ITokenResponse, IError)
-	TokenResponseWriter  func(response ITokenResponse, w http.ResponseWriter) error
-	TokenErrorWriter     func(err IError, w http.ResponseWriter) error
+	TokenRequestContextFactory func(r *http.Request) (ITokenRequestContext, IError)
+	TokenResponseWriter        func(requestContext ITokenRequestContext, w http.ResponseWriter) error
+	TokenErrorWriter           func(err IError, w http.ResponseWriter) error
 )

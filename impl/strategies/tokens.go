@@ -33,7 +33,7 @@ func (ds *DefaultStrategy) GenerateIDToken(profile sdk.IProfile, client sdk.ICli
 	if err != nil {
 		return
 	}
-	idToken, err = jwt.Signed(signer).Claims(transactionClaims).Claims(profile.GetClaims()).FullSerialize()
+	idToken, err = jwt.Signed(signer).Claims(transactionClaims).FullSerialize()
 	return
 }
 

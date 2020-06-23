@@ -3,12 +3,12 @@ package oauth2_oidc_sdk
 type (
 	IProfile interface {
 		GetUsername() string
-		GetSubject() string
+		SetUsername(username string)
 		GetRedirectURI() string
+		SetRedirectURI(uri string)
 		GetScope() Arguments
+		SetScope(scopes Arguments)
 		GetAudience() Arguments
-		GetClaims() map[string]interface{}
+		SetAudience(aud Arguments)
 	}
-
-	ProfileFactory func(username string) IProfile
 )

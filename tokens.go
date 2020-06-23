@@ -1,23 +1,23 @@
 package oauth2_oidc_sdk
 
-import (
-	"time"
-)
+import "time"
 
 type (
-	ITokens interface {
-		ITokenSignatures
-		GetAuthorizationCode() string
-		GetAccessToken() string
-		GetRefreshToken() string
-		GetAccessTokenExpiry() time.Duration
-		GetTokenType() string
-		GetIDToken() string
+	Tokens struct {
+		TokenSignatures
+		AuthorizationCode string
+		AccessToken       string
+		RefreshToken      string
+		TokenType         string
+		IDToken           string
 	}
-	ITokenSignatures interface {
-		GetAuthorizationCodeSignature() string
-		GetAccessTokenSignature() string
-		GetRefreshTokenSignature() string
+	TokenSignatures struct {
+		AuthorizationCodeSignature string
+		AccessTokenSignature       string
+		RefreshTokenSignature      string
+		RefreshTokenExpiry         *time.Time
+		AccessTokenExpiry          *time.Time
+		AuthorizationCodeExpiry    *time.Time
 	}
 	IAuthorizationCodeStrategy interface {
 		GenerateAuthCode() (code string, signature string)
@@ -36,5 +36,4 @@ type (
 	IIDTokenStrategy interface {
 		GenerateIDToken(profile IProfile, client IClient, transactionClaims map[string]interface{}) (idToken string, err error)
 	}
-	TokensFactory func() ITokens
 )
