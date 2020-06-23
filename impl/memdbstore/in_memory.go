@@ -1,20 +1,45 @@
 package memdbstore
 
 import (
+	"errors"
 	"github.com/hashicorp/go-memdb"
 	sdk "oauth2-oidc-sdk"
+	client2 "oauth2-oidc-sdk/impl/client"
 )
 
 type InMemoryDB struct {
-	Db *memdb.MemDB
+	Db   *memdb.MemDB
+	demo map[string]interface{}
 }
 
-func NewInMemoryDB() *InMemoryDB {
-	return &InMemoryDB{}
+func NewInMemoryDB(demo bool) *InMemoryDB {
+	i := &InMemoryDB{}
+	if demo {
+		client := client2.DefaultClient{
+			ID:                 "client",
+			Secret:             "client",
+			Public:             false,
+			IDTokenSigningAlg:  "as",
+			RedirectURIs:       []string{"http://localhost:8080/redirect"},
+			ApprovedScopes:     []string{"openid"},
+			ApprovedGrantTypes: []string{"authorization_grant", "implicit", "password", "refresh_token", "client_credentials"},
+		}
+		i.demo = make(map[string]interface{})
+		i.demo["client"] = &client
+	}
+	return i
 }
 
 func (i *InMemoryDB) GetClient(clientID string) (client sdk.IClient, err error) {
-	panic("implement me")
+	txn := i.Db.Txn(false)
+	defer txn.Abort()
+	raw, err := txn.First("client", "id", clientID)
+	if err != nil {
+		return nil, err
+	} else if raw == nil {
+		return nil, errors.New("client not found")
+	}
+	return raw.(sdk.IClient), nil
 }
 
 func (i *InMemoryDB) Authenticate(username string, credential []byte) (err error) {
@@ -35,6 +60,17 @@ func (i *InMemoryDB) Configure(interface{}, sdk.Config, ...interface{}) {
 		panic("failed to init InMemoryDB" + err.Error())
 	}
 	i.Db = db
+	if len(i.demo) > 0 {
+		txn := i.Db.Txn(true)
+		for k, v := range i.demo {
+			err := txn.Insert(k, v)
+			if err != nil {
+				txn.Abort()
+				panic("failed to create demo data " + err.Error())
+			}
+		}
+		txn.Commit()
+	}
 }
 
 func (i *InMemoryDB) StoreTokenProfile(reqId string, signatures sdk.TokenSignatures, profile sdk.IProfile) (err error) {

@@ -30,6 +30,16 @@ var (
 					},
 				},
 			},
+			"client": &memdb.TableSchema{
+				Name: "client",
+				Indexes: map[string]*memdb.IndexSchema{
+					"id": &memdb.IndexSchema{
+						Name:    "id",
+						Unique:  true,
+						Indexer: &memdb.StringFieldIndex{Field: "ID"},
+					},
+				},
+			},
 		},
 	}
 )

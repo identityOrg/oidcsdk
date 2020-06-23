@@ -18,7 +18,7 @@ func TestDefaultManager(t *testing.T) {
 	private, public := util.GenerateRSAKeyPair()
 	strategy := strategies.NewDefaultStrategy(private, public)
 	sequence := CreateDefaultSequence()
-	sequence = append(sequence, memdbstore.NewInMemoryDB())
+	sequence = append(sequence, memdbstore.NewInMemoryDB(true))
 	got := DefaultManager(config, strategy, sequence...)
 	rw := httptest.NewRecorder()
 	form := url.Values{}
