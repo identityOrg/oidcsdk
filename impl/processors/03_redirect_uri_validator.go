@@ -45,6 +45,6 @@ func (d *DefaultRedirectURIValidator) HandleAuthEP(_ context.Context, requestCon
 	}
 }
 
-//func (d *DefaultRedirectURIValidator) Configure(_ sdk.IManager, config sdk.Config, arg ...interface{}) {
+//func (d *DefaultRedirectURIValidator) Configure(_ sdk.IManager, config *sdk.Config, arg ...interface{}) {
 //	panic("implement me")
 //}

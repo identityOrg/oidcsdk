@@ -28,7 +28,7 @@ func (d *DefaultAccessCodeValidator) HandleTokenEP(_ context.Context, requestCon
 	return nil
 }
 
-func (d *DefaultAccessCodeValidator) Configure(strategy interface{}, _ sdk.Config, args ...interface{}) {
+func (d *DefaultAccessCodeValidator) Configure(strategy interface{}, _ *sdk.Config, args ...interface{}) {
 	d.AuthCodeStrategy = strategy.(sdk.IAuthorizationCodeStrategy)
 	for _, arg := range args {
 		if ts, ok := arg.(sdk.ITokenStore); ok {

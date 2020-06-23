@@ -28,7 +28,7 @@ func (d *DefaultRefreshTokenValidator) HandleTokenEP(_ context.Context, requestC
 	return nil
 }
 
-func (d *DefaultRefreshTokenValidator) Configure(strategy interface{}, config sdk.Config, args ...interface{}) {
+func (d *DefaultRefreshTokenValidator) Configure(strategy interface{}, _ *sdk.Config, args ...interface{}) {
 	d.RefreshTokenStrategy = strategy.(sdk.IRefreshTokenStrategy)
 	for _, arg := range args {
 		if ts, ok := arg.(sdk.ITokenStore); ok {

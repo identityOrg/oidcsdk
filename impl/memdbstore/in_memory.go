@@ -5,6 +5,7 @@ import (
 	"github.com/hashicorp/go-memdb"
 	sdk "oauth2-oidc-sdk"
 	client2 "oauth2-oidc-sdk/impl/client"
+	"oauth2-oidc-sdk/impl/sdkerror"
 	"oauth2-oidc-sdk/impl/userprofile"
 )
 
@@ -44,7 +45,11 @@ func (i *InMemoryDB) GetClient(clientID string) (client sdk.IClient, err error) 
 }
 
 func (i *InMemoryDB) Authenticate(username string, credential []byte) (err error) {
-	panic("implement me")
+	if username == string(credential) {
+		return nil
+	} else {
+		return sdkerror.InvalidGrant.WithDescription("invalid user credentials")
+	}
 }
 
 func (i *InMemoryDB) GetClaims(username string, scopes sdk.Arguments, claimsIDs []string) (map[string]interface{}, error) {
@@ -67,7 +72,7 @@ func (i *InMemoryDB) FetchClientProfile(username string) sdk.IProfile {
 	}
 }
 
-func (i *InMemoryDB) Configure(interface{}, sdk.Config, ...interface{}) {
+func (i *InMemoryDB) Configure(interface{}, *sdk.Config, ...interface{}) {
 	db, err := memdb.NewMemDB(schema)
 	if err != nil {
 		panic("failed to init InMemoryDB" + err.Error())

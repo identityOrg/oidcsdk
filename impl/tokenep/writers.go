@@ -2,7 +2,6 @@ package tokenep
 
 import (
 	"encoding/json"
-	"errors"
 	"net/http"
 	sdk "oauth2-oidc-sdk"
 	"strconv"
@@ -13,9 +12,6 @@ func DefaultTokenResponseWriter(response sdk.ITokenRequestContext, w http.Respon
 	w.WriteHeader(200)
 	w.Header().Set("content-type", "application/json")
 	tokens := response.GetIssuedTokens()
-	if tokens == nil {
-		return errors.New("can not render nil tokens from token endpoint")
-	}
 	values := make(map[string]string)
 	if tokens.AccessToken != "" {
 		values["access_token"] = tokens.AccessToken

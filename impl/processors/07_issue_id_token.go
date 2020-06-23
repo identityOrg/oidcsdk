@@ -42,7 +42,7 @@ func (d *DefaultIDTokenIssuer) HandleTokenEP(_ context.Context, requestContext s
 	return nil
 }
 
-func (d *DefaultIDTokenIssuer) Configure(strategy interface{}, config sdk.Config, _ ...interface{}) {
+func (d *DefaultIDTokenIssuer) Configure(strategy interface{}, config *sdk.Config, _ ...interface{}) {
 	d.IDTokenStrategy = strategy.(sdk.IIDTokenStrategy)
 	d.Lifespan = config.AccessTokenLifespan
 }

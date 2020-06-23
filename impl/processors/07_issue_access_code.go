@@ -20,7 +20,7 @@ func (d *DefaultAuthCodeIssuer) HandleAuthEP(_ context.Context, requestContext s
 	return nil
 }
 
-func (d *DefaultAuthCodeIssuer) Configure(strategy interface{}, config sdk.Config, _ ...interface{}) {
+func (d *DefaultAuthCodeIssuer) Configure(strategy interface{}, config *sdk.Config, _ ...interface{}) {
 	d.AuthCodeStrategy = strategy.(sdk.IAuthorizationCodeStrategy)
 	d.Lifespan = config.AuthCodeLifespan
 }

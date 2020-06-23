@@ -37,7 +37,7 @@ func (d *DefaultUserValidator) HandleTokenEP(_ context.Context, requestContext s
 	return nil
 }
 
-func (d *DefaultUserValidator) Configure(_ interface{}, _ sdk.Config, args ...interface{}) {
+func (d *DefaultUserValidator) Configure(_ interface{}, _ *sdk.Config, args ...interface{}) {
 	for _, arg := range args {
 		if us, ok := arg.(sdk.IUserStore); ok {
 			d.UserStore = us

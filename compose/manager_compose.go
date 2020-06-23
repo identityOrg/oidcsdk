@@ -7,7 +7,7 @@ import (
 	"oauth2-oidc-sdk/impl/tokenep"
 )
 
-func DefaultManager(config sdk.Config, strategy interface{}, args ...interface{}) sdk.IManager {
+func DefaultManager(config *sdk.Config, strategy interface{}, args ...interface{}) sdk.IManager {
 	dManager := manager.DefaultManager{}
 	dManager.Config = config
 	dManager.TokenRequestContextFactory = tokenep.DefaultTokenRequestContextFactory
@@ -19,6 +19,10 @@ func DefaultManager(config sdk.Config, strategy interface{}, args ...interface{}
 	dManager.AuthenticationErrorWriter = nil
 
 	dManager.ErrorStrategy = strategies.DefaultLoggingErrorStrategy
+
+	if configurable, ok := strategy.(sdk.IConfigurable); ok {
+		configurable.Configure(strategy, config, args)
+	}
 
 	dManager.AccessTokenStrategy = strategy.(sdk.IAccessTokenStrategy)
 	dManager.RefreshTokenStrategy = strategy.(sdk.IRefreshTokenStrategy)

@@ -8,7 +8,6 @@ import (
 
 type DefaultAccessTokenIssuer struct {
 	AccessTokenStrategy sdk.IAccessTokenStrategy
-	TokenStore          sdk.ITokenStore
 	Lifespan            time.Duration
 }
 
@@ -28,15 +27,7 @@ func (d *DefaultAccessTokenIssuer) HandleTokenEP(_ context.Context, requestConte
 	return nil
 }
 
-func (d *DefaultAccessTokenIssuer) Configure(strategy interface{}, config sdk.Config, args ...interface{}) {
+func (d *DefaultAccessTokenIssuer) Configure(strategy interface{}, config *sdk.Config, args ...interface{}) {
 	d.AccessTokenStrategy = strategy.(sdk.IAccessTokenStrategy)
-	for _, arg := range args {
-		if ts, ok := arg.(sdk.ITokenStore); ok {
-			d.TokenStore = ts
-		}
-	}
-	if d.TokenStore == nil {
-		panic("failed to init DefaultAccessTokenIssuer")
-	}
 	d.Lifespan = config.AccessTokenLifespan
 }

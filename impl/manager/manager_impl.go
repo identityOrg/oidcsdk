@@ -6,7 +6,7 @@ import (
 
 type (
 	DefaultManager struct {
-		Config                              sdk.Config
+		Config                              *sdk.Config
 		TokenRequestContextFactory          sdk.TokenRequestContextFactory
 		TokenResponseWriter                 sdk.TokenResponseWriter
 		TokenErrorWriter                    sdk.TokenErrorWriter

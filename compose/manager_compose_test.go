@@ -14,7 +14,7 @@ import (
 )
 
 func TestDefaultManager(t *testing.T) {
-	config := sdk.Config{}
+	config := sdk.NewConfig("http://localhost:8080")
 	private, public := util.GenerateRSAKeyPair()
 	strategy := strategies.NewDefaultStrategy(private, public)
 	sequence := CreateDefaultSequence()
@@ -29,4 +29,5 @@ func TestDefaultManager(t *testing.T) {
 	request.Header.Set("authorization", "Basic "+base64.StdEncoding.EncodeToString([]byte("client:client")))
 	request.Header.Set("content-type", "application/x-www-form-urlencoded")
 	got.ProcessTokenEP(rw, request)
+	println(rw.Code)
 }

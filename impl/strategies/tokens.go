@@ -4,6 +4,7 @@ import (
 	"crypto"
 	rand2 "crypto/rand"
 	"crypto/rsa"
+	"crypto/sha256"
 	"encoding/base64"
 	"github.com/google/uuid"
 	"gopkg.in/square/go-jose.v2"
@@ -13,12 +14,18 @@ import (
 )
 
 type DefaultStrategy struct {
-	PrivateKey          *rsa.PrivateKey
-	PublicKey           *rsa.PublicKey
-	AccessTokenEntropy  uint8
-	AccessCodeEntropy   uint8
-	RefreshTokenEntropy uint8
-	Issuer              string
+	PrivateKey               *rsa.PrivateKey
+	PublicKey                *rsa.PublicKey
+	AccessTokenEntropy       int
+	AuthorizationCodeEntropy int
+	RefreshTokenEntropy      int
+	Issuer                   string
+}
+
+func (ds *DefaultStrategy) Configure(_ interface{}, config *sdk.Config, _ ...interface{}) {
+	ds.AccessTokenEntropy = config.AccessTokenEntropy
+	ds.AuthorizationCodeEntropy = config.AuthorizationCodeEntropy
+	ds.RefreshTokenEntropy = config.RefreshTokenEntropy
 }
 
 func NewDefaultStrategy(privateKey *rsa.PrivateKey, publicKey *rsa.PublicKey) *DefaultStrategy {
@@ -73,16 +80,17 @@ func (ds *DefaultStrategy) ValidateAccessToken(token string, signature string) e
 }
 
 func (ds *DefaultStrategy) GenerateAuthCode() (code string, signature string) {
-	return ds.generateAndSign(ds.AccessCodeEntropy)
+	return ds.generateAndSign(ds.AuthorizationCodeEntropy)
 }
 
 func (ds *DefaultStrategy) ValidateAuthCode(code string, signature string) error {
 	return ds.validate(code, signature)
 }
 
-func (ds *DefaultStrategy) generateAndSign(length uint8) (code string, signature string) {
+func (ds *DefaultStrategy) generateAndSign(length int) (code string, signature string) {
 	codeBytes := generate(length)
-	signed, err := rsa.SignPKCS1v15(rand2.Reader, ds.PrivateKey, crypto.SHA256, codeBytes)
+	hash := sha256.Sum256(codeBytes)
+	signed, err := rsa.SignPKCS1v15(rand2.Reader, ds.PrivateKey, crypto.SHA256, hash[:])
 	if err != nil {
 		panic(err)
 	}
@@ -108,14 +116,15 @@ func (ds *DefaultStrategy) validate(code string, signature string) (err error) {
 	return
 }
 
-func generate(length uint8) (codeByte []byte) {
+func generate(length int) (codeByte []byte) {
 	codeByte = make([]byte, length)
 	_, _ = rand2.Read(codeByte)
 	return
 }
 
 func (ds *DefaultStrategy) sigh(code string) (signature string) {
-	signed, err := rsa.SignPKCS1v15(rand2.Reader, ds.PrivateKey, crypto.SHA256, []byte(code))
+	hash := sha256.Sum256([]byte(code))
+	signed, err := rsa.SignPKCS1v15(rand2.Reader, ds.PrivateKey, crypto.SHA256, hash[:])
 	if err != nil {
 		panic(err)
 	}

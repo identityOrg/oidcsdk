@@ -8,7 +8,6 @@ import (
 
 type DefaultRefreshTokenIssuer struct {
 	RefreshTokenStrategy sdk.IRefreshTokenStrategy
-	TokenStore           sdk.ITokenStore
 	Lifespan             time.Duration
 }
 
@@ -23,15 +22,7 @@ func (d *DefaultRefreshTokenIssuer) HandleTokenEP(_ context.Context, requestCont
 	return nil
 }
 
-func (d *DefaultRefreshTokenIssuer) Configure(strategy interface{}, config sdk.Config, args ...interface{}) {
+func (d *DefaultRefreshTokenIssuer) Configure(strategy interface{}, config *sdk.Config, args ...interface{}) {
 	d.RefreshTokenStrategy = strategy.(sdk.IRefreshTokenStrategy)
-	for _, arg := range args {
-		if ts, ok := arg.(sdk.ITokenStore); ok {
-			d.TokenStore = ts
-		}
-	}
-	if d.TokenStore == nil {
-		panic("failed to init DefaultAccessTokenIssuer")
-	}
 	d.Lifespan = config.RefreshTokenLifespan
 }
