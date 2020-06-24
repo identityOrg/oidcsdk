@@ -7,6 +7,7 @@ import (
 	client2 "oauth2-oidc-sdk/impl/client"
 	"oauth2-oidc-sdk/impl/sdkerror"
 	"oauth2-oidc-sdk/impl/userprofile"
+	"time"
 )
 
 type InMemoryDB struct {
@@ -92,7 +93,7 @@ func (i *InMemoryDB) Configure(interface{}, *sdk.Config, ...interface{}) {
 }
 
 func (i *InMemoryDB) StoreTokenProfile(reqId string, signatures sdk.TokenSignatures, profile sdk.IProfile) (err error) {
-	row := TokeTable{
+	row := &TokenTable{
 		RequestID:       reqId,
 		TokenSignatures: signatures,
 		Profile:         profile,
@@ -108,24 +109,89 @@ func (i *InMemoryDB) StoreTokenProfile(reqId string, signatures sdk.TokenSignatu
 	return nil
 }
 
-func (i *InMemoryDB) GetProfileWithAuthCodeSign(signature string) (profile sdk.IProfile, err error) {
-	panic("implement me")
+func (i *InMemoryDB) GetProfileWithAuthCodeSign(signature string) (profile sdk.IProfile, reqId string, err error) {
+	txn := i.Db.Txn(false)
+	defer txn.Abort()
+
+	first, err := txn.First("request", "code-sign", signature)
+	if err != nil {
+		return nil, "", err
+	} else if first == nil {
+		return nil, "", errors.New("authorization code not found")
+	}
+	row := first.(*TokenTable)
+	now := time.Now()
+	if row.AuthorizationCodeExpiry.Before(now) {
+		return nil, "", errors.New("authorization code expired")
+	} else {
+		return row.Profile, row.RequestID, nil
+	}
 }
 
-func (i *InMemoryDB) GetProfileWithAccessTokenSign(signature string) (profile sdk.IProfile, err error) {
-	panic("implement me")
+func (i *InMemoryDB) GetProfileWithAccessTokenSign(signature string) (profile sdk.IProfile, reqId string, err error) {
+	txn := i.Db.Txn(false)
+	defer txn.Abort()
+
+	first, err := txn.First("request", "at-sign", signature)
+	if err != nil {
+		return nil, "", err
+	} else if first == nil {
+		return nil, "", errors.New("access token not found")
+	}
+	row := first.(*TokenTable)
+	now := time.Now()
+	if row.AccessTokenExpiry.Before(now) {
+		return nil, "", errors.New("access token expired")
+	} else {
+		return row.Profile, row.RequestID, nil
+	}
 }
 
-func (i *InMemoryDB) GetProfileWithRefreshTokenSign(signature string) (profile sdk.IProfile, err error) {
-	panic("implement me")
+func (i *InMemoryDB) GetProfileWithRefreshTokenSign(signature string) (profile sdk.IProfile, reqId string, err error) {
+	txn := i.Db.Txn(false)
+	defer txn.Abort()
+
+	first, err := txn.First("request", "rt-sign", signature)
+	if err != nil {
+		return nil, "", err
+	} else if first == nil {
+		return nil, "", errors.New("refresh token not found")
+	}
+	row := first.(*TokenTable)
+	now := time.Now()
+	if row.RefreshTokenExpiry.Before(now) {
+		return nil, "", errors.New("refresh token expired")
+	} else {
+		return row.Profile, row.RequestID, nil
+	}
 }
 
-func (i *InMemoryDB) InvalidateWithRequestID(reqID string) (err error) {
-	panic("implement me")
+func (i *InMemoryDB) InvalidateWithRequestID(reqID string, what uint8) (err error) {
+	txn := i.Db.Txn(true)
+	first, err := txn.First("request", "id", reqID)
+	if err != nil {
+		return
+	}
+	if first != nil {
+		row := first.(*TokenTable)
+		if what&sdk.ExpireRefreshToken > 0 {
+			row.RefreshTokenExpiry = time.Now()
+		}
+		if what&sdk.ExpireAccessToken > 0 {
+			row.AccessTokenExpiry = time.Now()
+		}
+		if what&sdk.ExpireAuthorizationCode > 0 {
+			row.AuthorizationCodeExpiry = time.Now()
+		}
+		txn.Commit()
+		return nil
+	}
+	txn.Abort()
+	return nil
 }
 
 type (
-	TokeTable struct {
+	TokenTable struct {
 		RequestID string
 		sdk.TokenSignatures
 		Profile sdk.IProfile

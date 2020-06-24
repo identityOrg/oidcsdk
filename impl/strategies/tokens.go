@@ -1,7 +1,7 @@
 package strategies
 
 import (
-	"crypto"
+	"crypto/hmac"
 	rand2 "crypto/rand"
 	"crypto/rsa"
 	"crypto/sha256"
@@ -16,20 +16,24 @@ import (
 type DefaultStrategy struct {
 	PrivateKey               *rsa.PrivateKey
 	PublicKey                *rsa.PublicKey
+	HmacKey                  string
 	AccessTokenEntropy       int
 	AuthorizationCodeEntropy int
 	RefreshTokenEntropy      int
 	Issuer                   string
 }
 
+func NewDefaultStrategy(privateKey *rsa.PrivateKey, publicKey *rsa.PublicKey) *DefaultStrategy {
+	return &DefaultStrategy{PrivateKey: privateKey, PublicKey: publicKey}
+}
+
 func (ds *DefaultStrategy) Configure(_ interface{}, config *sdk.Config, _ ...interface{}) {
 	ds.AccessTokenEntropy = config.AccessTokenEntropy
 	ds.AuthorizationCodeEntropy = config.AuthorizationCodeEntropy
 	ds.RefreshTokenEntropy = config.RefreshTokenEntropy
-}
-
-func NewDefaultStrategy(privateKey *rsa.PrivateKey, publicKey *rsa.PublicKey) *DefaultStrategy {
-	return &DefaultStrategy{PrivateKey: privateKey, PublicKey: publicKey}
+	if ds.HmacKey == "" {
+		ds.HmacKey = uuid.New().String()
+	}
 }
 
 func (ds *DefaultStrategy) GenerateIDToken(profile sdk.IProfile, client sdk.IClient, expiry time.Time,
@@ -63,71 +67,64 @@ func (ds *DefaultStrategy) GenerateRefreshToken() (token string, signature strin
 	return ds.generateAndSign(ds.RefreshTokenEntropy)
 }
 
-func (ds *DefaultStrategy) ValidateRefreshToken(token string, signature string) error {
-	return ds.validate(token, signature)
-}
-
-func (ds *DefaultStrategy) SignRefreshToken(token string) string {
-	return ds.sigh(token)
+func (ds *DefaultStrategy) SignRefreshToken(token string) (signature string, err error) {
+	decodeBytes, err := base64.URLEncoding.DecodeString(token)
+	if err != nil {
+		return
+	}
+	signedBytes := ds.sigh(decodeBytes)
+	signature = base64.URLEncoding.EncodeToString(signedBytes)
+	return
 }
 
 func (ds *DefaultStrategy) GenerateAccessToken() (token string, signature string) {
 	return ds.generateAndSign(ds.AccessTokenEntropy)
 }
 
-func (ds *DefaultStrategy) ValidateAccessToken(token string, signature string) error {
-	return ds.validate(token, signature)
+func (ds *DefaultStrategy) SignAccessToken(token string) (signature string, err error) {
+	decodeBytes, err := base64.URLEncoding.DecodeString(token)
+	if err != nil {
+		return
+	}
+	signedBytes := ds.sigh(decodeBytes)
+	signature = base64.URLEncoding.EncodeToString(signedBytes)
+	return
 }
 
 func (ds *DefaultStrategy) GenerateAuthCode() (code string, signature string) {
 	return ds.generateAndSign(ds.AuthorizationCodeEntropy)
 }
 
-func (ds *DefaultStrategy) ValidateAuthCode(code string, signature string) error {
-	return ds.validate(code, signature)
-}
-
 func (ds *DefaultStrategy) generateAndSign(length int) (code string, signature string) {
 	codeBytes := generate(length)
-	hash := sha256.Sum256(codeBytes)
-	signed, err := rsa.SignPKCS1v15(rand2.Reader, ds.PrivateKey, crypto.SHA256, hash[:])
-	if err != nil {
-		panic(err)
-	}
+	signedBytes := ds.sigh(codeBytes)
 	code = base64.URLEncoding.EncodeToString(codeBytes)
-	signature = base64.URLEncoding.EncodeToString(signed)
+	signature = base64.URLEncoding.EncodeToString(signedBytes)
 	return
 }
 
-func (ds *DefaultStrategy) SignAuthCode(code string) string {
-	return ds.sigh(code)
+func (ds *DefaultStrategy) SignAuthCode(code string) (signature string, err error) {
+	decodeBytes, err := base64.URLEncoding.DecodeString(code)
+	if err != nil {
+		return
+	}
+	signedBytes := ds.sigh(decodeBytes)
+	signature = base64.URLEncoding.EncodeToString(signedBytes)
+	return
 }
 
-func (ds *DefaultStrategy) validate(code string, signature string) (err error) {
-	codeBytes, err := base64.URLEncoding.DecodeString(code)
-	if err != nil {
-		return
-	}
-	signatureBytes, err := base64.URLEncoding.DecodeString(signature)
-	if err != nil {
-		return
-	}
-	err = rsa.VerifyPKCS1v15(ds.PublicKey, crypto.SHA256, codeBytes, signatureBytes)
+func (ds *DefaultStrategy) sigh(code []byte) (signature []byte) {
+	mac := hmac.New(sha256.New, []byte(ds.HmacKey))
+	mac.Write(code)
+	signature = mac.Sum(nil)
 	return
 }
 
 func generate(length int) (codeByte []byte) {
+	if length < 1 {
+		return []byte(uuid.New().String())
+	}
 	codeByte = make([]byte, length)
 	_, _ = rand2.Read(codeByte)
-	return
-}
-
-func (ds *DefaultStrategy) sigh(code string) (signature string) {
-	hash := sha256.Sum256([]byte(code))
-	signed, err := rsa.SignPKCS1v15(rand2.Reader, ds.PrivateKey, crypto.SHA256, hash[:])
-	if err != nil {
-		panic(err)
-	}
-	signature = base64.URLEncoding.EncodeToString(signed)
 	return
 }

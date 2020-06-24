@@ -21,17 +21,15 @@ type (
 	}
 	IAuthorizationCodeStrategy interface {
 		GenerateAuthCode() (code string, signature string)
-		ValidateAuthCode(code string, signature string) error
-		SignAuthCode(code string) string
+		SignAuthCode(token string) (signature string, err error)
 	}
 	IAccessTokenStrategy interface {
 		GenerateAccessToken() (token string, signature string)
-		ValidateAccessToken(token string, signature string) error
+		SignAccessToken(token string) (signature string, err error)
 	}
 	IRefreshTokenStrategy interface {
 		GenerateRefreshToken() (token string, signature string)
-		ValidateRefreshToken(token string, signature string) error
-		SignRefreshToken(token string) string
+		SignRefreshToken(token string) (signature string, err error)
 	}
 	IIDTokenStrategy interface {
 		GenerateIDToken(profile IProfile, client IClient, expiry time.Time,

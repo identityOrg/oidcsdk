@@ -15,6 +15,7 @@ func (d *DefaultManager) ProcessTokenEP(w http.ResponseWriter, r *http.Request) 
 		for _, handler := range d.TokenEPHandlers {
 			if iError := handler.HandleTokenEP(ctx, tokenRequestContext); iError != nil {
 				d.handleTokenEPError(w, iError)
+				return
 			}
 		}
 		if err := d.TokenResponseWriter(tokenRequestContext, w); err != nil {

@@ -5,10 +5,10 @@ import "context"
 type (
 	ITokenStore interface {
 		StoreTokenProfile(regID string, signatures TokenSignatures, profile IProfile) (err error)
-		GetProfileWithAuthCodeSign(signature string) (profile IProfile, err error)
-		GetProfileWithAccessTokenSign(signature string) (profile IProfile, err error)
-		GetProfileWithRefreshTokenSign(signature string) (profile IProfile, err error)
-		InvalidateWithRequestID(reqID string) (err error)
+		GetProfileWithAuthCodeSign(signature string) (profile IProfile, reqId string, err error)
+		GetProfileWithAccessTokenSign(signature string) (profile IProfile, reqId string, err error)
+		GetProfileWithRefreshTokenSign(signature string) (profile IProfile, reqId string, err error)
+		InvalidateWithRequestID(reqID string, what uint8) (err error)
 	}
 
 	IUserStore interface {
@@ -28,4 +28,10 @@ type (
 		CommitTransaction(ctx context.Context)
 		RollbackTransaction(ctx context.Context)
 	}
+)
+
+const (
+	ExpireAuthorizationCode = 1
+	ExpireAccessToken       = 2
+	ExpireRefreshToken      = 4
 )

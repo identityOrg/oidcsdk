@@ -10,6 +10,7 @@ import (
 type (
 	DefaultTokenRequest struct {
 		RequestID         string
+		PreviousRequestID string
 		RequestedAt       time.Time
 		State             string
 		RedirectURI       string
@@ -31,6 +32,14 @@ type (
 		Form              *url.Values
 	}
 )
+
+func (d *DefaultTokenRequest) SetPreviousRequestID(id string) {
+	d.PreviousRequestID = id
+}
+
+func (d *DefaultTokenRequest) GetPreviousRequestID() (id string) {
+	return d.PreviousRequestID
+}
 
 func (d *DefaultTokenRequest) GetIssuedTokens() sdk.Tokens {
 	return d.IssuedTokens

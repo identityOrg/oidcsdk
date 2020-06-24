@@ -9,6 +9,8 @@ import (
 type (
 	ITokenRequestContext interface {
 		GetRequestID() string
+		GetPreviousRequestID() (id string)
+		SetPreviousRequestID(id string)
 		GetRequestedAt() time.Time
 		GetState() string
 		GetRedirectURI() string

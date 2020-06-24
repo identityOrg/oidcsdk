@@ -18,11 +18,15 @@ func (d *DefaultAccessCodeValidator) HandleTokenEP(_ context.Context, requestCon
 		}
 
 		authCode := requestContext.GetAuthorizationCode()
-		authCodeSignature := d.AuthCodeStrategy.SignAuthCode(authCode)
-		if profile, err := d.TokenStore.GetProfileWithAuthCodeSign(authCodeSignature); err != nil {
+		authCodeSignature, err := d.AuthCodeStrategy.SignAuthCode(authCode)
+		if err != nil {
+			return sdkerror.InvalidGrant.WithDescription("invalid 'authorization_code'")
+		}
+		if profile, reqId, err := d.TokenStore.GetProfileWithAuthCodeSign(authCodeSignature); err != nil {
 			return sdkerror.InvalidGrant.WithDescription("invalid 'authorization_code'")
 		} else {
 			requestContext.SetProfile(profile)
+			requestContext.SetPreviousRequestID(reqId)
 		}
 	}
 	return nil
