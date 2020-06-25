@@ -8,7 +8,7 @@ import (
 )
 
 type (
-	DefaultTokenRequest struct {
+	DefaultTokenRequestContext struct {
 		RequestID         string
 		PreviousRequestID string
 		RequestedAt       time.Time
@@ -33,124 +33,132 @@ type (
 	}
 )
 
-func (d *DefaultTokenRequest) SetPreviousRequestID(id string) {
+func (d *DefaultTokenRequestContext) GetError() sdk.IError {
+	return d.Error
+}
+
+func (d *DefaultTokenRequestContext) SetError(err sdk.IError) {
+	d.Error = err
+}
+
+func (d *DefaultTokenRequestContext) SetPreviousRequestID(id string) {
 	d.PreviousRequestID = id
 }
 
-func (d *DefaultTokenRequest) GetPreviousRequestID() (id string) {
+func (d *DefaultTokenRequestContext) GetPreviousRequestID() (id string) {
 	return d.PreviousRequestID
 }
 
-func (d *DefaultTokenRequest) GetIssuedTokens() sdk.Tokens {
+func (d *DefaultTokenRequestContext) GetIssuedTokens() sdk.Tokens {
 	return d.IssuedTokens
 }
 
-func (d *DefaultTokenRequest) IssueAccessToken(token string, signature string, expiry time.Time) {
+func (d *DefaultTokenRequestContext) IssueAccessToken(token string, signature string, expiry time.Time) {
 	d.IssuedTokens.AccessToken = token
 	d.IssuedTokens.AccessTokenSignature = signature
 	d.IssuedTokens.AccessTokenExpiry = expiry
 }
 
-func (d *DefaultTokenRequest) IssueAuthorizationCode(code string, signature string, expiry time.Time) {
+func (d *DefaultTokenRequestContext) IssueAuthorizationCode(code string, signature string, expiry time.Time) {
 	d.IssuedTokens.AuthorizationCode = code
 	d.IssuedTokens.AuthorizationCodeSignature = signature
 	d.IssuedTokens.AuthorizationCodeExpiry = expiry
 }
 
-func (d *DefaultTokenRequest) IssueRefreshToken(token string, signature string, expiry time.Time) {
+func (d *DefaultTokenRequestContext) IssueRefreshToken(token string, signature string, expiry time.Time) {
 	d.IssuedTokens.RefreshToken = token
 	d.IssuedTokens.RefreshTokenSignature = signature
 	d.IssuedTokens.RefreshTokenExpiry = expiry
 }
 
-func (d *DefaultTokenRequest) IssueIDToken(token string) {
+func (d *DefaultTokenRequestContext) IssueIDToken(token string) {
 	d.IssuedTokens.IDToken = token
 }
 
-func (d *DefaultTokenRequest) GetUsername() string {
+func (d *DefaultTokenRequestContext) GetUsername() string {
 	return d.Username
 }
 
-func (d *DefaultTokenRequest) GetPassword() string {
+func (d *DefaultTokenRequestContext) GetPassword() string {
 	return d.Password
 }
 
-func (d *DefaultTokenRequest) GetRequestID() string {
+func (d *DefaultTokenRequestContext) GetRequestID() string {
 	return d.RequestID
 }
 
-func (d *DefaultTokenRequest) GetGrantedScopes() sdk.Arguments {
+func (d *DefaultTokenRequestContext) GetGrantedScopes() sdk.Arguments {
 	return d.GrantedScopes
 }
 
-func (d *DefaultTokenRequest) GetGrantedAudience() sdk.Arguments {
+func (d *DefaultTokenRequestContext) GetGrantedAudience() sdk.Arguments {
 	return d.GrantedAudience
 }
 
-func (d *DefaultTokenRequest) GrantScope(scope string) {
+func (d *DefaultTokenRequestContext) GrantScope(scope string) {
 	d.GrantedScopes = util.AppendUnique(d.GrantedScopes, scope)
 }
 
-func (d *DefaultTokenRequest) GrantAudience(audience string) {
+func (d *DefaultTokenRequestContext) GrantAudience(audience string) {
 	d.GrantedAudience = util.AppendUnique(d.GrantedAudience, audience)
 }
 
-func (d *DefaultTokenRequest) GetClient() sdk.IClient {
+func (d *DefaultTokenRequestContext) GetClient() sdk.IClient {
 	return d.Client
 }
 
-func (d *DefaultTokenRequest) SetClient(client sdk.IClient) {
+func (d *DefaultTokenRequestContext) SetClient(client sdk.IClient) {
 	d.Client = client
 }
 
-func (d *DefaultTokenRequest) GetProfile() sdk.IProfile {
+func (d *DefaultTokenRequestContext) GetProfile() sdk.IProfile {
 	return d.Profile
 }
 
-func (d *DefaultTokenRequest) SetProfile(profile sdk.IProfile) {
+func (d *DefaultTokenRequestContext) SetProfile(profile sdk.IProfile) {
 	d.Profile = profile
 }
 
-func (d *DefaultTokenRequest) GetForm() *url.Values {
+func (d *DefaultTokenRequestContext) GetForm() *url.Values {
 	return d.Form
 }
 
-func (d *DefaultTokenRequest) GetRequestedAt() time.Time {
+func (d *DefaultTokenRequestContext) GetRequestedAt() time.Time {
 	return d.RequestedAt
 }
 
-func (d *DefaultTokenRequest) GetState() string {
+func (d *DefaultTokenRequestContext) GetState() string {
 	return d.State
 }
 
-func (d *DefaultTokenRequest) GetRedirectURI() string {
+func (d *DefaultTokenRequestContext) GetRedirectURI() string {
 	return d.RedirectURI
 }
 
-func (d *DefaultTokenRequest) GetGrantType() string {
+func (d *DefaultTokenRequestContext) GetGrantType() string {
 	return d.GrantType
 }
 
-func (d *DefaultTokenRequest) GetClientID() string {
+func (d *DefaultTokenRequestContext) GetClientID() string {
 	return d.ClientId
 }
 
-func (d *DefaultTokenRequest) GetClientSecret() string {
+func (d *DefaultTokenRequestContext) GetClientSecret() string {
 	return d.ClientSecret
 }
 
-func (d *DefaultTokenRequest) GetAuthorizationCode() string {
+func (d *DefaultTokenRequestContext) GetAuthorizationCode() string {
 	return d.AuthorizationCode
 }
 
-func (d *DefaultTokenRequest) GetRefreshToken() string {
+func (d *DefaultTokenRequestContext) GetRefreshToken() string {
 	return d.RefreshToken
 }
 
-func (d *DefaultTokenRequest) GetRequestedScopes() sdk.Arguments {
+func (d *DefaultTokenRequestContext) GetRequestedScopes() sdk.Arguments {
 	return d.RequestedScopes
 }
 
-func (d *DefaultTokenRequest) GetRequestedAudience() sdk.Arguments {
+func (d *DefaultTokenRequestContext) GetRequestedAudience() sdk.Arguments {
 	return d.RequestedAudience
 }

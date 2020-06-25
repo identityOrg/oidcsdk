@@ -8,8 +8,10 @@ import (
 type (
 	ISession interface {
 		GetUsername() string
-		GetLoginTime() time.Time
+		GetLoginTime() *time.Time
 	}
 
-	SessionFactory func(r *http.Request) (session ISession)
+	ISessionManager interface {
+		RetrieveUserSession(r *http.Request) (ISession, error)
+	}
 )

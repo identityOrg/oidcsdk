@@ -3,30 +3,34 @@ package manager
 import (
 	"context"
 	"net/http"
-	sdk "oauth2-oidc-sdk"
 )
 
 func (d *DefaultManager) ProcessTokenEP(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Background()
 	if tokenRequestContext, iError := d.TokenRequestContextFactory(r); iError != nil {
-		d.handleTokenEPError(w, iError)
+		if tokenRequestContext != nil {
+			tokenRequestContext.SetError(iError)
+			err := d.TokenErrorWriter(tokenRequestContext, w, r)
+			if err != nil {
+				d.ErrorStrategy(err, w)
+			}
+		} else {
+			d.ErrorStrategy(iError, w)
+		}
 		return
 	} else {
 		for _, handler := range d.TokenEPHandlers {
 			if iError := handler.HandleTokenEP(ctx, tokenRequestContext); iError != nil {
-				d.handleTokenEPError(w, iError)
+				tokenRequestContext.SetError(iError)
+				err := d.TokenErrorWriter(tokenRequestContext, w, r)
+				if err != nil {
+					d.ErrorStrategy(err, w)
+				}
 				return
 			}
 		}
-		if err := d.TokenResponseWriter(tokenRequestContext, w); err != nil {
+		if err := d.TokenResponseWriter(tokenRequestContext, w, r); err != nil {
 			d.ErrorStrategy(err, w)
 		}
-	}
-}
-
-func (d *DefaultManager) handleTokenEPError(w http.ResponseWriter, iError sdk.IError) {
-	err := d.TokenErrorWriter(iError, w)
-	if err != nil {
-		d.ErrorStrategy(err, w)
 	}
 }

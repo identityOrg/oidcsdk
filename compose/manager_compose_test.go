@@ -67,6 +67,7 @@ func CreateManager() sdk.IManager {
 	sequence := CreateDefaultSequence()
 	sequence = append(sequence, memdbstore.NewInMemoryDB(true))
 	got := DefaultManager(config, strategy, sequence...)
+
 	return got
 }
 

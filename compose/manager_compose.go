@@ -2,6 +2,7 @@ package compose
 
 import (
 	sdk "oauth2-oidc-sdk"
+	"oauth2-oidc-sdk/impl/authep"
 	"oauth2-oidc-sdk/impl/manager"
 	"oauth2-oidc-sdk/impl/strategies"
 	"oauth2-oidc-sdk/impl/tokenep"
@@ -14,9 +15,9 @@ func DefaultManager(config *sdk.Config, strategy interface{}, args ...interface{
 	dManager.TokenResponseWriter = tokenep.DefaultTokenResponseWriter
 	dManager.TokenErrorWriter = tokenep.DefaultTokenErrorWriter
 
-	dManager.AuthenticationRequestContextFactory = nil
-	dManager.AuthenticationResponseWriter = nil
-	dManager.AuthenticationErrorWriter = nil
+	dManager.AuthenticationRequestContextFactory = authep.DefaultAuthenticationRequestContextFactory
+	dManager.AuthenticationResponseWriter = authep.DefaultAuthenticationResponseWriter
+	dManager.AuthenticationErrorWriter = authep.DefaultAuthenticationErrorWriter
 
 	dManager.ErrorStrategy = strategies.DefaultLoggingErrorStrategy
 

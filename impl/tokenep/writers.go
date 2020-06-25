@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func DefaultTokenResponseWriter(response sdk.ITokenRequestContext, w http.ResponseWriter) error {
+func DefaultTokenResponseWriter(response sdk.ITokenRequestContext, w http.ResponseWriter, _ *http.Request) error {
 	w.WriteHeader(200)
 	w.Header().Set("content-type", "application/json")
 	tokens := response.GetIssuedTokens()
@@ -29,7 +29,8 @@ func DefaultTokenResponseWriter(response sdk.ITokenRequestContext, w http.Respon
 	return err
 }
 
-func DefaultTokenErrorWriter(pError sdk.IError, w http.ResponseWriter) error {
+func DefaultTokenErrorWriter(requestContext sdk.ITokenRequestContext, w http.ResponseWriter, _ *http.Request) error {
+	pError := requestContext.GetError()
 	w.WriteHeader(pError.GetStatusCode())
 	w.Header().Set("content-type", "application/json")
 	values := make(map[string]string)

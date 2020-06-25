@@ -19,7 +19,7 @@ func DefaultTokenRequestContextFactory(r *http.Request) (sdk.ITokenRequestContex
 	if err != nil {
 		return nil, sdkerror.InvalidRequest.WithDescription(err.Error())
 	}
-	reqStruct := DefaultTokenRequest{}
+	reqStruct := DefaultTokenRequestContext{}
 	form := r.PostForm
 
 	reqStruct.RequestedScopes = util.RemoveEmpty(strings.Split(util.GetAndRemove(form, "scope"), " "))
