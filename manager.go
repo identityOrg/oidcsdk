@@ -14,6 +14,7 @@ type (
 )
 
 const (
-	ResultLoginRequired   Result = 1
-	ResultConsentRequired Result = 2
+	ResultNoOperation     Result = 1
+	ResultLoginRequired   Result = 2
+	ResultConsentRequired Result = 4
 )

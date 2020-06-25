@@ -48,6 +48,9 @@ func DefaultManager(config *sdk.Config, strategy interface{}, args ...interface{
 		if element, ok := arg.(sdk.ITokenEPHandler); ok {
 			dManager.TokenEPHandlers = append(dManager.TokenEPHandlers, element)
 		}
+		if element, ok := arg.(sdk.ISessionManager); ok {
+			dManager.UserSessionManager = element
+		}
 	}
 
 	return &dManager

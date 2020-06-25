@@ -26,8 +26,17 @@ type (
 		Error             sdk.IError
 		Form              *url.Values
 		ResponseType      sdk.Arguments
+		UserSession       sdk.ISession
 	}
 )
+
+func (d *DefaultAuthenticationRequestContext) GetUserSession() sdk.ISession {
+	return d.UserSession
+}
+
+func (d *DefaultAuthenticationRequestContext) SetUserSession(sess sdk.ISession) {
+	d.UserSession = sess
+}
 
 func (d *DefaultAuthenticationRequestContext) GetError() sdk.IError {
 	return d.Error

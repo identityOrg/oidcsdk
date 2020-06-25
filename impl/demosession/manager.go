@@ -7,21 +7,33 @@ import (
 	"time"
 )
 
-var sessionStore = sessions.NewCookieStore([]byte("demo-session-key"))
-
 type Manager struct {
+	SessionStore *sessions.CookieStore
+	CookieName   string
 }
 
-func (m *Manager) RetrieveUserSession(r *http.Request) (sess sdk.ISession, err error) {
-	sessBack, err := sessionStore.Get(r, "oauth-sdk")
+func NewManager(encKey string, cookieName string) *Manager {
+	return &Manager{
+		SessionStore: sessions.NewCookieStore([]byte(encKey)),
+		CookieName:   cookieName,
+	}
+}
+
+func (m *Manager) RetrieveUserSession(r *http.Request) (sdk.ISession, error) {
+	sessBack, err := m.SessionStore.Get(r, "oauth-sdk")
 	if err != nil {
-		return
+		return nil, err
 	}
-	sess = &DefaultSession{
-		Username:  sessBack.Values["username"].(string),
-		LoginTime: sessBack.Values["login-time"].(*time.Time),
+	sess := &DefaultSession{}
+	userName := sessBack.Values["username"]
+	loginTime := sessBack.Values["login-time"]
+	if userName != nil {
+		sess.Username = userName.(string)
 	}
-	return
+	if loginTime != nil {
+		sess.LoginTime = loginTime.(*time.Time)
+	}
+	return sess, nil
 }
 
 type DefaultSession struct {

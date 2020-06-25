@@ -24,24 +24,24 @@ func (d *DefaultRedirectURIValidator) HandleTokenEP(_ context.Context, requestCo
 	}
 }
 
-func (d *DefaultRedirectURIValidator) HandleAuthEP(_ context.Context, requestContext sdk.IAuthenticationRequestContext) sdk.IError {
+func (d *DefaultRedirectURIValidator) HandleAuthEP(_ context.Context, requestContext sdk.IAuthenticationRequestContext) (sdk.IError, sdk.Result) {
 	if client := requestContext.GetClient(); client == nil {
-		return sdkerror.UnAuthorizedClient.WithDescription("client not resolved")
+		return sdkerror.UnAuthorizedClient.WithDescription("client not resolved"), sdk.ResultNoOperation
 	} else {
 		oidc := requestContext.GetRequestedScopes().Has("openid")
 		redirectURI := requestContext.GetRedirectURI()
 		if redirectURI == "" && !oidc {
 			if len(client.GetRedirectURIs()) > 0 {
 				requestContext.SetRedirectURI(client.GetRedirectURIs()[0])
-				return nil
+				return nil, sdk.ResultNoOperation
 			}
 		}
 		for _, uri := range client.GetRedirectURIs() {
 			if redirectURI == uri {
-				return nil
+				return nil, sdk.ResultNoOperation
 			}
 		}
-		return sdkerror.InvalidRequest.WithDescription("invalid redirect uri")
+		return sdkerror.InvalidRequest.WithDescription("invalid redirect uri"), sdk.ResultNoOperation
 	}
 }
 

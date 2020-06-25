@@ -18,20 +18,26 @@ func (d *DefaultManager) ProcessAuthorizationEP(w http.ResponseWriter, r *http.R
 		} else {
 			d.ErrorStrategy(iError, w)
 		}
-		return 0
+		return sdk.ResultNoOperation
 	} else {
+		if sess, err := d.UserSessionManager.RetrieveUserSession(r); err == nil {
+			authRequestContext.SetUserSession(sess)
+		}
 		for _, handler := range d.AuthEPHandlers {
-			if iError := handler.HandleAuthEP(ctx, authRequestContext); iError != nil {
+			if iError, display := handler.HandleAuthEP(ctx, authRequestContext); iError != nil {
 				authRequestContext.SetError(iError)
 				err := d.AuthenticationErrorWriter(authRequestContext, w, r)
 				if err != nil {
 					d.ErrorStrategy(err, w)
 				}
-				return
+				return sdk.ResultNoOperation
+			} else if display > sdk.ResultNoOperation {
+				return display
 			}
 		}
 		if err := d.AuthenticationResponseWriter(authRequestContext, w, r); err != nil {
 			d.ErrorStrategy(err, w)
 		}
+		return sdk.ResultNoOperation
 	}
 }

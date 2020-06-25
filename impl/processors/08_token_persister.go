@@ -11,15 +11,15 @@ type DefaultTokenPersister struct {
 	RefreshTokenStrategy sdk.IRefreshTokenStrategy
 }
 
-func (d *DefaultTokenPersister) HandleAuthEP(_ context.Context, requestContext sdk.IAuthenticationRequestContext) sdk.IError {
+func (d *DefaultTokenPersister) HandleAuthEP(_ context.Context, requestContext sdk.IAuthenticationRequestContext) (sdk.IError, sdk.Result) {
 	tokens := requestContext.GetIssuedTokens()
 	profile := requestContext.GetProfile()
 	reqId := requestContext.GetRequestID()
 	err := d.TokenStore.StoreTokenProfile(reqId, tokens.TokenSignatures, profile)
 	if err != nil {
-		return sdkerror.InvalidRequest //todo change error
+		return sdkerror.InvalidRequest, sdk.ResultNoOperation //todo change error
 	}
-	return nil
+	return nil, sdk.ResultNoOperation
 }
 
 func (d *DefaultTokenPersister) HandleTokenEP(_ context.Context, requestContext sdk.ITokenRequestContext) sdk.IError {

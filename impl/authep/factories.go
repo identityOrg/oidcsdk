@@ -19,7 +19,7 @@ func DefaultAuthenticationRequestContextFactory(r *http.Request) (sdk.IAuthentic
 		return nil, sdkerror.InvalidRequest.WithDescription(err.Error())
 	}
 	reqStruct := DefaultAuthenticationRequestContext{}
-	form := r.PostForm
+	form := r.Form
 
 	reqStruct.RequestedScopes = util.RemoveEmpty(strings.Split(util.GetAndRemove(form, "scope"), " "))
 	reqStruct.RequestedAudience = util.RemoveEmpty(strings.Split(util.GetAndRemove(form, "audience"), " "))

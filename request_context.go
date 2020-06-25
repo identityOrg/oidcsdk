@@ -33,6 +33,8 @@ type (
 	}
 	IAuthenticationRequestContext interface {
 		IRequestContext
+		GetUserSession() ISession
+		SetUserSession(sess ISession)
 		GetNonce() string
 		GetResponseMode() string
 		GetResponseType() Arguments

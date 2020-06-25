@@ -1,15 +1,14 @@
 package compose
 
 import (
-	"crypto/hmac"
-	"crypto/sha256"
 	"encoding/base64"
-	"encoding/hex"
 	"encoding/json"
+	"golang.org/x/oauth2"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
 	sdk "oauth2-oidc-sdk"
+	"oauth2-oidc-sdk/impl/demosession"
 	"oauth2-oidc-sdk/impl/memdbstore"
 	"oauth2-oidc-sdk/impl/strategies"
 	"oauth2-oidc-sdk/util"
@@ -65,7 +64,7 @@ func CreateManager() sdk.IManager {
 	private, public := util.GenerateRSAKeyPair()
 	strategy := strategies.NewDefaultStrategy(private, public)
 	sequence := CreateDefaultSequence()
-	sequence = append(sequence, memdbstore.NewInMemoryDB(true))
+	sequence = append(sequence, memdbstore.NewInMemoryDB(true), demosession.NewManager("some-secure-key", "demo-session"))
 	got := DefaultManager(config, strategy, sequence...)
 
 	return got
@@ -76,13 +75,25 @@ type Tokens struct {
 	RefreshToken string `json:"refresh_token"`
 }
 
-func TestMac(t *testing.T) {
-	key := []byte("key")
-	mac := hmac.New(sha256.New, key)
-	mac.Write([]byte("some message"))
-	expectedMAC := mac.Sum(nil)
-	hexS := hex.EncodeToString(expectedMAC)
-	println(hexS)
-	toString := base64.URLEncoding.EncodeToString(expectedMAC)
-	println(toString)
+var conf = &oauth2.Config{
+	ClientID:     "client",
+	ClientSecret: "client",
+	Scopes:       []string{"openid", "offline", "offline_access"},
+	Endpoint: oauth2.Endpoint{
+		AuthURL:   "http://localhost:8080/oauth2/auth",
+		TokenURL:  "http://localhost:8080/oauth2/token",
+		AuthStyle: oauth2.AuthStyleInHeader,
+	},
+	RedirectURL: "http://localhost:8080/callback",
+}
+
+func TestAuthorization(t *testing.T) {
+	got := CreateManager()
+
+	rw := httptest.NewRecorder()
+	authCodeURL := conf.AuthCodeURL("ehfbwejwjewkjevkwevj")
+	request := httptest.NewRequest(http.MethodGet, authCodeURL, nil)
+	got.ProcessAuthorizationEP(rw, request)
+	println(rw.Code)
+
 }

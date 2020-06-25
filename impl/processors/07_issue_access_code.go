@@ -11,13 +11,13 @@ type DefaultAuthCodeIssuer struct {
 	Lifespan         time.Duration
 }
 
-func (d *DefaultAuthCodeIssuer) HandleAuthEP(_ context.Context, requestContext sdk.IAuthenticationRequestContext) sdk.IError {
+func (d *DefaultAuthCodeIssuer) HandleAuthEP(_ context.Context, requestContext sdk.IAuthenticationRequestContext) (sdk.IError, sdk.Result) {
 	if requestContext.GetResponseType().Has("code") {
 		expiry := requestContext.GetRequestedAt().UTC().Add(d.Lifespan).Round(time.Second)
 		code, signature := d.AuthCodeStrategy.GenerateAuthCode()
 		requestContext.IssueAuthorizationCode(code, signature, expiry)
 	}
-	return nil
+	return nil, sdk.ResultNoOperation
 }
 
 func (d *DefaultAuthCodeIssuer) Configure(strategy interface{}, config *sdk.Config, _ ...interface{}) {

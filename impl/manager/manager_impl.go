@@ -22,5 +22,6 @@ type (
 		AuthEPHandlers                      []sdk.IAuthEPHandler
 		TokenEPHandlers                     []sdk.ITokenEPHandler
 		ErrorStrategy                       sdk.ErrorStrategy
+		UserSessionManager                  sdk.ISessionManager
 	}
 )
