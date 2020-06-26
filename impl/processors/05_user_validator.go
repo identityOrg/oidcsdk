@@ -11,8 +11,8 @@ type DefaultUserValidator struct {
 	ClientStore sdk.IClientStore
 }
 
-func (d *DefaultUserValidator) HandleAuthEP(ctx context.Context, requestContext sdk.IAuthenticationRequestContext) (sdk.IError, sdk.Result) {
-	return sdkerror.ErrUnsupportedGrantType, sdk.ResultNoOperation
+func (d *DefaultUserValidator) HandleAuthEP(ctx context.Context, requestContext sdk.IAuthenticationRequestContext) sdk.IError {
+	return sdkerror.ErrUnsupportedGrantType
 }
 
 func (d *DefaultUserValidator) HandleTokenEP(_ context.Context, requestContext sdk.ITokenRequestContext) sdk.IError {

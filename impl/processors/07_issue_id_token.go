@@ -12,7 +12,7 @@ type DefaultIDTokenIssuer struct {
 	Lifespan        time.Duration
 }
 
-func (d *DefaultIDTokenIssuer) HandleAuthEP(_ context.Context, requestContext sdk.IAuthenticationRequestContext) (sdk.IError, sdk.Result) {
+func (d *DefaultIDTokenIssuer) HandleAuthEP(_ context.Context, requestContext sdk.IAuthenticationRequestContext) sdk.IError {
 	if requestContext.GetResponseType().Has("id_token") {
 		expiry := requestContext.GetRequestedAt().UTC().Add(d.Lifespan).Round(time.Second)
 		profile := requestContext.GetProfile()
@@ -20,11 +20,11 @@ func (d *DefaultIDTokenIssuer) HandleAuthEP(_ context.Context, requestContext sd
 		var tClaims map[string]interface{}
 		token, err := d.IDTokenStrategy.GenerateIDToken(profile, client, expiry, tClaims)
 		if err != nil {
-			return sdkerror.ErrInvalidGrant, sdk.ResultNoOperation //todo change
+			return sdkerror.ErrInvalidGrant //todo change
 		}
 		requestContext.IssueIDToken(token)
 	}
-	return nil, sdk.ResultNoOperation
+	return nil
 }
 
 func (d *DefaultIDTokenIssuer) HandleTokenEP(_ context.Context, requestContext sdk.ITokenRequestContext) sdk.IError {

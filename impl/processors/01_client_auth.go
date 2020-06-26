@@ -22,17 +22,17 @@ func (d *DefaultClientAuthenticationProcessor) Configure(_ interface{}, _ *sdk.C
 	}
 }
 
-func (d *DefaultClientAuthenticationProcessor) HandleAuthEP(_ context.Context, requestContext sdk.IAuthenticationRequestContext) (sdk.IError, sdk.Result) {
+func (d *DefaultClientAuthenticationProcessor) HandleAuthEP(_ context.Context, requestContext sdk.IAuthenticationRequestContext) sdk.IError {
 	clientId := requestContext.GetClientID()
 	if clientId == "" {
-		return sdkerror.ErrInvalidClient.WithDescription("client id not found in request"), sdk.ResultNoOperation
+		return sdkerror.ErrInvalidClient.WithDescription("client id not found in request")
 	}
 	client, err := d.ClientStore.GetClient(clientId)
 	if err != nil {
-		return sdkerror.ErrInvalidClient.WithDescription(err.Error()), sdk.ResultNoOperation
+		return sdkerror.ErrInvalidClient.WithDescription(err.Error())
 	}
 	requestContext.SetClient(client)
-	return nil, sdk.ResultNoOperation
+	return nil
 }
 
 func (d *DefaultClientAuthenticationProcessor) HandleTokenEP(_ context.Context, requestContext sdk.ITokenRequestContext) sdk.IError {

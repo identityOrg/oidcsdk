@@ -11,13 +11,13 @@ type DefaultAccessTokenIssuer struct {
 	Lifespan            time.Duration
 }
 
-func (d *DefaultAccessTokenIssuer) HandleAuthEP(_ context.Context, requestContext sdk.IAuthenticationRequestContext) (sdk.IError, sdk.Result) {
+func (d *DefaultAccessTokenIssuer) HandleAuthEP(_ context.Context, requestContext sdk.IAuthenticationRequestContext) sdk.IError {
 	if requestContext.GetResponseType().Has("token") {
 		token, signature := d.AccessTokenStrategy.GenerateAccessToken()
 		expiry := requestContext.GetRequestedAt().UTC().Add(d.Lifespan).Round(time.Second)
 		requestContext.IssueAccessToken(token, signature, expiry)
 	}
-	return nil, sdk.ResultNoOperation
+	return nil
 }
 
 func (d *DefaultAccessTokenIssuer) HandleTokenEP(_ context.Context, requestContext sdk.ITokenRequestContext) sdk.IError {

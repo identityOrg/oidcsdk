@@ -14,12 +14,12 @@ func (d *DefaultStateValidator) Configure(_ interface{}, config *sdk.Config, _ .
 	d.StateParamMinimumEntropy = config.StateParamMinimumEntropy
 }
 
-func (d *DefaultStateValidator) HandleAuthEP(_ context.Context, requestContext sdk.IAuthenticationRequestContext) (sdk.IError, sdk.Result) {
+func (d *DefaultStateValidator) HandleAuthEP(_ context.Context, requestContext sdk.IAuthenticationRequestContext) sdk.IError {
 	if len(requestContext.GetState()) < d.StateParamMinimumEntropy {
 		return sdkerror.ErrInsufficientEntropy.WithHintf("state parameter entropy is less then %d",
-			d.StateParamMinimumEntropy), sdk.ResultNoOperation
+			d.StateParamMinimumEntropy)
 	}
-	return nil, sdk.ResultNoOperation
+	return nil
 }
 
 func (d *DefaultStateValidator) HandleTokenEP(_ context.Context, requestContext sdk.ITokenRequestContext) sdk.IError {

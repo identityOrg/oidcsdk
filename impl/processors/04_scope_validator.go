@@ -9,9 +9,9 @@ import (
 type DefaultScopeValidator struct {
 }
 
-func (d *DefaultScopeValidator) HandleAuthEP(_ context.Context, requestContext sdk.IAuthenticationRequestContext) (sdk.IError, sdk.Result) {
+func (d *DefaultScopeValidator) HandleAuthEP(_ context.Context, requestContext sdk.IAuthenticationRequestContext) sdk.IError {
 	if client := requestContext.GetClient(); client == nil {
-		return sdkerror.ErrUnauthorizedClient.WithDescription("client not resolved"), sdk.ResultNoOperation
+		return sdkerror.ErrUnauthorizedClient.WithDescription("client not resolved")
 	} else {
 		requestedScopes := requestContext.GetRequestedScopes()
 		approvedScopes := client.GetApprovedScopes()
@@ -23,10 +23,10 @@ func (d *DefaultScopeValidator) HandleAuthEP(_ context.Context, requestContext s
 				}
 			}
 			if !found {
-				return sdkerror.ErrInvalidScope.WithDescription("un-approved or invalid scope requested"), sdk.ResultNoOperation
+				return sdkerror.ErrInvalidScope.WithDescription("un-approved or invalid scope requested")
 			}
 		}
-		return nil, sdk.ResultNoOperation
+		return nil
 	}
 }
 
