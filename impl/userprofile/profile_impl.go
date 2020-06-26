@@ -7,8 +7,17 @@ import (
 type DefaultProfile struct {
 	Username    string
 	RedirectURI string
+	State       string
 	Scope       sdk.Arguments
 	Audience    sdk.Arguments
+}
+
+func (d *DefaultProfile) GetState() string {
+	return d.State
+}
+
+func (d *DefaultProfile) SetState(state string) {
+	d.State = state
 }
 
 func (d *DefaultProfile) GetUsername() string {

@@ -23,10 +23,10 @@ func (d *DefaultResponseTypeValidator) HandleAuthEP(_ context.Context, requestCo
 			}
 		} else if responseType == "token" || responseType == "id_token" {
 			if !approvedGrantTypes.Has("implicit") {
-				return sdkerror.ErrInvalidGrant.WithDescription("'implicit' grant not approved"), sdk.ResultNoOperation
+				return sdkerror.ErrInvalidGrant.WithDebug("'implicit' grant not approved for client"), sdk.ResultNoOperation
 			}
 		} else {
-			return sdkerror.ErrInvalidGrant.WithDescription("un-known response type"), sdk.ResultNoOperation
+			return sdkerror.ErrUnsupportedResponseType.WithDebugf("un-known response type %s", responseType), sdk.ResultNoOperation
 		}
 	}
 	return nil, sdk.ResultNoOperation
