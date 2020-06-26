@@ -13,12 +13,12 @@ func (d *DefaultRedirectURIValidator) HandleTokenEP(_ context.Context, requestCo
 	if requestContext.GetGrantType() == "authorization_code" {
 		if profile := requestContext.GetProfile(); profile != nil {
 			if profile.GetRedirectURI() != "" && requestContext.GetRedirectURI() != profile.GetRedirectURI() {
-				return sdkerror.InvalidGrant.WithDescription("redirect URI mismatch")
+				return sdkerror.ErrInvalidGrant.WithDescription("redirect URI mismatch")
 			} else {
 				return nil
 			}
 		}
-		return sdkerror.InvalidGrant.WithDescription("redirect URI validation failed")
+		return sdkerror.ErrInvalidGrant.WithDescription("redirect URI validation failed")
 	} else {
 		return nil
 	}
@@ -26,7 +26,7 @@ func (d *DefaultRedirectURIValidator) HandleTokenEP(_ context.Context, requestCo
 
 func (d *DefaultRedirectURIValidator) HandleAuthEP(_ context.Context, requestContext sdk.IAuthenticationRequestContext) (sdk.IError, sdk.Result) {
 	if client := requestContext.GetClient(); client == nil {
-		return sdkerror.UnAuthorizedClient.WithDescription("client not resolved"), sdk.ResultNoOperation
+		return sdkerror.ErrUnauthorizedClient.WithDescription("client not resolved"), sdk.ResultNoOperation
 	} else {
 		oidc := requestContext.GetRequestedScopes().Has("openid")
 		redirectURI := requestContext.GetRedirectURI()
@@ -41,7 +41,7 @@ func (d *DefaultRedirectURIValidator) HandleAuthEP(_ context.Context, requestCon
 				return nil, sdk.ResultNoOperation
 			}
 		}
-		return sdkerror.InvalidRequest.WithDescription("invalid redirect uri"), sdk.ResultNoOperation
+		return sdkerror.ErrInvalidRequest.WithDescription("invalid redirect uri"), sdk.ResultNoOperation
 	}
 }
 

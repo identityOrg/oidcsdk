@@ -13,11 +13,11 @@ import (
 
 func DefaultTokenRequestContextFactory(r *http.Request) (sdk.ITokenRequestContext, sdk.IError) {
 	if r.Method != http.MethodPost {
-		return nil, sdkerror.InvalidRequest.WithDescription("only HTTP method post supported")
+		return nil, sdkerror.ErrInvalidRequest.WithDescription("only HTTP method post supported")
 	}
 	err := r.ParseForm()
 	if err != nil {
-		return nil, sdkerror.InvalidRequest.WithDescription(err.Error())
+		return nil, sdkerror.ErrInvalidRequest.WithDescription(err.Error())
 	}
 	reqStruct := DefaultTokenRequestContext{}
 	form := r.PostForm
@@ -40,11 +40,11 @@ func DefaultTokenRequestContextFactory(r *http.Request) (sdk.ITokenRequestContex
 	if strings.ToLower(parts[0]) == "basic" && len(parts) == 2 {
 		decodeString, err := base64.StdEncoding.DecodeString(parts[1])
 		if err != nil {
-			return nil, sdkerror.InvalidRequest.WithDescription(err.Error())
+			return nil, sdkerror.ErrInvalidRequest.WithDescription(err.Error())
 		}
 		parts = strings.SplitN(string(decodeString), ":", 2)
 		if len(parts) != 2 {
-			return nil, sdkerror.InvalidRequest.WithDescription("invalid basic authorization header")
+			return nil, sdkerror.ErrInvalidRequest.WithDescription("invalid basic authorization header")
 		}
 		reqStruct.ClientId = parts[0]
 		reqStruct.ClientSecret = parts[1]

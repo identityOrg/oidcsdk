@@ -33,11 +33,7 @@ func DefaultTokenErrorWriter(requestContext sdk.ITokenRequestContext, w http.Res
 	pError := requestContext.GetError()
 	w.WriteHeader(pError.GetStatusCode())
 	w.Header().Set("content-type", "application/json")
-	values := make(map[string]string)
-	values["error"] = pError.GetErrorCode()
-	values["error_description"] = pError.GetDescription()
-	values["error_uri"] = pError.GetErrorURL()
 
-	err := json.NewEncoder(w).Encode(values)
+	err := json.NewEncoder(w).Encode(pError)
 	return err
 }

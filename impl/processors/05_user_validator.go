@@ -12,7 +12,7 @@ type DefaultUserValidator struct {
 }
 
 func (d *DefaultUserValidator) HandleAuthEP(ctx context.Context, requestContext sdk.IAuthenticationRequestContext) (sdk.IError, sdk.Result) {
-	return sdkerror.UnSupportedGrantType, sdk.ResultNoOperation
+	return sdkerror.ErrUnsupportedGrantType, sdk.ResultNoOperation
 }
 
 func (d *DefaultUserValidator) HandleTokenEP(_ context.Context, requestContext sdk.ITokenRequestContext) sdk.IError {
@@ -22,7 +22,7 @@ func (d *DefaultUserValidator) HandleTokenEP(_ context.Context, requestContext s
 		password := requestContext.GetPassword()
 		err := d.UserStore.Authenticate(username, []byte(password))
 		if err != nil {
-			return sdkerror.InvalidGrant.WithDescription("user authentication failed")
+			return sdkerror.ErrInvalidGrant.WithDescription("user authentication failed")
 		}
 		profile := d.UserStore.FetchUserProfile(username)
 		profile.SetScope(requestContext.GetGrantedScopes())

@@ -12,11 +12,11 @@ import (
 
 func DefaultAuthenticationRequestContextFactory(r *http.Request) (sdk.IAuthenticationRequestContext, sdk.IError) {
 	if r.Method != http.MethodGet {
-		return nil, sdkerror.InvalidRequest.WithDescription("only HTTP method 'get' is supported")
+		return nil, sdkerror.ErrInvalidRequest.WithDescription("only HTTP method 'get' is supported")
 	}
 	err := r.ParseForm()
 	if err != nil {
-		return nil, sdkerror.InvalidRequest.WithDescription(err.Error())
+		return nil, sdkerror.ErrInvalidRequest.WithDescription(err.Error())
 	}
 	reqStruct := DefaultAuthenticationRequestContext{}
 	form := r.Form

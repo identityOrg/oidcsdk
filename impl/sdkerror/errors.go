@@ -1,4 +1,4 @@
-package oauth2_oidc_sdk
+package sdkerror
 
 import (
 	"fmt"
@@ -250,7 +250,19 @@ type SDKError struct {
 	Debug       string `json:"error_debug,omitempty"`
 }
 
-func (e *SDKError) Status() string {
+func (e *SDKError) GetReason() string {
+	return e.Hint
+}
+
+func (e *SDKError) GetDescription() string {
+	return e.Description
+}
+
+func (e *SDKError) GetDebugInfo() string {
+	return e.Debug
+}
+
+func (e *SDKError) GetStatus() string {
 	return http.StatusText(e.Code)
 }
 
@@ -258,15 +270,7 @@ func (e *SDKError) Error() string {
 	return e.Name
 }
 
-func (e *SDKError) RequestID() string {
-	return ""
-}
-
-func (e *SDKError) Reason() string {
-	return e.Hint
-}
-
-func (e *SDKError) StatusCode() int {
+func (e *SDKError) GetStatusCode() int {
 	return e.Code
 }
 

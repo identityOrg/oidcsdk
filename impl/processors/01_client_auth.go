@@ -25,11 +25,11 @@ func (d *DefaultClientAuthenticationProcessor) Configure(_ interface{}, _ *sdk.C
 func (d *DefaultClientAuthenticationProcessor) HandleAuthEP(_ context.Context, requestContext sdk.IAuthenticationRequestContext) (sdk.IError, sdk.Result) {
 	clientId := requestContext.GetClientID()
 	if clientId == "" {
-		return sdkerror.InvalidClient.WithDescription("client id not found in request"), sdk.ResultNoOperation
+		return sdkerror.ErrInvalidClient.WithDescription("client id not found in request"), sdk.ResultNoOperation
 	}
 	client, err := d.ClientStore.GetClient(clientId)
 	if err != nil {
-		return sdkerror.InvalidClient.WithDescription(err.Error()), sdk.ResultNoOperation
+		return sdkerror.ErrInvalidClient.WithDescription(err.Error()), sdk.ResultNoOperation
 	}
 	requestContext.SetClient(client)
 	return nil, sdk.ResultNoOperation
@@ -38,12 +38,12 @@ func (d *DefaultClientAuthenticationProcessor) HandleAuthEP(_ context.Context, r
 func (d *DefaultClientAuthenticationProcessor) HandleTokenEP(_ context.Context, requestContext sdk.ITokenRequestContext) sdk.IError {
 	clientId := requestContext.GetClientID()
 	if clientId == "" {
-		return sdkerror.InvalidClient.WithDescription("client id not found in request")
+		return sdkerror.ErrInvalidClient.WithDescription("client id not found in request")
 	}
 	clientSecret := requestContext.GetClientSecret()
 	client, err := d.ClientStore.GetClient(clientId)
 	if err != nil {
-		return sdkerror.InvalidClient.WithDescription(err.Error())
+		return sdkerror.ErrInvalidClient.WithDescription(err.Error())
 	}
 	if clientSecret == "" && client.IsPublic() {
 		requestContext.SetClient(client)
@@ -55,5 +55,5 @@ func (d *DefaultClientAuthenticationProcessor) HandleTokenEP(_ context.Context, 
 		requestContext.SetClient(client)
 		return nil
 	}
-	return sdkerror.InvalidClient.WithDescription("could not authenticated client")
+	return sdkerror.ErrInvalidClient.WithDescription("could not authenticate client")
 }

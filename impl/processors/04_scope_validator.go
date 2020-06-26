@@ -11,7 +11,7 @@ type DefaultScopeValidator struct {
 
 func (d *DefaultScopeValidator) HandleAuthEP(_ context.Context, requestContext sdk.IAuthenticationRequestContext) (sdk.IError, sdk.Result) {
 	if client := requestContext.GetClient(); client == nil {
-		return sdkerror.UnAuthorizedClient.WithDescription("client not resolved"), sdk.ResultNoOperation
+		return sdkerror.ErrUnauthorizedClient.WithDescription("client not resolved"), sdk.ResultNoOperation
 	} else {
 		requestedScopes := requestContext.GetRequestedScopes()
 		approvedScopes := client.GetApprovedScopes()
@@ -23,7 +23,7 @@ func (d *DefaultScopeValidator) HandleAuthEP(_ context.Context, requestContext s
 				}
 			}
 			if !found {
-				return sdkerror.InvalidScope.WithDescription("un-approved or invalid scope requested"), sdk.ResultNoOperation
+				return sdkerror.ErrInvalidScope.WithDescription("un-approved or invalid scope requested"), sdk.ResultNoOperation
 			}
 		}
 		return nil, sdk.ResultNoOperation
@@ -40,7 +40,7 @@ func (d *DefaultScopeValidator) HandleTokenEP(_ context.Context, requestContext 
 			}
 			return nil
 		} else {
-			return sdkerror.InvalidScope.WithDescription("mismatch in requested scope")
+			return sdkerror.ErrInvalidScope.WithDescription("mismatch in requested scope")
 		}
 	} else if grantType == "password" || grantType == "client_credentials" {
 		approvedScopes := requestContext.GetClient().GetApprovedScopes()

@@ -17,7 +17,7 @@ func (d *DefaultTokenPersister) HandleAuthEP(_ context.Context, requestContext s
 	reqId := requestContext.GetRequestID()
 	err := d.TokenStore.StoreTokenProfile(reqId, tokens.TokenSignatures, profile)
 	if err != nil {
-		return sdkerror.InvalidRequest, sdk.ResultNoOperation //todo change error
+		return sdkerror.ErrInvalidRequest, sdk.ResultNoOperation //todo change error
 	}
 	return nil, sdk.ResultNoOperation
 }
@@ -28,13 +28,13 @@ func (d *DefaultTokenPersister) HandleTokenEP(_ context.Context, requestContext 
 	reqId := requestContext.GetRequestID()
 	err := d.TokenStore.StoreTokenProfile(reqId, tokens.TokenSignatures, profile)
 	if err != nil {
-		return sdkerror.InvalidRequest //todo change error
+		return sdkerror.ErrInvalidRequest //todo change error
 	}
 	if requestContext.GetGrantType() == "refresh_token" {
 		previousReqID := requestContext.GetPreviousRequestID()
 		err := d.TokenStore.InvalidateWithRequestID(previousReqID, sdk.ExpireAccessToken|sdk.ExpireRefreshToken)
 		if err != nil {
-			return sdkerror.InvalidGrant //todo correct it
+			return sdkerror.ErrInvalidGrant //todo correct it
 		}
 	}
 	return nil

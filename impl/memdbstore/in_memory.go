@@ -49,7 +49,7 @@ func (i *InMemoryDB) Authenticate(username string, credential []byte) (err error
 	if username == string(credential) {
 		return nil
 	} else {
-		return sdkerror.InvalidGrant.WithDescription("invalid user credentials")
+		return sdkerror.ErrRequestUnauthorized.WithDescription("invalid user credentials")
 	}
 }
 

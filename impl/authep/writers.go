@@ -78,7 +78,7 @@ func DefaultAuthenticationErrorWriter(requestContext sdk.IAuthenticationRequestC
 func buildErrorResponseForm(requestContext sdk.IAuthenticationRequestContext) url.Values {
 	form := url.Values{}
 	err := requestContext.GetError()
-	form.Add("error", err.GetErrorCode())
+	form.Add("error", err.Error())
 	form.Add("error_description", err.GetDescription())
 	if requestContext.GetState() != "" {
 		form.Add("state", requestContext.GetState())

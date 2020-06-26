@@ -14,16 +14,16 @@ type DefaultAccessCodeValidator struct {
 func (d *DefaultAccessCodeValidator) HandleTokenEP(_ context.Context, requestContext sdk.ITokenRequestContext) sdk.IError {
 	if requestContext.GetGrantType() == "authorization_code" {
 		if requestContext.GetAuthorizationCode() == "" {
-			return sdkerror.InvalidGrant.WithDescription("'authorization_code' not provided")
+			return sdkerror.ErrInvalidRequest.WithDescription("'authorization_code' not provided")
 		}
 
 		authCode := requestContext.GetAuthorizationCode()
 		authCodeSignature, err := d.AuthCodeStrategy.SignAuthCode(authCode)
 		if err != nil {
-			return sdkerror.InvalidGrant.WithDescription("invalid 'authorization_code'")
+			return sdkerror.ErrInvalidGrant.WithDescription("invalid 'authorization_code'")
 		}
 		if profile, reqId, err := d.TokenStore.GetProfileWithAuthCodeSign(authCodeSignature); err != nil {
-			return sdkerror.InvalidGrant.WithDescription("invalid 'authorization_code'")
+			return sdkerror.ErrInvalidGrant.WithDescription("invalid 'authorization_code'")
 		} else {
 			requestContext.SetProfile(profile)
 			requestContext.SetPreviousRequestID(reqId)

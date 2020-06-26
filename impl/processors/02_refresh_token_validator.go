@@ -14,16 +14,16 @@ type DefaultRefreshTokenValidator struct {
 func (d *DefaultRefreshTokenValidator) HandleTokenEP(_ context.Context, requestContext sdk.ITokenRequestContext) sdk.IError {
 	if requestContext.GetGrantType() == "refresh_token" {
 		if requestContext.GetRefreshToken() == "" {
-			return sdkerror.InvalidGrant.WithDescription("'refresh_token' not provided")
+			return sdkerror.ErrInvalidGrant.WithDescription("'refresh_token' not provided")
 		}
 
 		refreshToken := requestContext.GetRefreshToken()
 		refreshTokenSignature, err := d.RefreshTokenStrategy.SignRefreshToken(refreshToken)
 		if err != nil {
-			return sdkerror.InvalidGrant.WithDescription("invalid 'refresh_token'")
+			return sdkerror.ErrInvalidGrant.WithDescription("invalid 'refresh_token'")
 		}
 		if profile, reqId, err := d.TokenStore.GetProfileWithRefreshTokenSign(refreshTokenSignature); err != nil {
-			return sdkerror.InvalidGrant.WithDescription("invalid 'refresh_token'")
+			return sdkerror.ErrInvalidGrant.WithDescription("invalid 'refresh_token'")
 		} else {
 			requestContext.SetProfile(profile)
 			requestContext.SetPreviousRequestID(reqId)

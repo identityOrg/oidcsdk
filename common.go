@@ -20,11 +20,11 @@ type (
 
 	IError interface {
 		error
-		GetErrorCode() string
-		GetDescription() string
+		GetStatus() string
+		GetReason() string
 		GetStatusCode() int
-		GetErrorURL() string
-		WithDescription(desc string) IError
+		GetDescription() string
+		GetDebugInfo() string
 	}
 
 	ErrorFactory func(status uint8, code string, description string) IError
