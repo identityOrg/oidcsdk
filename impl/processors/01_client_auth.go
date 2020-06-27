@@ -22,12 +22,12 @@ func (d *DefaultClientAuthenticationProcessor) Configure(_ interface{}, _ *sdk.C
 	}
 }
 
-func (d *DefaultClientAuthenticationProcessor) HandleAuthEP(_ context.Context, requestContext sdk.IAuthenticationRequestContext) sdk.IError {
+func (d *DefaultClientAuthenticationProcessor) HandleAuthEP(ctx context.Context, requestContext sdk.IAuthenticationRequestContext) sdk.IError {
 	clientId := requestContext.GetClientID()
 	if clientId == "" {
 		return sdkerror.ErrInvalidClient.WithDescription("client id not found in request")
 	}
-	client, err := d.ClientStore.GetClient(clientId)
+	client, err := d.ClientStore.GetClient(ctx, clientId)
 	if err != nil {
 		return sdkerror.ErrInvalidClient.WithDescription(err.Error())
 	}
@@ -35,13 +35,13 @@ func (d *DefaultClientAuthenticationProcessor) HandleAuthEP(_ context.Context, r
 	return nil
 }
 
-func (d *DefaultClientAuthenticationProcessor) HandleTokenEP(_ context.Context, requestContext sdk.ITokenRequestContext) sdk.IError {
+func (d *DefaultClientAuthenticationProcessor) HandleTokenEP(ctx context.Context, requestContext sdk.ITokenRequestContext) sdk.IError {
 	clientId := requestContext.GetClientID()
 	if clientId == "" {
 		return sdkerror.ErrInvalidClient.WithDescription("client id not found in request")
 	}
 	clientSecret := requestContext.GetClientSecret()
-	client, err := d.ClientStore.GetClient(clientId)
+	client, err := d.ClientStore.GetClient(ctx, clientId)
 	if err != nil {
 		return sdkerror.ErrInvalidClient.WithDescription(err.Error())
 	}

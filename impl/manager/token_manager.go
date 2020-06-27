@@ -1,12 +1,11 @@
 package manager
 
 import (
-	"context"
 	"net/http"
 )
 
 func (d *DefaultManager) ProcessTokenEP(w http.ResponseWriter, r *http.Request) {
-	ctx := context.Background()
+	ctx := r.Context()
 	if tokenRequestContext, iError := d.TokenRequestContextFactory(r); iError != nil {
 		if tokenRequestContext != nil {
 			tokenRequestContext.SetError(iError)

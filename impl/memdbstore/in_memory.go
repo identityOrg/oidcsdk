@@ -1,6 +1,7 @@
 package memdbstore
 
 import (
+	"context"
 	"errors"
 	"github.com/hashicorp/go-memdb"
 	sdk "oauth2-oidc-sdk"
@@ -33,7 +34,7 @@ func NewInMemoryDB(demo bool) *InMemoryDB {
 	return i
 }
 
-func (i *InMemoryDB) GetClient(clientID string) (client sdk.IClient, err error) {
+func (i *InMemoryDB) GetClient(ctx context.Context, clientID string) (client sdk.IClient, err error) {
 	txn := i.Db.Txn(false)
 	defer txn.Abort()
 	raw, err := txn.First("client", "id", clientID)
@@ -45,7 +46,7 @@ func (i *InMemoryDB) GetClient(clientID string) (client sdk.IClient, err error) 
 	return raw.(sdk.IClient), nil
 }
 
-func (i *InMemoryDB) Authenticate(username string, credential []byte) (err error) {
+func (i *InMemoryDB) Authenticate(ctx context.Context, username string, credential []byte) (err error) {
 	if username == string(credential) {
 		return nil
 	} else {
@@ -53,21 +54,21 @@ func (i *InMemoryDB) Authenticate(username string, credential []byte) (err error
 	}
 }
 
-func (i *InMemoryDB) GetClaims(username string, scopes sdk.Arguments, claimsIDs []string) (map[string]interface{}, error) {
+func (i *InMemoryDB) GetClaims(ctx context.Context, username string, scopes sdk.Arguments, claimsIDs []string) (map[string]interface{}, error) {
 	panic("implement me")
 }
 
-func (i *InMemoryDB) IsConsentRequired(username string, client sdk.IClient, scopes sdk.Arguments, audience sdk.Arguments) bool {
+func (i *InMemoryDB) IsConsentRequired(ctx context.Context, username string, client sdk.IClient, scopes sdk.Arguments, audience sdk.Arguments) bool {
 	panic("implement me")
 }
 
-func (i *InMemoryDB) FetchUserProfile(username string) sdk.IProfile {
+func (i *InMemoryDB) FetchUserProfile(ctx context.Context, username string) sdk.IProfile {
 	return &userprofile.DefaultProfile{
 		Username: username,
 	}
 }
 
-func (i *InMemoryDB) FetchClientProfile(username string) sdk.IProfile {
+func (i *InMemoryDB) FetchClientProfile(ctx context.Context, username string) sdk.IProfile {
 	return &userprofile.DefaultProfile{
 		Username: username,
 	}
@@ -92,7 +93,7 @@ func (i *InMemoryDB) Configure(interface{}, *sdk.Config, ...interface{}) {
 	}
 }
 
-func (i *InMemoryDB) StoreTokenProfile(reqId string, signatures sdk.TokenSignatures, profile sdk.IProfile) (err error) {
+func (i *InMemoryDB) StoreTokenProfile(ctx context.Context, reqId string, signatures sdk.TokenSignatures, profile sdk.IProfile) (err error) {
 	row := &TokenTable{
 		RequestID:       reqId,
 		TokenSignatures: signatures,
@@ -109,7 +110,7 @@ func (i *InMemoryDB) StoreTokenProfile(reqId string, signatures sdk.TokenSignatu
 	return nil
 }
 
-func (i *InMemoryDB) GetProfileWithAuthCodeSign(signature string) (profile sdk.IProfile, reqId string, err error) {
+func (i *InMemoryDB) GetProfileWithAuthCodeSign(ctx context.Context, signature string) (profile sdk.IProfile, reqId string, err error) {
 	txn := i.Db.Txn(false)
 	defer txn.Abort()
 
@@ -128,7 +129,7 @@ func (i *InMemoryDB) GetProfileWithAuthCodeSign(signature string) (profile sdk.I
 	}
 }
 
-func (i *InMemoryDB) GetProfileWithAccessTokenSign(signature string) (profile sdk.IProfile, reqId string, err error) {
+func (i *InMemoryDB) GetProfileWithAccessTokenSign(ctx context.Context, signature string) (profile sdk.IProfile, reqId string, err error) {
 	txn := i.Db.Txn(false)
 	defer txn.Abort()
 
@@ -147,7 +148,7 @@ func (i *InMemoryDB) GetProfileWithAccessTokenSign(signature string) (profile sd
 	}
 }
 
-func (i *InMemoryDB) GetProfileWithRefreshTokenSign(signature string) (profile sdk.IProfile, reqId string, err error) {
+func (i *InMemoryDB) GetProfileWithRefreshTokenSign(ctx context.Context, signature string) (profile sdk.IProfile, reqId string, err error) {
 	txn := i.Db.Txn(false)
 	defer txn.Abort()
 
@@ -166,7 +167,7 @@ func (i *InMemoryDB) GetProfileWithRefreshTokenSign(signature string) (profile s
 	}
 }
 
-func (i *InMemoryDB) InvalidateWithRequestID(reqID string, what uint8) (err error) {
+func (i *InMemoryDB) InvalidateWithRequestID(ctx context.Context, reqID string, what uint8) (err error) {
 	txn := i.Db.Txn(true)
 	first, err := txn.First("request", "id", reqID)
 	if err != nil {

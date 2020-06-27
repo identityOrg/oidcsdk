@@ -1,14 +1,13 @@
 package manager
 
 import (
-	"context"
 	"net/http"
 	sdk "oauth2-oidc-sdk"
 	"oauth2-oidc-sdk/impl/sdkerror"
 )
 
 func (d *DefaultManager) ProcessAuthorizationEP(w http.ResponseWriter, r *http.Request) sdk.Result {
-	ctx := context.Background()
+	ctx := r.Context()
 	if authRequestContext, iError := d.AuthenticationRequestContextFactory(r); iError != nil {
 		if authRequestContext != nil {
 			authRequestContext.SetError(iError)

@@ -11,28 +11,28 @@ type DefaultTokenPersister struct {
 	RefreshTokenStrategy sdk.IRefreshTokenStrategy
 }
 
-func (d *DefaultTokenPersister) HandleAuthEP(_ context.Context, requestContext sdk.IAuthenticationRequestContext) sdk.IError {
+func (d *DefaultTokenPersister) HandleAuthEP(ctx context.Context, requestContext sdk.IAuthenticationRequestContext) sdk.IError {
 	tokens := requestContext.GetIssuedTokens()
 	profile := requestContext.GetProfile()
 	reqId := requestContext.GetRequestID()
-	err := d.TokenStore.StoreTokenProfile(reqId, tokens.TokenSignatures, profile)
+	err := d.TokenStore.StoreTokenProfile(ctx, reqId, tokens.TokenSignatures, profile)
 	if err != nil {
 		return sdkerror.ErrInvalidRequest //todo change error
 	}
 	return nil
 }
 
-func (d *DefaultTokenPersister) HandleTokenEP(_ context.Context, requestContext sdk.ITokenRequestContext) sdk.IError {
+func (d *DefaultTokenPersister) HandleTokenEP(ctx context.Context, requestContext sdk.ITokenRequestContext) sdk.IError {
 	tokens := requestContext.GetIssuedTokens()
 	profile := requestContext.GetProfile()
 	reqId := requestContext.GetRequestID()
-	err := d.TokenStore.StoreTokenProfile(reqId, tokens.TokenSignatures, profile)
+	err := d.TokenStore.StoreTokenProfile(ctx, reqId, tokens.TokenSignatures, profile)
 	if err != nil {
 		return sdkerror.ErrInvalidRequest //todo change error
 	}
 	if requestContext.GetGrantType() == "refresh_token" {
 		previousReqID := requestContext.GetPreviousRequestID()
-		err := d.TokenStore.InvalidateWithRequestID(previousReqID, sdk.ExpireAccessToken|sdk.ExpireRefreshToken)
+		err := d.TokenStore.InvalidateWithRequestID(ctx, previousReqID, sdk.ExpireAccessToken|sdk.ExpireRefreshToken)
 		if err != nil {
 			return sdkerror.ErrInvalidGrant //todo correct it
 		}

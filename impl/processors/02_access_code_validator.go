@@ -11,7 +11,7 @@ type DefaultAccessCodeValidator struct {
 	AuthCodeStrategy sdk.IAuthorizationCodeStrategy
 }
 
-func (d *DefaultAccessCodeValidator) HandleTokenEP(_ context.Context, requestContext sdk.ITokenRequestContext) sdk.IError {
+func (d *DefaultAccessCodeValidator) HandleTokenEP(ctx context.Context, requestContext sdk.ITokenRequestContext) sdk.IError {
 	if requestContext.GetGrantType() == "authorization_code" {
 		if requestContext.GetAuthorizationCode() == "" {
 			return sdkerror.ErrInvalidRequest.WithDescription("'authorization_code' not provided")
@@ -22,7 +22,7 @@ func (d *DefaultAccessCodeValidator) HandleTokenEP(_ context.Context, requestCon
 		if err != nil {
 			return sdkerror.ErrInvalidGrant.WithDescription("invalid 'authorization_code'")
 		}
-		if profile, reqId, err := d.TokenStore.GetProfileWithAuthCodeSign(authCodeSignature); err != nil {
+		if profile, reqId, err := d.TokenStore.GetProfileWithAuthCodeSign(ctx, authCodeSignature); err != nil {
 			return sdkerror.ErrInvalidGrant.WithDescription("invalid 'authorization_code'")
 		} else {
 			requestContext.SetProfile(profile)
