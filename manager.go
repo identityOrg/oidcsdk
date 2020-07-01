@@ -6,7 +6,7 @@ import (
 
 type (
 	IManager interface {
-		ProcessAuthorizationEP(w http.ResponseWriter, r *http.Request) Result
+		ProcessAuthorizationEP(w http.ResponseWriter, r *http.Request)
 		ProcessTokenEP(w http.ResponseWriter, r *http.Request)
 	}
 	Result        uint8

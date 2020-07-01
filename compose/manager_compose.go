@@ -1,6 +1,7 @@
 package compose
 
 import (
+	"net/http"
 	sdk "oauth2-oidc-sdk"
 	"oauth2-oidc-sdk/impl/authep"
 	"oauth2-oidc-sdk/impl/manager"
@@ -25,22 +26,9 @@ func DefaultManager(config *sdk.Config, strategy interface{}, args ...interface{
 		configurable.Configure(strategy, config, args)
 	}
 
-	dManager.AccessTokenStrategy = strategy.(sdk.IAccessTokenStrategy)
-	dManager.RefreshTokenStrategy = strategy.(sdk.IRefreshTokenStrategy)
-	dManager.IDTokenStrategy = strategy.(sdk.IIDTokenStrategy)
-
 	for _, arg := range args {
 		if configurable, ok := arg.(sdk.IConfigurable); ok {
 			configurable.Configure(strategy, config, args...)
-		}
-		if element, ok := arg.(sdk.IUserStore); ok {
-			dManager.UserStore = element
-		}
-		if element, ok := arg.(sdk.IClientStore); ok {
-			dManager.ClientStore = element
-		}
-		if element, ok := arg.(sdk.ITokenStore); ok {
-			dManager.TokenStore = element
 		}
 		if element, ok := arg.(sdk.IAuthEPHandler); ok {
 			dManager.AuthEPHandlers = append(dManager.AuthEPHandlers, element)
@@ -54,4 +42,16 @@ func DefaultManager(config *sdk.Config, strategy interface{}, args ...interface{
 	}
 
 	return &dManager
+}
+
+func SetLoginPageHandler(iManager sdk.IManager, handler http.HandlerFunc) {
+	if defaultManager, ok := iManager.(*manager.DefaultManager); ok {
+		defaultManager.LoginPageHandler = handler
+	}
+}
+
+func SetConsentPageHandler(iManager sdk.IManager, handler http.HandlerFunc) {
+	if defaultManager, ok := iManager.(*manager.DefaultManager); ok {
+		defaultManager.ConsentPageHandler = handler
+	}
 }

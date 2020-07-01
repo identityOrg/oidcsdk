@@ -1,6 +1,7 @@
 package manager
 
 import (
+	"net/http"
 	sdk "oauth2-oidc-sdk"
 )
 
@@ -13,15 +14,11 @@ type (
 		AuthenticationRequestContextFactory sdk.AuthenticationRequestContextFactory
 		AuthenticationResponseWriter        sdk.AuthenticationResponseWriter
 		AuthenticationErrorWriter           sdk.AuthenticationErrorWriter
-		IDTokenStrategy                     sdk.IIDTokenStrategy
-		AccessTokenStrategy                 sdk.IAccessTokenStrategy
-		RefreshTokenStrategy                sdk.IRefreshTokenStrategy
-		TokenStore                          sdk.ITokenStore
-		UserStore                           sdk.IUserStore
-		ClientStore                         sdk.IClientStore
 		AuthEPHandlers                      []sdk.IAuthEPHandler
 		TokenEPHandlers                     []sdk.ITokenEPHandler
 		ErrorStrategy                       sdk.ErrorStrategy
 		UserSessionManager                  sdk.ISessionManager
+		LoginPageHandler                    http.HandlerFunc
+		ConsentPageHandler                  http.HandlerFunc
 	}
 )
