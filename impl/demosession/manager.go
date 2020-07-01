@@ -4,6 +4,8 @@ import (
 	"github.com/gorilla/sessions"
 	"net/http"
 	sdk "oauth2-oidc-sdk"
+	"oauth2-oidc-sdk/util"
+	"strings"
 	"time"
 )
 
@@ -26,6 +28,7 @@ func (m *Manager) RetrieveUserSession(r *http.Request) (sdk.ISession, error) {
 	}
 	sess := &DefaultSession{}
 	userName := sessBack.Values["username"]
+	scope := sessBack.Values["scope"]
 	loginTime := sessBack.Values["login-time"]
 	if userName != nil {
 		sess.Username = userName.(string)
@@ -33,12 +36,28 @@ func (m *Manager) RetrieveUserSession(r *http.Request) (sdk.ISession, error) {
 	if loginTime != nil {
 		sess.LoginTime = loginTime.(*time.Time)
 	}
+	if scope != nil {
+		sess.Scope = scope.(string)
+	}
 	return sess, nil
 }
 
 type DefaultSession struct {
 	Username  string
+	Scope     string
 	LoginTime *time.Time
+}
+
+func (d DefaultSession) IsLoginDone() bool {
+	return true
+}
+
+func (d DefaultSession) IsConsentSubmitted() bool {
+	return true
+}
+
+func (d DefaultSession) GetApprovedScopes() sdk.Arguments {
+	return util.RemoveEmpty(strings.Split(d.Scope, " "))
 }
 
 func (d DefaultSession) GetUsername() string {

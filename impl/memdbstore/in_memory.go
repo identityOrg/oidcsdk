@@ -26,7 +26,7 @@ func NewInMemoryDB(demo bool) *InMemoryDB {
 			IDTokenSigningAlg:  "as",
 			RedirectURIs:       []string{"http://localhost:8080/redirect"},
 			ApprovedScopes:     []string{"openid"},
-			ApprovedGrantTypes: []string{"authorization_grant", "implicit", "password", "refresh_token", "client_credentials"},
+			ApprovedGrantTypes: []string{"authorization_code", "implicit", "password", "refresh_token", "client_credentials"},
 		}
 		i.demo = make(map[string]interface{})
 		i.demo["client"] = &client
@@ -54,12 +54,12 @@ func (i *InMemoryDB) Authenticate(ctx context.Context, username string, credenti
 	}
 }
 
-func (i *InMemoryDB) GetClaims(ctx context.Context, username string, scopes sdk.Arguments, claimsIDs []string) (map[string]interface{}, error) {
-	panic("implement me")
+func (i *InMemoryDB) GetClaims(context.Context, string, sdk.Arguments, []string) (map[string]interface{}, error) {
+	return make(map[string]interface{}), nil
 }
 
-func (i *InMemoryDB) IsConsentRequired(ctx context.Context, username string, client sdk.IClient, scopes sdk.Arguments, audience sdk.Arguments) bool {
-	panic("implement me")
+func (i *InMemoryDB) IsConsentRequired(context.Context, string, string, sdk.Arguments) bool {
+	return true
 }
 
 func (i *InMemoryDB) FetchUserProfile(ctx context.Context, username string) sdk.IProfile {

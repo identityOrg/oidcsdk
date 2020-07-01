@@ -14,6 +14,7 @@ type (
 		AuthorizationCodeEntropy int
 		RefreshTokenEntropy      int
 		StateParamMinimumEntropy int
+		GlobalConsentRequired    bool
 	}
 	IConfigurable interface {
 		Configure(strategy interface{}, config *Config, arg ...interface{})
@@ -40,5 +41,6 @@ func NewConfig(issuer string) *Config {
 	config.AuthCodeLifespan = time.Minute * 10
 	config.AccessTokenLifespan = time.Minute * 60
 	config.RefreshTokenLifespan = time.Hour * 24 * 30
+	config.GlobalConsentRequired = true
 	return config
 }

@@ -9,6 +9,9 @@ type (
 	ISession interface {
 		GetUsername() string
 		GetLoginTime() *time.Time
+		IsConsentSubmitted() bool
+		IsLoginDone() bool
+		GetApprovedScopes() Arguments
 	}
 
 	ISessionManager interface {

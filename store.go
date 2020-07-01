@@ -14,7 +14,7 @@ type (
 	IUserStore interface {
 		Authenticate(ctx context.Context, username string, credential []byte) (err error)
 		GetClaims(ctx context.Context, username string, scopes Arguments, claimsIDs []string) (map[string]interface{}, error)
-		IsConsentRequired(ctx context.Context, username string, client IClient, scopes Arguments, audience Arguments) bool
+		IsConsentRequired(ctx context.Context, username string, clientId string, scopes Arguments) bool
 		FetchUserProfile(ctx context.Context, username string) IProfile
 	}
 
