@@ -34,7 +34,9 @@ func (m *Manager) RetrieveUserSession(r *http.Request) (sdk.ISession, error) {
 		sess.Username = userName.(string)
 	}
 	if loginTime != nil {
-		sess.LoginTime = loginTime.(*time.Time)
+		i := loginTime.(int64)
+		unix := time.Unix(i, 0)
+		sess.LoginTime = &unix
 	}
 	if scope != nil {
 		sess.Scope = scope.(string)
@@ -42,10 +44,26 @@ func (m *Manager) RetrieveUserSession(r *http.Request) (sdk.ISession, error) {
 	return sess, nil
 }
 
+func (m *Manager) StoreUserSession(w http.ResponseWriter, r *http.Request, sess sdk.ISession) error {
+	sessBack, err := m.SessionStore.Get(r, "oauth-sdk")
+	if err != nil {
+		return err
+	}
+	sessBack.Values["username"] = sess.GetUsername()
+	sessBack.Values["scope"] = sess.GetScope()
+	sessBack.Values["login-time"] = sess.GetLoginTime().Unix()
+
+	return m.SessionStore.Save(r, w, sessBack)
+}
+
 type DefaultSession struct {
 	Username  string
 	Scope     string
 	LoginTime *time.Time
+}
+
+func (d DefaultSession) GetScope() string {
+	return d.Scope
 }
 
 func (d DefaultSession) IsLoginDone() bool {

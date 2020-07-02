@@ -12,7 +12,7 @@ type DefaultRefreshTokenValidator struct {
 }
 
 func (d *DefaultRefreshTokenValidator) HandleTokenEP(ctx context.Context, requestContext sdk.ITokenRequestContext) sdk.IError {
-	if requestContext.GetGrantType() == "refresh_token" {
+	if requestContext.GetGrantType() == sdk.GrantRefreshToken {
 		if requestContext.GetRefreshToken() == "" {
 			return sdkerror.ErrInvalidGrant.WithDescription("'refresh_token' not provided")
 		}

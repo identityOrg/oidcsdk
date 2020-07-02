@@ -12,7 +12,7 @@ type DefaultAccessCodeValidator struct {
 }
 
 func (d *DefaultAccessCodeValidator) HandleTokenEP(ctx context.Context, requestContext sdk.ITokenRequestContext) sdk.IError {
-	if requestContext.GetGrantType() == "authorization_code" {
+	if requestContext.GetGrantType() == sdk.GrantAuthorizationCode {
 		if requestContext.GetAuthorizationCode() == "" {
 			return sdkerror.ErrInvalidRequest.WithDescription("'authorization_code' not provided")
 		}

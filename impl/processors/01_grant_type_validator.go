@@ -15,10 +15,10 @@ func (d *DefaultGrantTypeValidator) HandleTokenEP(_ context.Context, requestCont
 	if !client.GetApprovedGrantTypes().Has(grantType) {
 		return sdkerror.ErrInvalidGrant.WithDescription("grant not approved")
 	}
-	if grantType == "client_credentials" && client.IsPublic() {
+	if grantType == sdk.GrantClientCredentials && client.IsPublic() {
 		return sdkerror.ErrUnsupportedGrantType.WithDescription("'client_credentials' grant not allowed for public client")
 	}
-	if grantType == "password" && client.IsPublic() {
+	if grantType == sdk.GrantResourceOwnerPassword && client.IsPublic() {
 		return sdkerror.ErrUnsupportedGrantType.WithDescription("'password' grant not allowed for public client")
 	}
 	return nil

@@ -11,7 +11,7 @@ import (
 func DefaultAuthenticationResponseWriter(requestContext sdk.IAuthenticationRequestContext, w http.ResponseWriter, r *http.Request) error {
 	mode := requestContext.GetResponseMode()
 	switch mode {
-	case "fragment":
+	case sdk.ResponseModeFragment:
 		form := buildSuccessResponseForm(requestContext)
 		redirectUri, err := url.Parse(requestContext.GetRedirectURI())
 		if err != nil {
@@ -20,7 +20,7 @@ func DefaultAuthenticationResponseWriter(requestContext sdk.IAuthenticationReque
 		redirectUri.Fragment = form.Encode()
 		http.Redirect(w, r, redirectUri.String(), http.StatusFound)
 		return nil
-	case "query":
+	case sdk.ResponseModeQuery:
 		form := buildSuccessResponseForm(requestContext)
 		redirectUri, err := url.Parse(requestContext.GetRedirectURI())
 		if err != nil {
@@ -42,7 +42,7 @@ func buildSuccessResponseForm(requestContext sdk.IAuthenticationRequestContext) 
 		form.Add("type", "bearer")
 	}
 	if tokens.AuthorizationCode != "" {
-		form.Add("code", tokens.AuthorizationCode)
+		form.Add(sdk.ResponseTypeCode, tokens.AuthorizationCode)
 	}
 	if tokens.IDToken != "" {
 		form.Add("id_token", tokens.IDToken)
@@ -53,7 +53,7 @@ func buildSuccessResponseForm(requestContext sdk.IAuthenticationRequestContext) 
 func DefaultAuthenticationErrorWriter(requestContext sdk.IAuthenticationRequestContext, w http.ResponseWriter, r *http.Request) error {
 	mode := requestContext.GetResponseMode()
 	switch mode {
-	case "fragment":
+	case sdk.ResponseModeFragment:
 		form := buildErrorResponseForm(requestContext)
 		redirectUri, err := url.Parse(requestContext.GetRedirectURI())
 		if err != nil {
@@ -62,7 +62,7 @@ func DefaultAuthenticationErrorWriter(requestContext sdk.IAuthenticationRequestC
 		redirectUri.Fragment = form.Encode()
 		http.Redirect(w, r, redirectUri.String(), http.StatusFound)
 		return nil
-	case "query":
+	case sdk.ResponseModeQuery:
 		form := buildErrorResponseForm(requestContext)
 		redirectUri, err := url.Parse(requestContext.GetRedirectURI())
 		if err != nil {

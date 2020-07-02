@@ -30,7 +30,7 @@ func (d *DefaultTokenPersister) HandleTokenEP(ctx context.Context, requestContex
 	if err != nil {
 		return sdkerror.ErrInvalidRequest //todo change error
 	}
-	if requestContext.GetGrantType() == "refresh_token" {
+	if requestContext.GetGrantType() == sdk.GrantRefreshToken {
 		previousReqID := requestContext.GetPreviousRequestID()
 		err := d.TokenStore.InvalidateWithRequestID(ctx, previousReqID, sdk.ExpireAccessToken|sdk.ExpireRefreshToken)
 		if err != nil {

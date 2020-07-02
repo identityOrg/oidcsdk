@@ -32,7 +32,7 @@ func (d *DefaultScopeValidator) HandleAuthEP(_ context.Context, requestContext s
 
 func (d *DefaultScopeValidator) HandleTokenEP(_ context.Context, requestContext sdk.ITokenRequestContext) sdk.IError {
 	grantType := requestContext.GetGrantType()
-	if grantType == "authorization_code" {
+	if grantType == sdk.GrantAuthorizationCode {
 		profile := requestContext.GetProfile()
 		if profile.GetScope().MatchesExact(requestContext.GetRequestedScopes()...) {
 			for _, s := range requestContext.GetRequestedScopes() {
@@ -42,14 +42,14 @@ func (d *DefaultScopeValidator) HandleTokenEP(_ context.Context, requestContext 
 		} else {
 			return sdkerror.ErrInvalidScope.WithDescription("mismatch in requested scope")
 		}
-	} else if grantType == "password" || grantType == "client_credentials" {
+	} else if grantType == sdk.GrantResourceOwnerPassword || grantType == sdk.GrantClientCredentials {
 		approvedScopes := requestContext.GetClient().GetApprovedScopes()
 		for _, requestedScope := range requestContext.GetRequestedScopes() {
 			if approvedScopes.Has(requestedScope) {
 				requestContext.GrantScope(requestedScope)
 			}
 		}
-	} else if grantType == "refresh_token" {
+	} else if grantType == sdk.GrantRefreshToken {
 		scope := requestContext.GetProfile().GetScope()
 		for _, s := range scope {
 			requestContext.GrantScope(s)

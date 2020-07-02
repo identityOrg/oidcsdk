@@ -16,7 +16,7 @@ type DefaultUserValidator struct {
 
 func (d *DefaultUserValidator) HandleAuthEP(ctx context.Context, requestContext sdk.IAuthenticationRequestContext) sdk.IError {
 	session := requestContext.GetUserSession()
-	isOidc := requestContext.GetRequestedScopes().Has("openid")
+	isOidc := requestContext.GetRequestedScopes().Has(sdk.ScopeOpenid)
 	if !isOidc {
 		if session.GetUsername() == "" {
 			return sdkerror.ErrLoginRequired
@@ -53,7 +53,7 @@ func (d *DefaultUserValidator) HandleAuthEP(ctx context.Context, requestContext 
 
 func (d *DefaultUserValidator) HandleTokenEP(ctx context.Context, requestContext sdk.ITokenRequestContext) sdk.IError {
 	grantType := requestContext.GetGrantType()
-	if grantType == "password" {
+	if grantType == sdk.GrantResourceOwnerPassword {
 		username := requestContext.GetUsername()
 		password := requestContext.GetPassword()
 		err := d.UserStore.Authenticate(ctx, username, []byte(password))
@@ -64,7 +64,7 @@ func (d *DefaultUserValidator) HandleTokenEP(ctx context.Context, requestContext
 		profile.SetScope(requestContext.GetGrantedScopes())
 		profile.SetAudience(requestContext.GetGrantedAudience())
 		requestContext.SetProfile(profile)
-	} else if grantType == "client_credentials" {
+	} else if grantType == sdk.GrantClientCredentials {
 		profile := d.ClientStore.FetchClientProfile(ctx, requestContext.GetClientID())
 		profile.SetScope(requestContext.GetGrantedScopes())
 		profile.SetAudience(requestContext.GetGrantedAudience())

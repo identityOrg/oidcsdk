@@ -13,7 +13,7 @@ type DefaultIDTokenIssuer struct {
 }
 
 func (d *DefaultIDTokenIssuer) HandleAuthEP(_ context.Context, requestContext sdk.IAuthenticationRequestContext) sdk.IError {
-	if requestContext.GetResponseType().Has("id_token") {
+	if requestContext.GetResponseType().Has(sdk.ResponseTypeIdToken) {
 		expiry := requestContext.GetRequestedAt().UTC().Add(d.Lifespan).Round(time.Second)
 		profile := requestContext.GetProfile()
 		client := requestContext.GetClient()
@@ -28,7 +28,7 @@ func (d *DefaultIDTokenIssuer) HandleAuthEP(_ context.Context, requestContext sd
 }
 
 func (d *DefaultIDTokenIssuer) HandleTokenEP(_ context.Context, requestContext sdk.ITokenRequestContext) sdk.IError {
-	if requestContext.GetGrantedScopes().Has("openid") {
+	if requestContext.GetGrantedScopes().Has(sdk.ScopeOpenid) {
 		expiry := requestContext.GetRequestedAt().UTC().Add(d.Lifespan).Round(time.Second)
 		profile := requestContext.GetProfile()
 		client := requestContext.GetClient()

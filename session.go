@@ -12,6 +12,7 @@ type (
 		IsConsentSubmitted() bool
 		IsLoginDone() bool
 		GetApprovedScopes() Arguments
+		GetScope() string
 	}
 
 	ISessionManager interface {

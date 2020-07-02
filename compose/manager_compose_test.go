@@ -20,12 +20,12 @@ func TestDefaultManager_Password(t *testing.T) {
 	got := CreateManager()
 	rw := httptest.NewRecorder()
 	form := url.Values{}
-	form.Set("grant_type", "password")
+	form.Set("grant_type", sdk.GrantResourceOwnerPassword)
 	form.Set("username", "user")
 	form.Set("password", "user")
 	request := httptest.NewRequest(http.MethodPost, "/oauth/token", strings.NewReader(form.Encode()))
-	request.Header.Set("authorization", "Basic "+base64.StdEncoding.EncodeToString([]byte("client:client")))
-	request.Header.Set("content-type", "application/x-www-form-urlencoded")
+	request.Header.Set(sdk.HeaderAuthorization, "Basic "+base64.StdEncoding.EncodeToString([]byte("client:client")))
+	request.Header.Set(sdk.HeaderContentType, sdk.ContentTypeUrlEncodedForm)
 	got.ProcessTokenEP(rw, request)
 	println(rw.Code)
 }
@@ -34,10 +34,10 @@ func TestDefaultManager_Client(t *testing.T) {
 	got := CreateManager()
 	rw := httptest.NewRecorder()
 	form := url.Values{}
-	form.Set("grant_type", "client_credentials")
+	form.Set("grant_type", sdk.GrantClientCredentials)
 	request := httptest.NewRequest(http.MethodPost, "/oauth/token", strings.NewReader(form.Encode()))
-	request.Header.Set("authorization", "Basic "+base64.StdEncoding.EncodeToString([]byte("client:client")))
-	request.Header.Set("content-type", "application/x-www-form-urlencoded")
+	request.Header.Set(sdk.HeaderAuthorization, "Basic "+base64.StdEncoding.EncodeToString([]byte("client:client")))
+	request.Header.Set(sdk.HeaderContentType, sdk.ContentTypeUrlEncodedForm)
 	got.ProcessTokenEP(rw, request)
 	println(rw.Code)
 	toc := Tokens{}
@@ -46,11 +46,11 @@ func TestDefaultManager_Client(t *testing.T) {
 
 	rw = httptest.NewRecorder()
 	form = url.Values{}
-	form.Set("grant_type", "refresh_token")
+	form.Set("grant_type", sdk.GrantRefreshToken)
 	form.Set("refresh_token", toc.AccessToken)
 	request = httptest.NewRequest(http.MethodPost, "/oauth/token", strings.NewReader(form.Encode()))
-	request.Header.Set("authorization", "Basic "+base64.StdEncoding.EncodeToString([]byte("client:client")))
-	request.Header.Set("content-type", "application/x-www-form-urlencoded")
+	request.Header.Set(sdk.HeaderAuthorization, "Basic "+base64.StdEncoding.EncodeToString([]byte("client:client")))
+	request.Header.Set(sdk.HeaderContentType, sdk.ContentTypeUrlEncodedForm)
 	got.ProcessTokenEP(rw, request)
 	println(rw.Code)
 	toc = Tokens{}
@@ -78,7 +78,7 @@ type Tokens struct {
 var conf = &oauth2.Config{
 	ClientID:     "client",
 	ClientSecret: "client",
-	Scopes:       []string{"openid", "offline", "offline_access"},
+	Scopes:       []string{sdk.ScopeOpenid, "offline", "offline_access"},
 	Endpoint: oauth2.Endpoint{
 		AuthURL:   "http://localhost:8080/oauth2/auth",
 		TokenURL:  "http://localhost:8080/oauth2/token",

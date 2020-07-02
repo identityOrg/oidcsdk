@@ -10,7 +10,7 @@ type DefaultRedirectURIValidator struct {
 }
 
 func (d *DefaultRedirectURIValidator) HandleTokenEP(_ context.Context, requestContext sdk.ITokenRequestContext) sdk.IError {
-	if requestContext.GetGrantType() == "authorization_code" {
+	if requestContext.GetGrantType() == sdk.GrantAuthorizationCode {
 		if profile := requestContext.GetProfile(); profile != nil {
 			if profile.GetRedirectURI() != "" && requestContext.GetRedirectURI() != profile.GetRedirectURI() {
 				return sdkerror.ErrInvalidGrant.WithDescription("redirect URI mismatch")
@@ -28,7 +28,7 @@ func (d *DefaultRedirectURIValidator) HandleAuthEP(_ context.Context, requestCon
 	if client := requestContext.GetClient(); client == nil {
 		return sdkerror.ErrUnauthorizedClient.WithDescription("client not resolved")
 	} else {
-		oidc := requestContext.GetRequestedScopes().Has("openid")
+		oidc := requestContext.GetRequestedScopes().Has(sdk.ScopeOpenid)
 		redirectURI := requestContext.GetRedirectURI()
 		if redirectURI == "" && !oidc {
 			if len(client.GetRedirectURIs()) > 0 {

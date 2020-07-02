@@ -25,8 +25,8 @@ func NewInMemoryDB(demo bool) *InMemoryDB {
 			Public:             false,
 			IDTokenSigningAlg:  "as",
 			RedirectURIs:       []string{"http://localhost:8080/redirect"},
-			ApprovedScopes:     []string{"openid"},
-			ApprovedGrantTypes: []string{"authorization_code", "implicit", "password", "refresh_token", "client_credentials"},
+			ApprovedScopes:     []string{sdk.ScopeOpenid},
+			ApprovedGrantTypes: []string{sdk.GrantAuthorizationCode, sdk.GrantImplicit, sdk.GrantResourceOwnerPassword, sdk.GrantRefreshToken, sdk.GrantClientCredentials},
 		}
 		i.demo = make(map[string]interface{})
 		i.demo["client"] = &client

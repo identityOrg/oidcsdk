@@ -144,10 +144,10 @@ func (d *DefaultAuthenticationRequestContext) GetResponseMode() string {
 	if d.ResponseMode != "" {
 		return d.ResponseMode
 	} else {
-		if d.ResponseType.HasOneOf("token", "id_token") {
-			return "fragment"
+		if d.ResponseType.HasOneOf(sdk.ResponseTypeToken, sdk.ResponseTypeIdToken) {
+			return sdk.ResponseModeFragment
 		} else {
-			return "query"
+			return sdk.ResponseModeQuery
 		}
 	}
 }

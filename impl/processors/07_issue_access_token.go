@@ -12,7 +12,7 @@ type DefaultAccessTokenIssuer struct {
 }
 
 func (d *DefaultAccessTokenIssuer) HandleAuthEP(_ context.Context, requestContext sdk.IAuthenticationRequestContext) sdk.IError {
-	if requestContext.GetResponseType().Has("token") {
+	if requestContext.GetResponseType().Has(sdk.ResponseTypeToken) {
 		token, signature := d.AccessTokenStrategy.GenerateAccessToken()
 		expiry := requestContext.GetRequestedAt().UTC().Add(d.Lifespan).Round(time.Second)
 		requestContext.IssueAccessToken(token, signature, expiry)

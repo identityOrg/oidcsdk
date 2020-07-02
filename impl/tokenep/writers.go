@@ -10,7 +10,7 @@ import (
 
 func DefaultTokenResponseWriter(response sdk.ITokenRequestContext, w http.ResponseWriter, _ *http.Request) error {
 	w.WriteHeader(200)
-	w.Header().Set("content-type", "application/json")
+	w.Header().Set(sdk.HeaderContentType, sdk.ContentTypeJson)
 	tokens := response.GetIssuedTokens()
 	values := make(map[string]string)
 	if tokens.AccessToken != "" {
@@ -32,7 +32,7 @@ func DefaultTokenResponseWriter(response sdk.ITokenRequestContext, w http.Respon
 func DefaultTokenErrorWriter(requestContext sdk.ITokenRequestContext, w http.ResponseWriter, _ *http.Request) error {
 	pError := requestContext.GetError()
 	w.WriteHeader(pError.GetStatusCode())
-	w.Header().Set("content-type", "application/json")
+	w.Header().Set(sdk.HeaderContentType, sdk.ContentTypeJson)
 
 	err := json.NewEncoder(w).Encode(pError)
 	return err
