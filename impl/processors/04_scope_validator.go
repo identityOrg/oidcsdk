@@ -32,27 +32,20 @@ func (d *DefaultScopeValidator) HandleAuthEP(_ context.Context, requestContext s
 
 func (d *DefaultScopeValidator) HandleTokenEP(_ context.Context, requestContext sdk.ITokenRequestContext) sdk.IError {
 	grantType := requestContext.GetGrantType()
+	requestedScopes := requestContext.GetRequestedScopes()
 	if grantType == sdk.GrantAuthorizationCode {
 		profile := requestContext.GetProfile()
-		if profile.GetScope().MatchesExact(requestContext.GetRequestedScopes()...) {
-			for _, s := range requestContext.GetRequestedScopes() {
-				requestContext.GrantScope(s)
-			}
+		if profile.GetScope().MatchesExact(requestedScopes...) {
 			return nil
 		} else {
 			return sdkerror.ErrInvalidScope.WithDescription("mismatch in requested scope")
 		}
 	} else if grantType == sdk.GrantResourceOwnerPassword || grantType == sdk.GrantClientCredentials {
 		approvedScopes := requestContext.GetClient().GetApprovedScopes()
-		for _, requestedScope := range requestContext.GetRequestedScopes() {
-			if approvedScopes.Has(requestedScope) {
-				requestContext.GrantScope(requestedScope)
-			}
-		}
-	} else if grantType == sdk.GrantRefreshToken {
-		scope := requestContext.GetProfile().GetScope()
-		for _, s := range scope {
-			requestContext.GrantScope(s)
+		if approvedScopes.Has(requestedScopes...) {
+			requestContext.GetProfile().SetScope(requestedScopes)
+		} else {
+			return sdkerror.ErrInvalidScope.WithHint("at least one scope is un-approved")
 		}
 	}
 	return nil

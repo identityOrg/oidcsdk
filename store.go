@@ -4,10 +4,10 @@ import "context"
 
 type (
 	ITokenStore interface {
-		StoreTokenProfile(ctx context.Context, reqId string, signatures TokenSignatures, profile IProfile) (err error)
-		GetProfileWithAuthCodeSign(ctx context.Context, signature string) (profile IProfile, reqId string, err error)
-		GetProfileWithAccessTokenSign(ctx context.Context, signature string) (profile IProfile, reqId string, err error)
-		GetProfileWithRefreshTokenSign(ctx context.Context, signature string) (profile IProfile, reqId string, err error)
+		StoreTokenProfile(ctx context.Context, reqId string, signatures TokenSignatures, profile RequestProfile) (err error)
+		GetProfileWithAuthCodeSign(ctx context.Context, signature string) (profile RequestProfile, reqId string, err error)
+		GetProfileWithAccessTokenSign(ctx context.Context, signature string) (profile RequestProfile, reqId string, err error)
+		GetProfileWithRefreshTokenSign(ctx context.Context, signature string) (profile RequestProfile, reqId string, err error)
 		InvalidateWithRequestID(ctx context.Context, reqID string, what uint8) (err error)
 	}
 
@@ -15,12 +15,12 @@ type (
 		Authenticate(ctx context.Context, username string, credential []byte) (err error)
 		GetClaims(ctx context.Context, username string, scopes Arguments, claimsIDs []string) (map[string]interface{}, error)
 		IsConsentRequired(ctx context.Context, username string, clientId string, scopes Arguments) bool
-		FetchUserProfile(ctx context.Context, username string) IProfile
+		FetchUserProfile(ctx context.Context, username string) RequestProfile
 	}
 
 	IClientStore interface {
 		GetClient(ctx context.Context, clientID string) (client IClient, err error)
-		FetchClientProfile(ctx context.Context, clientID string) IProfile
+		FetchClientProfile(ctx context.Context, clientID string) RequestProfile
 	}
 
 	ITransactionalStore interface {

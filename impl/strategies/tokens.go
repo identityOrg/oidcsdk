@@ -36,7 +36,7 @@ func (ds *DefaultStrategy) Configure(_ interface{}, config *sdk.Config, _ ...int
 	}
 }
 
-func (ds *DefaultStrategy) GenerateIDToken(profile sdk.IProfile, client sdk.IClient, expiry time.Time,
+func (ds *DefaultStrategy) GenerateIDToken(profile sdk.RequestProfile, client sdk.IClient, expiry time.Time,
 	transactionClaims map[string]interface{}) (idToken string, err error) {
 	key := jose.SigningKey{
 		Algorithm: client.GetIDTokenSigningAlg(),

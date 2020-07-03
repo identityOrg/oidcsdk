@@ -15,14 +15,14 @@ type (
 		GetClientID() string
 		GetRequestedScopes() Arguments
 		GetRequestedAudience() Arguments
-		GetGrantedScopes() Arguments
-		GetGrantedAudience() Arguments
-		GrantScope(scope string)
-		GrantAudience(audience string)
+		//GetGrantedScopes() Arguments
+		//GetGrantedAudience() Arguments
+		//GrantScope(scope string)
+		//GrantAudience(audience string)
 		GetClient() IClient
 		SetClient(client IClient)
-		GetProfile() IProfile
-		SetProfile(profile IProfile)
+		GetProfile() RequestProfile
+		SetProfile(profile RequestProfile)
 		GetIssuedTokens() Tokens
 		IssueAccessToken(token string, signature string, expiry time.Time)
 		IssueRefreshToken(token string, signature string, expiry time.Time)

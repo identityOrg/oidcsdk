@@ -20,7 +20,7 @@ func (d *DefaultIDTokenIssuer) HandleAuthEP(_ context.Context, requestContext sd
 		var tClaims map[string]interface{}
 		token, err := d.IDTokenStrategy.GenerateIDToken(profile, client, expiry, tClaims)
 		if err != nil {
-			return sdkerror.ErrInvalidGrant //todo change
+			return sdkerror.ErrMisconfiguration.WithHint(err.Error())
 		}
 		requestContext.IssueIDToken(token)
 	}
@@ -28,14 +28,14 @@ func (d *DefaultIDTokenIssuer) HandleAuthEP(_ context.Context, requestContext sd
 }
 
 func (d *DefaultIDTokenIssuer) HandleTokenEP(_ context.Context, requestContext sdk.ITokenRequestContext) sdk.IError {
-	if requestContext.GetGrantedScopes().Has(sdk.ScopeOpenid) {
+	if requestContext.GetProfile().GetScope().Has(sdk.ScopeOpenid) {
 		expiry := requestContext.GetRequestedAt().UTC().Add(d.Lifespan).Round(time.Second)
 		profile := requestContext.GetProfile()
 		client := requestContext.GetClient()
 		var tClaims map[string]interface{}
 		token, err := d.IDTokenStrategy.GenerateIDToken(profile, client, expiry, tClaims)
 		if err != nil {
-			return sdkerror.ErrInvalidGrant //todo change
+			return sdkerror.ErrMisconfiguration.WithHint(err.Error())
 		}
 		requestContext.IssueIDToken(token)
 	}

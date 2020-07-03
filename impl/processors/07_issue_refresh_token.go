@@ -12,7 +12,7 @@ type DefaultRefreshTokenIssuer struct {
 }
 
 func (d *DefaultRefreshTokenIssuer) HandleTokenEP(_ context.Context, requestContext sdk.ITokenRequestContext) sdk.IError {
-	refreshScope := requestContext.GetGrantedScopes().Has("offline_access")
+	refreshScope := requestContext.GetProfile().GetScope().Has(sdk.ScopeOfflineAccess)
 	refreshGrant := requestContext.GetClient().GetApprovedGrantTypes().Has(sdk.GrantRefreshToken)
 	if refreshScope || refreshGrant {
 		token, signature := d.RefreshTokenStrategy.GenerateRefreshToken()
@@ -22,7 +22,7 @@ func (d *DefaultRefreshTokenIssuer) HandleTokenEP(_ context.Context, requestCont
 	return nil
 }
 
-func (d *DefaultRefreshTokenIssuer) Configure(strategy interface{}, config *sdk.Config, args ...interface{}) {
+func (d *DefaultRefreshTokenIssuer) Configure(strategy interface{}, config *sdk.Config, _ ...interface{}) {
 	d.RefreshTokenStrategy = strategy.(sdk.IRefreshTokenStrategy)
 	d.Lifespan = config.RefreshTokenLifespan
 }

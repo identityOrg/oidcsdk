@@ -9,10 +9,11 @@ const (
 )
 
 const (
-	ScopeOpenid  = "openid"
-	ScopeProfile = "profile"
-	ScopeEmail   = "email"
-	ScopeAddress = "address"
+	ScopeOpenid        = "openid"
+	ScopeProfile       = "profile"
+	ScopeEmail         = "email"
+	ScopeAddress       = "address"
+	ScopeOfflineAccess = "offline_access"
 )
 
 const (

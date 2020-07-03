@@ -7,7 +7,6 @@ import (
 	sdk "oauth2-oidc-sdk"
 	client2 "oauth2-oidc-sdk/impl/client"
 	"oauth2-oidc-sdk/impl/sdkerror"
-	"oauth2-oidc-sdk/impl/userprofile"
 	"time"
 )
 
@@ -62,16 +61,16 @@ func (i *InMemoryDB) IsConsentRequired(context.Context, string, string, sdk.Argu
 	return true
 }
 
-func (i *InMemoryDB) FetchUserProfile(ctx context.Context, username string) sdk.IProfile {
-	return &userprofile.DefaultProfile{
-		Username: username,
-	}
+func (i *InMemoryDB) FetchUserProfile(ctx context.Context, username string) sdk.RequestProfile {
+	profile := sdk.RequestProfile{}
+	profile.SetUsername(username)
+	return profile
 }
 
-func (i *InMemoryDB) FetchClientProfile(ctx context.Context, username string) sdk.IProfile {
-	return &userprofile.DefaultProfile{
-		Username: username,
-	}
+func (i *InMemoryDB) FetchClientProfile(ctx context.Context, username string) sdk.RequestProfile {
+	profile := sdk.RequestProfile{}
+	profile.SetUsername(username)
+	return profile
 }
 
 func (i *InMemoryDB) Configure(interface{}, *sdk.Config, ...interface{}) {
@@ -93,7 +92,7 @@ func (i *InMemoryDB) Configure(interface{}, *sdk.Config, ...interface{}) {
 	}
 }
 
-func (i *InMemoryDB) StoreTokenProfile(ctx context.Context, reqId string, signatures sdk.TokenSignatures, profile sdk.IProfile) (err error) {
+func (i *InMemoryDB) StoreTokenProfile(ctx context.Context, reqId string, signatures sdk.TokenSignatures, profile sdk.RequestProfile) (err error) {
 	row := &TokenTable{
 		RequestID:       reqId,
 		TokenSignatures: signatures,
@@ -110,7 +109,7 @@ func (i *InMemoryDB) StoreTokenProfile(ctx context.Context, reqId string, signat
 	return nil
 }
 
-func (i *InMemoryDB) GetProfileWithAuthCodeSign(ctx context.Context, signature string) (profile sdk.IProfile, reqId string, err error) {
+func (i *InMemoryDB) GetProfileWithAuthCodeSign(ctx context.Context, signature string) (profile sdk.RequestProfile, reqId string, err error) {
 	txn := i.Db.Txn(false)
 	defer txn.Abort()
 
@@ -129,7 +128,7 @@ func (i *InMemoryDB) GetProfileWithAuthCodeSign(ctx context.Context, signature s
 	}
 }
 
-func (i *InMemoryDB) GetProfileWithAccessTokenSign(ctx context.Context, signature string) (profile sdk.IProfile, reqId string, err error) {
+func (i *InMemoryDB) GetProfileWithAccessTokenSign(ctx context.Context, signature string) (profile sdk.RequestProfile, reqId string, err error) {
 	txn := i.Db.Txn(false)
 	defer txn.Abort()
 
@@ -148,7 +147,7 @@ func (i *InMemoryDB) GetProfileWithAccessTokenSign(ctx context.Context, signatur
 	}
 }
 
-func (i *InMemoryDB) GetProfileWithRefreshTokenSign(ctx context.Context, signature string) (profile sdk.IProfile, reqId string, err error) {
+func (i *InMemoryDB) GetProfileWithRefreshTokenSign(ctx context.Context, signature string) (profile sdk.RequestProfile, reqId string, err error) {
 	txn := i.Db.Txn(false)
 	defer txn.Abort()
 
@@ -195,6 +194,6 @@ type (
 	TokenTable struct {
 		RequestID string
 		sdk.TokenSignatures
-		Profile sdk.IProfile
+		Profile sdk.RequestProfile
 	}
 )

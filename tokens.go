@@ -32,7 +32,7 @@ type (
 		SignRefreshToken(token string) (signature string, err error)
 	}
 	IIDTokenStrategy interface {
-		GenerateIDToken(profile IProfile, client IClient, expiry time.Time,
+		GenerateIDToken(profile RequestProfile, client IClient, expiry time.Time,
 			transactionClaims map[string]interface{}) (idToken string, err error)
 	}
 )

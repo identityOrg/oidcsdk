@@ -52,5 +52,8 @@ func DefaultTokenRequestContextFactory(r *http.Request) (sdk.ITokenRequestContex
 
 	reqStruct.RequestID = uuid.New().String()
 	reqStruct.RequestedAt = time.Now()
+
+	reqStruct.Profile = sdk.NewRequestProfile()
+
 	return &reqStruct, nil
 }

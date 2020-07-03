@@ -21,30 +21,44 @@ func (d *DefaultUserValidator) HandleAuthEP(ctx context.Context, requestContext 
 		if session.GetUsername() == "" {
 			return sdkerror.ErrLoginRequired
 		}
-		if d.GlobalConsentRequired {
-			if d.UserStore.IsConsentRequired(ctx, session.GetUsername(), requestContext.GetClientID(), requestContext.GetRequestedScopes()) {
-				if !session.IsConsentSubmitted() {
-					return sdkerror.ErrConsentRequired
-				} else {
-					for _, s := range session.GetApprovedScopes() {
-						requestContext.GrantScope(s)
-					}
-				}
-			}
-		}
-		return nil
 	} else {
 		var prompt sdk.Arguments = util.RemoveEmpty(strings.Split(util.GetAndRemove(*requestContext.GetForm(), "prompt"), " "))
-		if prompt.Has("none") {
-			if len(prompt) > 1 {
-				return sdkerror.ErrInvalidRequest.WithHint("'prompt=none' can not be combined")
+		offlineAccess := requestContext.GetRequestedScopes().Has(sdk.ScopeOfflineAccess)
+		promptNone := prompt.Has("none")
+		promptLogin := prompt.Has("login")
+		promptConsent := prompt.Has("consent")
+		if promptNone {
+			if offlineAccess {
+				return sdkerror.ErrConsentRequired.WithHint("'prompt=none' can not be combined with 'offline_access'")
+			}
+			if promptLogin || promptConsent {
+				return sdkerror.ErrInvalidRequest.WithHint("'prompt=none' can not be combined with other prompt")
 			}
 		}
-		if prompt.Has("login") && !session.IsLoginDone() {
+		if promptLogin && !session.IsLoginDone() {
 			return sdkerror.ErrLoginRequired
 		}
-		if prompt.Has("consent") && !session.IsConsentSubmitted() {
+		if promptConsent && !session.IsConsentSubmitted() {
 			return sdkerror.ErrConsentRequired
+		}
+
+		if session.GetUsername() == "" {
+			return sdkerror.ErrLoginRequired
+		}
+	}
+
+	profile := requestContext.GetProfile()
+	profile.SetUsername(session.GetUsername())
+
+	if d.GlobalConsentRequired {
+		if d.UserStore.IsConsentRequired(ctx, session.GetUsername(), requestContext.GetClientID(), requestContext.GetRequestedScopes()) {
+			if !session.IsConsentSubmitted() {
+				return sdkerror.ErrConsentRequired
+			} else {
+				profile.SetScope(session.GetApprovedScopes())
+			}
+		} else {
+			profile.SetScope(session.GetApprovedScopes())
 		}
 	}
 
@@ -60,15 +74,13 @@ func (d *DefaultUserValidator) HandleTokenEP(ctx context.Context, requestContext
 		if err != nil {
 			return sdkerror.ErrInvalidGrant.WithDescription("user authentication failed")
 		}
-		profile := d.UserStore.FetchUserProfile(ctx, username)
-		profile.SetScope(requestContext.GetGrantedScopes())
-		profile.SetAudience(requestContext.GetGrantedAudience())
-		requestContext.SetProfile(profile)
+		profile := requestContext.GetProfile()
+		user := d.UserStore.FetchUserProfile(ctx, username)
+		profile.SetUsername(user.GetUsername())
 	} else if grantType == sdk.GrantClientCredentials {
-		profile := d.ClientStore.FetchClientProfile(ctx, requestContext.GetClientID())
-		profile.SetScope(requestContext.GetGrantedScopes())
-		profile.SetAudience(requestContext.GetGrantedAudience())
-		requestContext.SetProfile(profile)
+		profile := requestContext.GetProfile()
+		client := d.ClientStore.FetchClientProfile(ctx, requestContext.GetClientID())
+		profile.SetUsername(client.GetUsername())
 	}
 	return nil
 }

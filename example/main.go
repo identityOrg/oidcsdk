@@ -7,6 +7,7 @@ import (
 	"oauth2-oidc-sdk/compose"
 	"oauth2-oidc-sdk/example/demosession"
 	"oauth2-oidc-sdk/example/memdbstore"
+	"oauth2-oidc-sdk/impl/middleware"
 	"oauth2-oidc-sdk/impl/strategies"
 	"oauth2-oidc-sdk/util"
 	"time"
@@ -25,11 +26,11 @@ func main() {
 	compose.SetLoginPageHandler(got, renderLogin)
 	compose.SetConsentPageHandler(got, renderConsent)
 
-	http.HandleFunc("/token", got.ProcessTokenEP)
-	http.HandleFunc("/authorize", got.ProcessAuthorizationEP)
-	http.HandleFunc("/login", processLogin(demoStore, demoSessionManager))
+	http.HandleFunc("/token", middleware.NoCache(got.ProcessTokenEP))
+	http.HandleFunc("/authorize", middleware.NoCache(got.ProcessAuthorizationEP))
+	http.HandleFunc("/login", middleware.NoCache(processLogin(demoStore, demoSessionManager)))
 
-	_ = http.ListenAndServe("127.0.0.1:8080", nil)
+	_ = http.ListenAndServe("localhost:8080", nil)
 }
 
 func processLogin(demoStore *memdbstore.InMemoryDB, manager *demosession.Manager) func(writer http.ResponseWriter, request *http.Request) {
@@ -58,14 +59,14 @@ func processLogin(demoStore *memdbstore.InMemoryDB, manager *demosession.Manager
 }
 
 func renderConsent(writer http.ResponseWriter, request *http.Request) {
-	writer.WriteHeader(200)
 	writer.Header().Set(sdk.HeaderContentType, sdk.ContentTypeHtml)
+	writer.WriteHeader(200)
 	_, _ = writer.Write([]byte(ConsentPage))
 }
 
 func renderLogin(writer http.ResponseWriter, request *http.Request) {
-	writer.WriteHeader(200)
 	writer.Header().Set(sdk.HeaderContentType, sdk.ContentTypeHtml)
+	writer.WriteHeader(200)
 	_ = template.Must(template.New("login").Parse(LoginPage)).Execute(writer, request.URL.String())
 }
 

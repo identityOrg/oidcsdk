@@ -21,7 +21,7 @@ type (
 		GrantedScopes     sdk.Arguments
 		GrantedAudience   sdk.Arguments
 		Client            sdk.IClient
-		Profile           sdk.IProfile
+		Profile           sdk.RequestProfile
 		IssuedTokens      sdk.Tokens
 		Error             sdk.IError
 		Form              *url.Values
@@ -98,11 +98,11 @@ func (d *DefaultAuthenticationRequestContext) SetClient(client sdk.IClient) {
 	d.Client = client
 }
 
-func (d *DefaultAuthenticationRequestContext) GetProfile() sdk.IProfile {
+func (d *DefaultAuthenticationRequestContext) GetProfile() sdk.RequestProfile {
 	return d.Profile
 }
 
-func (d *DefaultAuthenticationRequestContext) SetProfile(profile sdk.IProfile) {
+func (d *DefaultAuthenticationRequestContext) SetProfile(profile sdk.RequestProfile) {
 	d.Profile = profile
 }
 

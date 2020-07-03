@@ -37,6 +37,13 @@ func (d *DefaultTokenPersister) HandleTokenEP(ctx context.Context, requestContex
 			return sdkerror.ErrInvalidGrant //todo correct it
 		}
 	}
+	if requestContext.GetGrantType() == sdk.GrantAuthorizationCode {
+		previousReqID := requestContext.GetPreviousRequestID()
+		err := d.TokenStore.InvalidateWithRequestID(ctx, previousReqID, sdk.ExpireAuthorizationCode)
+		if err != nil {
+			return sdkerror.ErrInvalidGrant //todo correct it
+		}
+	}
 	return nil
 }
 

@@ -32,5 +32,7 @@ func DefaultAuthenticationRequestContextFactory(r *http.Request) (sdk.IAuthentic
 	reqStruct.Form = &form
 	reqStruct.RequestID = uuid.New().String()
 	reqStruct.RequestedAt = time.Now()
+
+	reqStruct.Profile = sdk.NewRequestProfile()
 	return &reqStruct, nil
 }
