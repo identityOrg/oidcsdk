@@ -7,14 +7,21 @@ import (
 )
 
 type DefaultTokenPersister struct {
-	TokenStore           sdk.ITokenStore
-	RefreshTokenStrategy sdk.IRefreshTokenStrategy
+	TokenStore            sdk.ITokenStore
+	UserStore             sdk.IUserStore
+	GlobalConsentRequired bool
 }
 
 func (d *DefaultTokenPersister) HandleAuthEP(ctx context.Context, requestContext sdk.IAuthenticationRequestContext) sdk.IError {
 	tokens := requestContext.GetIssuedTokens()
 	profile := requestContext.GetProfile()
 	reqId := requestContext.GetRequestID()
+	if d.GlobalConsentRequired {
+		err := d.UserStore.StoreConsent(ctx, profile.GetUsername(), requestContext.GetClientID(), profile.GetScope())
+		if err != nil {
+			return sdkerror.ErrInvalidRequest //todo change error
+		}
+	}
 	err := d.TokenStore.StoreTokenProfile(ctx, reqId, tokens.TokenSignatures, profile)
 	if err != nil {
 		return sdkerror.ErrInvalidRequest //todo change error
@@ -47,14 +54,17 @@ func (d *DefaultTokenPersister) HandleTokenEP(ctx context.Context, requestContex
 	return nil
 }
 
-func (d *DefaultTokenPersister) Configure(strategy interface{}, _ *sdk.Config, args ...interface{}) {
-	d.RefreshTokenStrategy = strategy.(sdk.IRefreshTokenStrategy)
+func (d *DefaultTokenPersister) Configure(_ interface{}, config *sdk.Config, args ...interface{}) {
+	d.GlobalConsentRequired = config.GlobalConsentRequired
 	for _, arg := range args {
 		if ts, ok := arg.(sdk.ITokenStore); ok {
 			d.TokenStore = ts
 		}
+		if us, ok := arg.(sdk.IUserStore); ok {
+			d.UserStore = us
+		}
 	}
-	if d.TokenStore == nil {
+	if d.TokenStore == nil || d.UserStore == nil {
 		panic("failed to init DefaultTokenPersister")
 	}
 }

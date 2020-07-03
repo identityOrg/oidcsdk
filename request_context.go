@@ -15,10 +15,7 @@ type (
 		GetClientID() string
 		GetRequestedScopes() Arguments
 		GetRequestedAudience() Arguments
-		//GetGrantedScopes() Arguments
-		//GetGrantedAudience() Arguments
-		//GrantScope(scope string)
-		//GrantAudience(audience string)
+		GetClaims() map[string]interface{}
 		GetClient() IClient
 		SetClient(client IClient)
 		GetProfile() RequestProfile

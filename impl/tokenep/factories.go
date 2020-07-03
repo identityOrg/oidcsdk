@@ -54,6 +54,7 @@ func DefaultTokenRequestContextFactory(r *http.Request) (sdk.ITokenRequestContex
 	reqStruct.RequestedAt = time.Now()
 
 	reqStruct.Profile = sdk.NewRequestProfile()
+	reqStruct.Claims = make(map[string]interface{})
 
 	return &reqStruct, nil
 }

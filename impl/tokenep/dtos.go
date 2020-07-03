@@ -3,7 +3,6 @@ package tokenep
 import (
 	"net/url"
 	sdk "oauth2-oidc-sdk"
-	"oauth2-oidc-sdk/util"
 	"time"
 )
 
@@ -23,8 +22,7 @@ type (
 		RefreshToken      string
 		RequestedScopes   sdk.Arguments
 		RequestedAudience sdk.Arguments
-		GrantedScopes     sdk.Arguments
-		GrantedAudience   sdk.Arguments
+		Claims            map[string]interface{}
 		Client            sdk.IClient
 		Profile           sdk.RequestProfile
 		IssuedTokens      sdk.Tokens
@@ -87,20 +85,8 @@ func (d *DefaultTokenRequestContext) GetRequestID() string {
 	return d.RequestID
 }
 
-func (d *DefaultTokenRequestContext) GetGrantedScopes() sdk.Arguments {
-	return d.GrantedScopes
-}
-
-func (d *DefaultTokenRequestContext) GetGrantedAudience() sdk.Arguments {
-	return d.GrantedAudience
-}
-
-func (d *DefaultTokenRequestContext) GrantScope(scope string) {
-	d.GrantedScopes = util.AppendUnique(d.GrantedScopes, scope)
-}
-
-func (d *DefaultTokenRequestContext) GrantAudience(audience string) {
-	d.GrantedAudience = util.AppendUnique(d.GrantedAudience, audience)
+func (d *DefaultTokenRequestContext) GetClaims() map[string]interface{} {
+	return d.Claims
 }
 
 func (d *DefaultTokenRequestContext) GetClient() sdk.IClient {

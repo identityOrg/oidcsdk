@@ -66,3 +66,15 @@ func (r RequestProfile) GetAudience() Arguments {
 func (r RequestProfile) SetAudience(aud Arguments) {
 	r["audience"] = strings.Join(aud, " ")
 }
+
+func (r RequestProfile) IsClient() bool {
+	return r["domain"] == ""
+}
+
+func (r RequestProfile) GetDomain() string {
+	return r["domain"]
+}
+
+func (r RequestProfile) SetDomain(domain string) {
+	r["domain"] = domain
+}

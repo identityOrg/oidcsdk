@@ -19,11 +19,19 @@ func (d *DefaultResponseTypeValidator) HandleAuthEP(_ context.Context, requestCo
 	for _, responseType := range responseTypes {
 		if responseType == sdk.ResponseTypeCode {
 			if !approvedGrantTypes.Has(sdk.GrantAuthorizationCode) {
-				return sdkerror.ErrInvalidGrant.WithDescription("'authorization_code' grant not approved")
+				return sdkerror.ErrUnsupportedResponseType.WithDescription("'authorization_code' grant not approved")
 			}
 		} else if responseType == sdk.ResponseTypeToken || responseType == sdk.ResponseTypeIdToken {
 			if !approvedGrantTypes.Has(sdk.GrantImplicit) {
-				return sdkerror.ErrInvalidGrant.WithDebug("'implicit' grant not approved for client")
+				return sdkerror.ErrUnsupportedResponseType.WithDebug("'implicit' grant not approved for client")
+			}
+			if responseType == sdk.ResponseTypeIdToken {
+				nonce := requestContext.GetForm().Get("nonce")
+				if nonce == "" {
+					return sdkerror.ErrUnsupportedResponseType.WithHint("'nonce' is required for 'id_token' response")
+				} else {
+					requestContext.GetProfile().SetNonce(nonce)
+				}
 			}
 		} else {
 			return sdkerror.ErrUnsupportedResponseType.WithDebugf("un-known response type %s", responseType)

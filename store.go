@@ -15,6 +15,7 @@ type (
 		Authenticate(ctx context.Context, username string, credential []byte) (err error)
 		GetClaims(ctx context.Context, username string, scopes Arguments, claimsIDs []string) (map[string]interface{}, error)
 		IsConsentRequired(ctx context.Context, username string, clientId string, scopes Arguments) bool
+		StoreConsent(ctx context.Context, username string, clientId string, scopes Arguments) error
 		FetchUserProfile(ctx context.Context, username string) RequestProfile
 	}
 

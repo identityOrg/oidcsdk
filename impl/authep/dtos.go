@@ -3,7 +3,6 @@ package authep
 import (
 	"net/url"
 	sdk "oauth2-oidc-sdk"
-	"oauth2-oidc-sdk/util"
 	"time"
 )
 
@@ -18,8 +17,7 @@ type (
 		ResponseMode      string
 		RequestedScopes   sdk.Arguments
 		RequestedAudience sdk.Arguments
-		GrantedScopes     sdk.Arguments
-		GrantedAudience   sdk.Arguments
+		Claims            map[string]interface{}
 		Client            sdk.IClient
 		Profile           sdk.RequestProfile
 		IssuedTokens      sdk.Tokens
@@ -74,20 +72,8 @@ func (d *DefaultAuthenticationRequestContext) GetRequestedAudience() sdk.Argumen
 	return d.RequestedAudience
 }
 
-func (d *DefaultAuthenticationRequestContext) GetGrantedScopes() sdk.Arguments {
-	return d.GrantedScopes
-}
-
-func (d *DefaultAuthenticationRequestContext) GetGrantedAudience() sdk.Arguments {
-	return d.GrantedAudience
-}
-
-func (d *DefaultAuthenticationRequestContext) GrantScope(scope string) {
-	d.GrantedScopes = util.AppendUnique(d.GrantedScopes, scope)
-}
-
-func (d *DefaultAuthenticationRequestContext) GrantAudience(audience string) {
-	d.GrantedAudience = util.AppendUnique(d.GrantedAudience, audience)
+func (d *DefaultAuthenticationRequestContext) GetClaims() map[string]interface{} {
+	return d.Claims
 }
 
 func (d *DefaultAuthenticationRequestContext) GetClient() sdk.IClient {

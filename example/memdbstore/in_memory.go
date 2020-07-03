@@ -62,9 +62,14 @@ func (i *InMemoryDB) IsConsentRequired(context.Context, string, string, sdk.Argu
 	return false
 }
 
+func (i *InMemoryDB) StoreConsent(context.Context, string, string, sdk.Arguments) error {
+	return nil
+}
+
 func (i *InMemoryDB) FetchUserProfile(ctx context.Context, username string) sdk.RequestProfile {
 	profile := sdk.RequestProfile{}
 	profile.SetUsername(username)
+	profile.SetDomain("demo.com")
 	return profile
 }
 

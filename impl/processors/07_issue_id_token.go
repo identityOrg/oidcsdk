@@ -13,7 +13,9 @@ type DefaultIDTokenIssuer struct {
 }
 
 func (d *DefaultIDTokenIssuer) HandleAuthEP(_ context.Context, requestContext sdk.IAuthenticationRequestContext) sdk.IError {
-	if requestContext.GetResponseType().Has(sdk.ResponseTypeIdToken) {
+	idTokenRequired := requestContext.GetResponseType().Has(sdk.ResponseTypeIdToken)
+	openID := requestContext.GetProfile().GetScope().Has(sdk.ScopeOpenid)
+	if openID && idTokenRequired {
 		expiry := requestContext.GetRequestedAt().UTC().Add(d.Lifespan).Round(time.Second)
 		profile := requestContext.GetProfile()
 		client := requestContext.GetClient()
