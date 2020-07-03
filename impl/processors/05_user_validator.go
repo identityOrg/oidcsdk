@@ -38,7 +38,7 @@ func (d *DefaultUserValidator) HandleAuthEP(ctx context.Context, requestContext 
 		if promptLogin && !session.IsLoginDone() {
 			return sdkerror.ErrLoginRequired
 		}
-		if promptConsent && !session.IsConsentSubmitted() {
+		if promptConsent && !session.IsConsentSubmitted() && !d.GlobalConsentRequired {
 			return sdkerror.ErrConsentRequired
 		}
 
@@ -58,8 +58,10 @@ func (d *DefaultUserValidator) HandleAuthEP(ctx context.Context, requestContext 
 				profile.SetScope(session.GetApprovedScopes())
 			}
 		} else {
-			profile.SetScope(session.GetApprovedScopes())
+			profile.SetScope(requestContext.GetRequestedScopes())
 		}
+	} else {
+		profile.SetScope(requestContext.GetRequestedScopes())
 	}
 
 	return nil

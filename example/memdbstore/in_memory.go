@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"github.com/hashicorp/go-memdb"
+	"gopkg.in/square/go-jose.v2"
 	sdk "oauth2-oidc-sdk"
 	client2 "oauth2-oidc-sdk/impl/client"
 	"oauth2-oidc-sdk/impl/sdkerror"
@@ -22,7 +23,7 @@ func NewInMemoryDB(demo bool) *InMemoryDB {
 			ID:                 "client",
 			Secret:             "client",
 			Public:             false,
-			IDTokenSigningAlg:  "as",
+			IDTokenSigningAlg:  jose.RS256,
 			RedirectURIs:       []string{"http://localhost:8080/redirect"},
 			ApprovedScopes:     []string{sdk.ScopeOpenid},
 			ApprovedGrantTypes: []string{sdk.GrantAuthorizationCode, sdk.GrantImplicit, sdk.GrantResourceOwnerPassword, sdk.GrantRefreshToken, sdk.GrantClientCredentials},
@@ -58,7 +59,7 @@ func (i *InMemoryDB) GetClaims(context.Context, string, sdk.Arguments, []string)
 }
 
 func (i *InMemoryDB) IsConsentRequired(context.Context, string, string, sdk.Arguments) bool {
-	return true
+	return false
 }
 
 func (i *InMemoryDB) FetchUserProfile(ctx context.Context, username string) sdk.RequestProfile {

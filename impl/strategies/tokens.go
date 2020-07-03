@@ -59,7 +59,7 @@ func (ds *DefaultStrategy) GenerateIDToken(profile sdk.RequestProfile, client sd
 		Expiry:    jwt.NewNumericDate(expiry),
 		ID:        uuid.New().String(),
 	}
-	idToken, err = jwt.Signed(signer).Claims(standardClaims).Claims(transactionClaims).FullSerialize()
+	idToken, err = jwt.Signed(signer).Claims(standardClaims).Claims(transactionClaims).CompactSerialize()
 	return
 }
 
