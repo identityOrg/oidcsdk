@@ -52,3 +52,10 @@ func (d *DefaultClaimProcessor) Configure(_ interface{}, _ *sdk.Config, args ...
 		panic("failed to initialize DefaultClaimProcessor")
 	}
 }
+
+//var (
+//	phoneScopeClaims   = strings.Split("phone_number_verified", ",")
+//	emailScopeClaims   = strings.Split("phone_number,email,email_verified", ",")
+//	profileScopeClaims = strings.Split("name,family_name,given_name,middle_name,nickname,preferred_username," +
+//		"profile,picture,website,gender,birthdate,zoneinfo,locale,updated_at", ",")
+//)

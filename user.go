@@ -19,6 +19,14 @@ func (r RequestProfile) SetUsername(username string) {
 	r["username"] = username
 }
 
+func (r RequestProfile) GetClientID() string {
+	return r["username"]
+}
+
+func (r RequestProfile) SetClientID(username string) {
+	r["username"] = username
+}
+
 func (r RequestProfile) GetState() string {
 	return r["state"]
 }
