@@ -10,7 +10,7 @@ func (d *DefaultManager) ProcessAuthorizationEP(w http.ResponseWriter, r *http.R
 	if authRequestContext, iError := d.AuthenticationRequestContextFactory(r); iError != nil {
 		if authRequestContext != nil {
 			authRequestContext.SetError(iError)
-			err := d.AuthenticationErrorWriter(authRequestContext, w, r)
+			err := d.RedirectErrorWriter(authRequestContext, w, r)
 			if err != nil {
 				d.ErrorStrategy(err, w)
 			}
@@ -30,10 +30,11 @@ func (d *DefaultManager) ProcessAuthorizationEP(w http.ResponseWriter, r *http.R
 					d.ConsentPageHandler(w, r)
 				}
 				authRequestContext.SetError(iError)
-				err := d.AuthenticationErrorWriter(authRequestContext, w, r)
+				err := d.RedirectErrorWriter(authRequestContext, w, r)
 				if err != nil {
 					d.ErrorStrategy(err, w)
 				}
+				return
 			}
 		}
 		if err := d.AuthenticationResponseWriter(authRequestContext, w, r); err != nil {

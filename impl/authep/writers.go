@@ -50,7 +50,7 @@ func buildSuccessResponseForm(requestContext sdk.IAuthenticationRequestContext) 
 	return form
 }
 
-func DefaultAuthenticationErrorWriter(requestContext sdk.IAuthenticationRequestContext, w http.ResponseWriter, r *http.Request) error {
+func DefaultRedirectErrorWriter(requestContext sdk.IAuthenticationRequestContext, w http.ResponseWriter, r *http.Request) error {
 	mode := requestContext.GetResponseMode()
 	switch mode {
 	case sdk.ResponseModeFragment:

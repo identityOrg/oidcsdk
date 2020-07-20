@@ -10,10 +10,10 @@ type (
 		Config                              *sdk.Config
 		TokenRequestContextFactory          sdk.TokenRequestContextFactory
 		TokenResponseWriter                 sdk.TokenResponseWriter
-		TokenErrorWriter                    sdk.TokenErrorWriter
+		JsonErrorWriter                     sdk.JsonErrorWriter
 		AuthenticationRequestContextFactory sdk.AuthenticationRequestContextFactory
 		AuthenticationResponseWriter        sdk.AuthenticationResponseWriter
-		AuthenticationErrorWriter           sdk.AuthenticationErrorWriter
+		RedirectErrorWriter                 sdk.RedirectErrorWriter
 		AuthEPHandlers                      []sdk.IAuthEPHandler
 		TokenEPHandlers                     []sdk.ITokenEPHandler
 		ErrorStrategy                       sdk.ErrorStrategy

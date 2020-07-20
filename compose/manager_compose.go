@@ -14,11 +14,11 @@ func DefaultManager(config *sdk.Config, strategy interface{}, args ...interface{
 	dManager.Config = config
 	dManager.TokenRequestContextFactory = tokenep.DefaultTokenRequestContextFactory
 	dManager.TokenResponseWriter = tokenep.DefaultTokenResponseWriter
-	dManager.TokenErrorWriter = tokenep.DefaultTokenErrorWriter
+	dManager.JsonErrorWriter = tokenep.DefaultJsonErrorWriter
 
 	dManager.AuthenticationRequestContextFactory = authep.DefaultAuthenticationRequestContextFactory
 	dManager.AuthenticationResponseWriter = authep.DefaultAuthenticationResponseWriter
-	dManager.AuthenticationErrorWriter = authep.DefaultAuthenticationErrorWriter
+	dManager.RedirectErrorWriter = authep.DefaultRedirectErrorWriter
 
 	dManager.ErrorStrategy = strategies.DefaultLoggingErrorStrategy
 

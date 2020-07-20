@@ -49,10 +49,10 @@ type (
 		GetUsername() string
 		GetPassword() string
 	}
-	TokenRequestContextFactory          func(r *http.Request) (ITokenRequestContext, IError)
+	TokenRequestContextFactory          func(request *http.Request) (ITokenRequestContext, IError)
 	TokenResponseWriter                 func(requestContext ITokenRequestContext, w http.ResponseWriter, r *http.Request) error
-	TokenErrorWriter                    func(requestContext ITokenRequestContext, w http.ResponseWriter, r *http.Request) error
-	AuthenticationRequestContextFactory func(r *http.Request) (IAuthenticationRequestContext, IError)
+	JsonErrorWriter                     func(requestContext ITokenRequestContext, w http.ResponseWriter, r *http.Request) error
+	AuthenticationRequestContextFactory func(request *http.Request) (IAuthenticationRequestContext, IError)
 	AuthenticationResponseWriter        func(requestContext IAuthenticationRequestContext, w http.ResponseWriter, r *http.Request) error
-	AuthenticationErrorWriter           func(requestContext IAuthenticationRequestContext, w http.ResponseWriter, r *http.Request) error
+	RedirectErrorWriter                 func(requestContext IAuthenticationRequestContext, w http.ResponseWriter, r *http.Request) error
 )
