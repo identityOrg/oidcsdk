@@ -2,7 +2,7 @@ package processors
 
 import (
 	"context"
-	sdk "oidcsdk"
+	sdk "github.com/identityOrg/oidcsdk"
 	"time"
 )
 

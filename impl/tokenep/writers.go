@@ -2,8 +2,8 @@ package tokenep
 
 import (
 	"encoding/json"
+	sdk "github.com/identityOrg/oidcsdk"
 	"net/http"
-	sdk "oidcsdk"
 	"strconv"
 	"time"
 )

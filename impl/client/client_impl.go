@@ -1,8 +1,8 @@
 package client
 
 import (
+	sdk "github.com/identityOrg/oidcsdk"
 	"gopkg.in/square/go-jose.v2"
-	sdk "oidcsdk"
 )
 
 type DefaultClient struct {

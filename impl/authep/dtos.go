@@ -1,8 +1,8 @@
 package authep
 
 import (
+	sdk "github.com/identityOrg/oidcsdk"
 	"net/url"
-	sdk "oidcsdk"
 	"time"
 )
 

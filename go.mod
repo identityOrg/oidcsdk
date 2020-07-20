@@ -1,4 +1,4 @@
-module oidcsdk
+module github.com/identityOrg/oidcsdk
 
 go 1.14
 

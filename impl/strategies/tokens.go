@@ -7,9 +7,9 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"github.com/google/uuid"
+	sdk "github.com/identityOrg/oidcsdk"
 	"gopkg.in/square/go-jose.v2"
 	"gopkg.in/square/go-jose.v2/jwt"
-	sdk "oidcsdk"
 	"time"
 )
 

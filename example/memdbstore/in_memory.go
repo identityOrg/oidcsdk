@@ -4,10 +4,10 @@ import (
 	"context"
 	"errors"
 	"github.com/hashicorp/go-memdb"
+	sdk "github.com/identityOrg/oidcsdk"
+	client2 "github.com/identityOrg/oidcsdk/impl/client"
+	"github.com/identityOrg/oidcsdk/impl/sdkerror"
 	"gopkg.in/square/go-jose.v2"
-	sdk "oidcsdk"
-	client2 "oidcsdk/impl/client"
-	"oidcsdk/impl/sdkerror"
 	"time"
 )
 

@@ -2,9 +2,9 @@ package processors
 
 import (
 	"context"
-	sdk "oidcsdk"
-	"oidcsdk/impl/sdkerror"
-	"oidcsdk/util"
+	sdk "github.com/identityOrg/oidcsdk"
+	"github.com/identityOrg/oidcsdk/impl/sdkerror"
+	"github.com/identityOrg/oidcsdk/util"
 	"strings"
 )
 

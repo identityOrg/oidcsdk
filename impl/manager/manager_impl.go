@@ -1,8 +1,8 @@
 package manager
 
 import (
+	sdk "github.com/identityOrg/oidcsdk"
 	"net/http"
-	sdk "oidcsdk"
 )
 
 type (

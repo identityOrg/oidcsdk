@@ -1,7 +1,7 @@
 package oidcsdk
 
 import (
-	"oidcsdk/util"
+	"github.com/identityOrg/oidcsdk/util"
 	"strings"
 )
 

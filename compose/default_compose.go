@@ -1,6 +1,6 @@
 package compose
 
-import "oidcsdk/impl/processors"
+import "github.com/identityOrg/oidcsdk/impl/processors"
 
 func CreateDefaultSequence() []interface{} {
 	var sequence []interface{}

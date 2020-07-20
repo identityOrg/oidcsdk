@@ -1,15 +1,15 @@
 package main
 
 import (
+	sdk "github.com/identityOrg/oidcsdk"
+	"github.com/identityOrg/oidcsdk/compose"
+	"github.com/identityOrg/oidcsdk/example/demosession"
+	"github.com/identityOrg/oidcsdk/example/memdbstore"
+	"github.com/identityOrg/oidcsdk/impl/middleware"
+	"github.com/identityOrg/oidcsdk/impl/strategies"
+	"github.com/identityOrg/oidcsdk/util"
 	"html/template"
 	"net/http"
-	sdk "oidcsdk"
-	"oidcsdk/compose"
-	"oidcsdk/example/demosession"
-	"oidcsdk/example/memdbstore"
-	"oidcsdk/impl/middleware"
-	"oidcsdk/impl/strategies"
-	"oidcsdk/util"
 	"time"
 )
 

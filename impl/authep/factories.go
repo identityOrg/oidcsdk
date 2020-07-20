@@ -2,10 +2,10 @@ package authep
 
 import (
 	"github.com/google/uuid"
+	sdk "github.com/identityOrg/oidcsdk"
+	"github.com/identityOrg/oidcsdk/impl/sdkerror"
+	"github.com/identityOrg/oidcsdk/util"
 	"net/http"
-	sdk "oidcsdk"
-	"oidcsdk/impl/sdkerror"
-	"oidcsdk/util"
 	"strings"
 	"time"
 )

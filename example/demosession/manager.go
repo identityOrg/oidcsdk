@@ -2,9 +2,9 @@ package demosession
 
 import (
 	"github.com/gorilla/sessions"
+	sdk "github.com/identityOrg/oidcsdk"
+	"github.com/identityOrg/oidcsdk/util"
 	"net/http"
-	sdk "oidcsdk"
-	"oidcsdk/util"
 	"strings"
 	"time"
 )

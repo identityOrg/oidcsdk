@@ -1,8 +1,8 @@
 package manager
 
 import (
+	"github.com/identityOrg/oidcsdk/impl/sdkerror"
 	"net/http"
-	"oidcsdk/impl/sdkerror"
 )
 
 func (d *DefaultManager) ProcessAuthorizationEP(w http.ResponseWriter, r *http.Request) {

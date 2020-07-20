@@ -2,8 +2,8 @@ package processors
 
 import (
 	"context"
-	sdk "oidcsdk"
-	"oidcsdk/impl/sdkerror"
+	sdk "github.com/identityOrg/oidcsdk"
+	"github.com/identityOrg/oidcsdk/impl/sdkerror"
 )
 
 type DefaultGrantTypeValidator struct {

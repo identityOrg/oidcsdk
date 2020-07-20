@@ -1,9 +1,9 @@
 package strategies
 
 import (
+	sdk "github.com/identityOrg/oidcsdk"
 	"log"
 	"net/http"
-	sdk "oidcsdk"
 )
 
 func DefaultLoggingErrorStrategy(err error, w http.ResponseWriter) {

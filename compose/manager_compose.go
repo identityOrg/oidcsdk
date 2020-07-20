@@ -1,12 +1,12 @@
 package compose
 
 import (
+	sdk "github.com/identityOrg/oidcsdk"
+	"github.com/identityOrg/oidcsdk/impl/authep"
+	"github.com/identityOrg/oidcsdk/impl/manager"
+	"github.com/identityOrg/oidcsdk/impl/strategies"
+	"github.com/identityOrg/oidcsdk/impl/tokenep"
 	"net/http"
-	sdk "oidcsdk"
-	"oidcsdk/impl/authep"
-	"oidcsdk/impl/manager"
-	"oidcsdk/impl/strategies"
-	"oidcsdk/impl/tokenep"
 )
 
 func DefaultManager(config *sdk.Config, strategy interface{}, args ...interface{}) sdk.IManager {

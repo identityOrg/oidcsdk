@@ -2,9 +2,9 @@ package authep
 
 import (
 	"errors"
+	sdk "github.com/identityOrg/oidcsdk"
 	"net/http"
 	"net/url"
-	sdk "oidcsdk"
 	"strconv"
 )
 
