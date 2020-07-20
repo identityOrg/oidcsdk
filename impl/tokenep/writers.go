@@ -3,7 +3,7 @@ package tokenep
 import (
 	"encoding/json"
 	"net/http"
-	sdk "oauth2-oidc-sdk"
+	sdk "oidcsdk"
 	"strconv"
 	"time"
 )

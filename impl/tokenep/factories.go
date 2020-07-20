@@ -4,9 +4,9 @@ import (
 	"encoding/base64"
 	"github.com/google/uuid"
 	"net/http"
-	sdk "oauth2-oidc-sdk"
-	"oauth2-oidc-sdk/impl/sdkerror"
-	"oauth2-oidc-sdk/util"
+	sdk "oidcsdk"
+	"oidcsdk/impl/sdkerror"
+	"oidcsdk/util"
 	"strings"
 	"time"
 )

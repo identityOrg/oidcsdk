@@ -1,4 +1,4 @@
-package oauth2_oidc_sdk
+package oidcsdk
 
 import "gopkg.in/square/go-jose.v2"
 

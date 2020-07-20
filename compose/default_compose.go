@@ -1,6 +1,6 @@
 package compose
 
-import "oauth2-oidc-sdk/impl/processors"
+import "oidcsdk/impl/processors"
 
 func CreateDefaultSequence() []interface{} {
 	var sequence []interface{}

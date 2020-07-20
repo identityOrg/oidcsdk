@@ -2,7 +2,7 @@ package manager
 
 import (
 	"net/http"
-	sdk "oauth2-oidc-sdk"
+	sdk "oidcsdk"
 )
 
 type (

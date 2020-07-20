@@ -2,7 +2,7 @@ package manager
 
 import (
 	"net/http"
-	"oauth2-oidc-sdk/impl/sdkerror"
+	"oidcsdk/impl/sdkerror"
 )
 
 func (d *DefaultManager) ProcessAuthorizationEP(w http.ResponseWriter, r *http.Request) {

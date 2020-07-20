@@ -2,8 +2,8 @@ package processors
 
 import (
 	"context"
-	sdk "oauth2-oidc-sdk"
-	"oauth2-oidc-sdk/impl/sdkerror"
+	sdk "oidcsdk"
+	"oidcsdk/impl/sdkerror"
 )
 
 type DefaultScopeValidator struct {

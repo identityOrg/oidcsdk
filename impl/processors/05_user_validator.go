@@ -2,9 +2,9 @@ package processors
 
 import (
 	"context"
-	sdk "oauth2-oidc-sdk"
-	"oauth2-oidc-sdk/impl/sdkerror"
-	"oauth2-oidc-sdk/util"
+	sdk "oidcsdk"
+	"oidcsdk/impl/sdkerror"
+	"oidcsdk/util"
 	"strings"
 )
 

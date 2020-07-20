@@ -2,7 +2,7 @@ package authep
 
 import (
 	"net/url"
-	sdk "oauth2-oidc-sdk"
+	sdk "oidcsdk"
 	"time"
 )
 

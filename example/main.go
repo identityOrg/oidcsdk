@@ -3,13 +3,13 @@ package main
 import (
 	"html/template"
 	"net/http"
-	sdk "oauth2-oidc-sdk"
-	"oauth2-oidc-sdk/compose"
-	"oauth2-oidc-sdk/example/demosession"
-	"oauth2-oidc-sdk/example/memdbstore"
-	"oauth2-oidc-sdk/impl/middleware"
-	"oauth2-oidc-sdk/impl/strategies"
-	"oauth2-oidc-sdk/util"
+	sdk "oidcsdk"
+	"oidcsdk/compose"
+	"oidcsdk/example/demosession"
+	"oidcsdk/example/memdbstore"
+	"oidcsdk/impl/middleware"
+	"oidcsdk/impl/strategies"
+	"oidcsdk/util"
 	"time"
 )
 

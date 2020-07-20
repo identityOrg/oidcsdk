@@ -3,8 +3,8 @@ package demosession
 import (
 	"github.com/gorilla/sessions"
 	"net/http"
-	sdk "oauth2-oidc-sdk"
-	"oauth2-oidc-sdk/util"
+	sdk "oidcsdk"
+	"oidcsdk/util"
 	"strings"
 	"time"
 )

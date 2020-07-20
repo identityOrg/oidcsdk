@@ -4,7 +4,7 @@ import (
 	"errors"
 	"net/http"
 	"net/url"
-	sdk "oauth2-oidc-sdk"
+	sdk "oidcsdk"
 	"strconv"
 )
 

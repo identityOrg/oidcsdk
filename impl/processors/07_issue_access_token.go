@@ -2,7 +2,7 @@ package processors
 
 import (
 	"context"
-	sdk "oauth2-oidc-sdk"
+	sdk "oidcsdk"
 	"time"
 )
 

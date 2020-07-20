@@ -1,4 +1,4 @@
-package oauth2_oidc_sdk
+package oidcsdk
 
 const (
 	GrantAuthorizationCode     = "authorization_code"

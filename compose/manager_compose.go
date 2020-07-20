@@ -2,11 +2,11 @@ package compose
 
 import (
 	"net/http"
-	sdk "oauth2-oidc-sdk"
-	"oauth2-oidc-sdk/impl/authep"
-	"oauth2-oidc-sdk/impl/manager"
-	"oauth2-oidc-sdk/impl/strategies"
-	"oauth2-oidc-sdk/impl/tokenep"
+	sdk "oidcsdk"
+	"oidcsdk/impl/authep"
+	"oidcsdk/impl/manager"
+	"oidcsdk/impl/strategies"
+	"oidcsdk/impl/tokenep"
 )
 
 func DefaultManager(config *sdk.Config, strategy interface{}, args ...interface{}) sdk.IManager {

@@ -1,7 +1,7 @@
-package oauth2_oidc_sdk
+package oidcsdk
 
 import (
-	"oauth2-oidc-sdk/util"
+	"oidcsdk/util"
 	"strings"
 )
 

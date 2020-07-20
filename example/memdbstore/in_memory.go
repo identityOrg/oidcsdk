@@ -5,9 +5,9 @@ import (
 	"errors"
 	"github.com/hashicorp/go-memdb"
 	"gopkg.in/square/go-jose.v2"
-	sdk "oauth2-oidc-sdk"
-	client2 "oauth2-oidc-sdk/impl/client"
-	"oauth2-oidc-sdk/impl/sdkerror"
+	sdk "oidcsdk"
+	client2 "oidcsdk/impl/client"
+	"oidcsdk/impl/sdkerror"
 	"time"
 )
 

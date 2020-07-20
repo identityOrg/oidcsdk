@@ -3,7 +3,7 @@ package strategies
 import (
 	"log"
 	"net/http"
-	sdk "oauth2-oidc-sdk"
+	sdk "oidcsdk"
 )
 
 func DefaultLoggingErrorStrategy(err error, w http.ResponseWriter) {

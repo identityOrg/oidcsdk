@@ -2,7 +2,7 @@ package client
 
 import (
 	"gopkg.in/square/go-jose.v2"
-	sdk "oauth2-oidc-sdk"
+	sdk "oidcsdk"
 )
 
 type DefaultClient struct {

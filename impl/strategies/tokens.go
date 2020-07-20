@@ -9,7 +9,7 @@ import (
 	"github.com/google/uuid"
 	"gopkg.in/square/go-jose.v2"
 	"gopkg.in/square/go-jose.v2/jwt"
-	sdk "oauth2-oidc-sdk"
+	sdk "oidcsdk"
 	"time"
 )
 
