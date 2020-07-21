@@ -28,7 +28,7 @@ func (d *DefaultTokenRevocationProcessor) HandleRevocationEP(ctx context.Context
 			return sdkerror.ErrInvalidRequest.WithHint(err.Error())
 		}
 		_, reqID, err := d.TokenStore.GetProfileWithAccessTokenSign(ctx, tokenSign)
-		if err == nil {
+		if err == nil && reqID != "" {
 			err = d.TokenStore.InvalidateWithRequestID(ctx, reqID, sdk.ExpireAccessToken)
 			if err != nil {
 				return sdkerror.ErrServerError.WithHint(err.Error())
@@ -42,7 +42,7 @@ func (d *DefaultTokenRevocationProcessor) HandleRevocationEP(ctx context.Context
 			return sdkerror.ErrInvalidRequest.WithHint(err.Error())
 		}
 		_, reqID, err := d.TokenStore.GetProfileWithRefreshTokenSign(ctx, tokenSign)
-		if err == nil {
+		if err == nil && reqID != "" {
 			err = d.TokenStore.InvalidateWithRequestID(ctx, reqID, sdk.ExpireRefreshToken|sdk.ExpireAccessToken)
 			if err != nil {
 				return sdkerror.ErrServerError.WithHint(err.Error())
