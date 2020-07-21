@@ -6,8 +6,8 @@ import (
 	sdk "github.com/identityOrg/oidcsdk"
 	"github.com/identityOrg/oidcsdk/example/demosession"
 	"github.com/identityOrg/oidcsdk/example/memdbstore"
+	"github.com/identityOrg/oidcsdk/example/secretkey"
 	"github.com/identityOrg/oidcsdk/impl/strategies"
-	"github.com/identityOrg/oidcsdk/util"
 	"golang.org/x/oauth2"
 	"net/http"
 	"net/http/httptest"
@@ -61,13 +61,15 @@ func TestDefaultManager_Client(t *testing.T) {
 func CreateManager() sdk.IManager {
 	config := sdk.NewConfig("http://localhost:8080")
 	config.RefreshTokenEntropy = 0
-	private, public := util.GenerateRSAKeyPair()
 	strategy := strategies.NewDefaultStrategy()
 	sequence := CreateDefaultSequence()
-	sequence = append(sequence, memdbstore.NewInMemoryDB(true), demosession.NewManager("some-secure-key", "demo-session"))
-	got := DefaultManager(config, strategy, sequence...)
+	demoStore := memdbstore.NewInMemoryDB(true)
+	demoSessionManager := demosession.NewManager("some-secure-key", "demo-session")
+	secretKeyStore := secretkey.NewDefaultMemorySecretStore()
+	sequence = append(sequence, demoStore, demoSessionManager, secretKeyStore, strategy)
+	manager := DefaultManager(config, sequence...)
 
-	return got
+	return manager
 }
 
 type Tokens struct {
