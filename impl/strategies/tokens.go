@@ -27,6 +27,8 @@ func NewDefaultStrategy(privateKey *rsa.PrivateKey, publicKey *rsa.PublicKey) *D
 	return &DefaultStrategy{PrivateKey: privateKey, PublicKey: publicKey}
 }
 
+var b64 = base64.URLEncoding.WithPadding(base64.NoPadding)
+
 func (ds *DefaultStrategy) Configure(_ interface{}, config *sdk.Config, _ ...interface{}) {
 	ds.AccessTokenEntropy = config.AccessTokenEntropy
 	ds.AuthorizationCodeEntropy = config.AuthorizationCodeEntropy
@@ -68,12 +70,12 @@ func (ds *DefaultStrategy) GenerateRefreshToken() (token string, signature strin
 }
 
 func (ds *DefaultStrategy) SignRefreshToken(token string) (signature string, err error) {
-	decodeBytes, err := base64.URLEncoding.DecodeString(token)
+	decodeBytes, err := b64.DecodeString(token)
 	if err != nil {
 		return
 	}
 	signedBytes := ds.sigh(decodeBytes)
-	signature = base64.URLEncoding.EncodeToString(signedBytes)
+	signature = b64.EncodeToString(signedBytes)
 	return
 }
 
@@ -82,12 +84,12 @@ func (ds *DefaultStrategy) GenerateAccessToken() (token string, signature string
 }
 
 func (ds *DefaultStrategy) SignAccessToken(token string) (signature string, err error) {
-	decodeBytes, err := base64.URLEncoding.DecodeString(token)
+	decodeBytes, err := b64.DecodeString(token)
 	if err != nil {
 		return
 	}
 	signedBytes := ds.sigh(decodeBytes)
-	signature = base64.URLEncoding.EncodeToString(signedBytes)
+	signature = b64.EncodeToString(signedBytes)
 	return
 }
 
@@ -98,18 +100,18 @@ func (ds *DefaultStrategy) GenerateAuthCode() (code string, signature string) {
 func (ds *DefaultStrategy) generateAndSign(length int) (code string, signature string) {
 	codeBytes := generate(length)
 	signedBytes := ds.sigh(codeBytes)
-	code = base64.URLEncoding.EncodeToString(codeBytes)
-	signature = base64.URLEncoding.EncodeToString(signedBytes)
+	code = b64.EncodeToString(codeBytes)
+	signature = b64.EncodeToString(signedBytes)
 	return
 }
 
 func (ds *DefaultStrategy) SignAuthCode(code string) (signature string, err error) {
-	decodeBytes, err := base64.URLEncoding.DecodeString(code)
+	decodeBytes, err := b64.DecodeString(code)
 	if err != nil {
 		return
 	}
 	signedBytes := ds.sigh(decodeBytes)
-	signature = base64.URLEncoding.EncodeToString(signedBytes)
+	signature = b64.EncodeToString(signedBytes)
 	return
 }
 
