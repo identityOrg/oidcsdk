@@ -16,9 +16,15 @@ type (
 		RedirectErrorWriter                 sdk.RedirectErrorWriter
 		AuthEPHandlers                      []sdk.IAuthEPHandler
 		TokenEPHandlers                     []sdk.ITokenEPHandler
+		IntrospectionEPHandlers             []sdk.IIntrospectionEPHandler
+		RevocationEPHandlers                []sdk.IRevocationEPHandler
 		ErrorStrategy                       sdk.ErrorStrategy
 		UserSessionManager                  sdk.ISessionManager
 		LoginPageHandler                    http.HandlerFunc
 		ConsentPageHandler                  http.HandlerFunc
+		IntrospectionRequestContextFactory  sdk.IntrospectionRequestContextFactory
+		IntrospectionResponseWriter         sdk.IntrospectionResponseWriter
+		RevocationRequestContextFactory     sdk.RevocationRequestContextFactory
+		RevocationResponseWriter            sdk.RevocationResponseWriter
 	}
 )

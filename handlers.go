@@ -10,4 +10,12 @@ type (
 	ITokenEPHandler interface {
 		HandleTokenEP(ctx context.Context, requestContext ITokenRequestContext) IError
 	}
+
+	IIntrospectionEPHandler interface {
+		HandleIntrospectionEP(ctx context.Context, requestContext IIntrospectionRequestContext) IError
+	}
+
+	IRevocationEPHandler interface {
+		HandleRevocationEP(ctx context.Context, requestContext IRevocationRequestContext) IError
+	}
 )

@@ -7,21 +7,15 @@ import (
 func (d *DefaultManager) ProcessTokenEP(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	if tokenRequestContext, iError := d.TokenRequestContextFactory(r); iError != nil {
-		if tokenRequestContext != nil {
-			tokenRequestContext.SetError(iError)
-			err := d.JsonErrorWriter(tokenRequestContext, w, r)
-			if err != nil {
-				d.ErrorStrategy(err, w)
-			}
-		} else {
-			d.ErrorStrategy(iError, w)
+		err := d.JsonErrorWriter(iError, w, r)
+		if err != nil {
+			d.ErrorStrategy(err, w)
 		}
 		return
 	} else {
 		for _, handler := range d.TokenEPHandlers {
 			if iError := handler.HandleTokenEP(ctx, tokenRequestContext); iError != nil {
-				tokenRequestContext.SetError(iError)
-				err := d.JsonErrorWriter(tokenRequestContext, w, r)
+				err := d.JsonErrorWriter(iError, w, r)
 				if err != nil {
 					d.ErrorStrategy(err, w)
 				}

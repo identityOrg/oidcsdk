@@ -9,6 +9,7 @@ import (
 	"github.com/identityOrg/oidcsdk/impl/strategies"
 	"github.com/identityOrg/oidcsdk/util"
 	"html/template"
+	"log"
 	"net/http"
 	"time"
 )
@@ -22,15 +23,17 @@ func main() {
 	demoStore := memdbstore.NewInMemoryDB(true)
 	demoSessionManager := demosession.NewManager("some-secure-key", "demo-session")
 	sequence = append(sequence, demoStore, demoSessionManager)
-	got := compose.DefaultManager(config, strategy, sequence...)
-	compose.SetLoginPageHandler(got, renderLogin)
-	compose.SetConsentPageHandler(got, renderConsent)
+	manager := compose.DefaultManager(config, strategy, sequence...)
+	compose.SetLoginPageHandler(manager, renderLogin)
+	compose.SetConsentPageHandler(manager, renderConsent)
 
-	http.HandleFunc("/token", middleware.NoCache(got.ProcessTokenEP))
-	http.HandleFunc("/authorize", middleware.NoCache(got.ProcessAuthorizationEP))
+	http.HandleFunc("/token", middleware.NoCache(manager.ProcessTokenEP))
+	http.HandleFunc("/authorize", middleware.NoCache(manager.ProcessAuthorizationEP))
+	http.HandleFunc("/introspect", middleware.NoCache(manager.ProcessIntrospectionEP))
+	http.HandleFunc("/revoke", middleware.NoCache(manager.ProcessRevocationEP))
 	http.HandleFunc("/login", middleware.NoCache(processLogin(demoStore, demoSessionManager)))
 
-	_ = http.ListenAndServe("localhost:8080", nil)
+	log.Println(http.ListenAndServe("localhost:8080", nil))
 }
 
 func processLogin(demoStore *memdbstore.InMemoryDB, manager *demosession.Manager) func(writer http.ResponseWriter, request *http.Request) {

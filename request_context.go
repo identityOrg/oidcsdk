@@ -7,6 +7,11 @@ import (
 )
 
 type (
+	IClientCredentialContext interface {
+		GetClientID() string
+		GetClientSecret() string
+		SetClient(client IClient)
+	}
 	IRequestContext interface {
 		GetRequestID() string
 		GetRequestedAt() time.Time
@@ -51,7 +56,7 @@ type (
 	}
 	TokenRequestContextFactory          func(request *http.Request) (ITokenRequestContext, IError)
 	TokenResponseWriter                 func(requestContext ITokenRequestContext, w http.ResponseWriter, r *http.Request) error
-	JsonErrorWriter                     func(requestContext ITokenRequestContext, w http.ResponseWriter, r *http.Request) error
+	JsonErrorWriter                     func(pError IError, w http.ResponseWriter, r *http.Request) error
 	AuthenticationRequestContextFactory func(request *http.Request) (IAuthenticationRequestContext, IError)
 	AuthenticationResponseWriter        func(requestContext IAuthenticationRequestContext, w http.ResponseWriter, r *http.Request) error
 	RedirectErrorWriter                 func(requestContext IAuthenticationRequestContext, w http.ResponseWriter, r *http.Request) error

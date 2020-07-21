@@ -29,8 +29,7 @@ func DefaultTokenResponseWriter(response sdk.ITokenRequestContext, w http.Respon
 	return err
 }
 
-func DefaultJsonErrorWriter(requestContext sdk.ITokenRequestContext, w http.ResponseWriter, _ *http.Request) error {
-	pError := requestContext.GetError()
+func DefaultJsonErrorWriter(pError sdk.IError, w http.ResponseWriter, _ *http.Request) error {
 	w.Header().Set(sdk.HeaderContentType, sdk.ContentTypeJson)
 	w.WriteHeader(pError.GetStatusCode())
 

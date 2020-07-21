@@ -10,6 +10,10 @@ type DefaultClientAuthenticationProcessor struct {
 	ClientStore sdk.IClientStore
 }
 
+func (d *DefaultClientAuthenticationProcessor) HandleIntrospectionEP(ctx context.Context, requestContext sdk.IIntrospectionRequestContext) sdk.IError {
+	return d.authenticateClient(ctx, requestContext)
+}
+
 func (d *DefaultClientAuthenticationProcessor) Configure(_ interface{}, _ *sdk.Config, args ...interface{}) {
 	for _, arg := range args {
 		if cs, ok := arg.(sdk.IClientStore); ok {
@@ -36,6 +40,10 @@ func (d *DefaultClientAuthenticationProcessor) HandleAuthEP(ctx context.Context,
 }
 
 func (d *DefaultClientAuthenticationProcessor) HandleTokenEP(ctx context.Context, requestContext sdk.ITokenRequestContext) sdk.IError {
+	return d.authenticateClient(ctx, requestContext)
+}
+
+func (d *DefaultClientAuthenticationProcessor) authenticateClient(ctx context.Context, requestContext sdk.IClientCredentialContext) sdk.IError {
 	clientId := requestContext.GetClientID()
 	if clientId == "" {
 		return sdkerror.ErrInvalidClient.WithDescription("client id not found in request")

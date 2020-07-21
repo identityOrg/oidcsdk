@@ -12,7 +12,7 @@ type (
 		GetRequestedAt() time.Time
 		GetClientID() string
 		SetClient(client IClient)
-		GetSecret() string
+		GetClientSecret() string
 		GetClient() IClient
 		GetError() IError
 		SetError(err IError)
@@ -23,8 +23,8 @@ type (
 		GetToken() string
 		GetTokenTypeHint() string
 	}
-	RevocationRequestContextFactory func(r *http.Request) (IRevocationRequestContext, IError)
-	RevocationResponseWriter        func(requestContext IRevocationRequestContext, w http.ResponseWriter, r *http.Request) error
+	RevocationRequestContextFactory func(request *http.Request) (IRevocationRequestContext, IError)
+	RevocationResponseWriter        func(requestContext IRevocationRequestContext, writer http.ResponseWriter, request *http.Request) error
 
 	IIntrospectionRequestContext interface {
 		IBaseContext
@@ -32,9 +32,14 @@ type (
 		SetProfile(profile RequestProfile)
 		GetToken() string
 		GetTokenTypeHint() string
+		IsActive() bool
+		SetActive(active bool)
+		GetTokenType() string
+		SetTokenType(tokenType string)
 	}
-	IntrospectionRequestContextFactory func(r *http.Request) (IRevocationRequestContext, IError)
-	IntrospectionResponseWriter        func(requestContext IRevocationRequestContext, w http.ResponseWriter, r *http.Request) error
+	IntrospectionRequestContextFactory func(request *http.Request) (IIntrospectionRequestContext, IError)
+	IntrospectionResponseWriter        func(requestContext IIntrospectionRequestContext, writer http.ResponseWriter, request *http.Request) error
+	BearerErrorResponseWriter          func(writer http.ResponseWriter, request *http.Request) error
 )
 
 //mysqldump --user=root --password=root --result-file=dump.sql --databases db
