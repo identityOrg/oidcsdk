@@ -15,6 +15,7 @@ func CreateDefaultSequence() []interface{} {
 	sequence = append(sequence, &processors.DefaultUserValidator{})
 	sequence = append(sequence, &processors.DefaultClaimProcessor{})
 	sequence = append(sequence, &processors.DefaultTokenIntrospectionProcessor{})
+	sequence = append(sequence, &processors.DefaultTokenRevocationProcessor{})
 	sequence = append(sequence, &processors.DefaultAuthCodeIssuer{})
 	sequence = append(sequence, &processors.DefaultAccessTokenIssuer{})
 	sequence = append(sequence, &processors.DefaultRefreshTokenIssuer{})
