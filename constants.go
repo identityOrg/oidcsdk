@@ -38,3 +38,7 @@ const (
 	HeaderContentType   = "Content-Type"
 	HeaderAuthorization = "Authorization"
 )
+
+const (
+	UrlOidcDiscovery = "/.well-known/openid-configuration"
+)

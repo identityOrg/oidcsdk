@@ -31,6 +31,7 @@ func main() {
 	http.HandleFunc("/authorize", middleware.NoCache(manager.ProcessAuthorizationEP))
 	http.HandleFunc("/introspect", middleware.NoCache(manager.ProcessIntrospectionEP))
 	http.HandleFunc("/revoke", middleware.NoCache(manager.ProcessRevocationEP))
+	http.HandleFunc(sdk.UrlOidcDiscovery, middleware.NoCache(manager.ProcessDiscoveryEP))
 	http.HandleFunc("/login", middleware.NoCache(processLogin(demoStore, demoSessionManager)))
 
 	log.Println(http.ListenAndServe("localhost:8080", nil))

@@ -6,10 +6,11 @@ import (
 
 type (
 	IManager interface {
-		ProcessAuthorizationEP(w http.ResponseWriter, r *http.Request)
-		ProcessTokenEP(w http.ResponseWriter, r *http.Request)
-		ProcessIntrospectionEP(w http.ResponseWriter, r *http.Request)
-		ProcessRevocationEP(w http.ResponseWriter, r *http.Request)
+		ProcessAuthorizationEP(writer http.ResponseWriter, request *http.Request)
+		ProcessTokenEP(writer http.ResponseWriter, request *http.Request)
+		ProcessIntrospectionEP(writer http.ResponseWriter, request *http.Request)
+		ProcessRevocationEP(writer http.ResponseWriter, request *http.Request)
+		ProcessDiscoveryEP(writer http.ResponseWriter, request *http.Request)
 	}
 	ErrorStrategy func(err error, w http.ResponseWriter)
 )
