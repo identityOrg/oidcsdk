@@ -26,5 +26,6 @@ type (
 		IntrospectionResponseWriter         sdk.IntrospectionResponseWriter
 		RevocationRequestContextFactory     sdk.RevocationRequestContextFactory
 		RevocationResponseWriter            sdk.RevocationResponseWriter
+		SecretStore                         sdk.ISecretStore
 	}
 )

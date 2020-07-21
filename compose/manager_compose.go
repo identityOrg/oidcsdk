@@ -48,6 +48,9 @@ func DefaultManager(config *sdk.Config, args ...interface{}) sdk.IManager {
 		if element, ok := arg.(sdk.ISessionManager); ok {
 			dManager.UserSessionManager = element
 		}
+		if element, ok := arg.(sdk.ISecretStore); ok {
+			dManager.SecretStore = element
+		}
 	}
 
 	return &dManager
