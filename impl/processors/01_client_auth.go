@@ -10,6 +10,10 @@ type DefaultClientAuthenticationProcessor struct {
 	ClientStore sdk.IClientStore
 }
 
+func (d *DefaultClientAuthenticationProcessor) HandleRevocationEP(ctx context.Context, requestContext sdk.IRevocationRequestContext) sdk.IError {
+	return d.authenticateClient(ctx, requestContext)
+}
+
 func (d *DefaultClientAuthenticationProcessor) HandleIntrospectionEP(ctx context.Context, requestContext sdk.IIntrospectionRequestContext) sdk.IError {
 	return d.authenticateClient(ctx, requestContext)
 }

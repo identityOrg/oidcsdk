@@ -189,6 +189,11 @@ var (
 		Name:        errJTIKnownName,
 		Code:        http.StatusBadRequest,
 	}
+	ErrUnsupportedTokenType = &SDKError{
+		Name:        errUnsupportedTokenTypeName,
+		Description: "The authorization server does not support the revocation of the presented token type.  That is, the client tried to revoke an access token on a server not supporting this feature.",
+		Code:        http.StatusBadRequest,
+	}
 )
 
 const (
@@ -226,6 +231,7 @@ const (
 	errRequestURINotSupportedName   = "request_uri_not_supported"
 	errRegistrationNotSupportedName = "registration_not_supported"
 	errJTIKnownName                 = "jti_known"
+	errUnsupportedTokenTypeName     = "unsupported_token_type"
 )
 
 func ErrorToSDKError(err error) *SDKError {

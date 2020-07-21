@@ -24,6 +24,9 @@ func DefaultManager(config *sdk.Config, strategy interface{}, args ...interface{
 	dManager.IntrospectionRequestContextFactory = introrevoke.DefaultIntrospectionRequestContextFactory
 	dManager.IntrospectionResponseWriter = introrevoke.DefaultIntrospectionResponseWriter
 
+	dManager.RevocationRequestContextFactory = introrevoke.DefaultRevocationRequestContextFactory
+	dManager.RevocationResponseWriter = introrevoke.DefaultRevocationResponseWriter
+
 	dManager.ErrorStrategy = strategies.DefaultLoggingErrorStrategy
 
 	if configurable, ok := strategy.(sdk.IConfigurable); ok {

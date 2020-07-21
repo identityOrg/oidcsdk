@@ -11,6 +11,8 @@ type (
 		GetRequestID() string
 		GetRequestedAt() time.Time
 		GetClientID() string
+		GetToken() string
+		GetTokenTypeHint() string
 		SetClient(client IClient)
 		GetClientSecret() string
 		GetClient() IClient
@@ -20,8 +22,6 @@ type (
 	}
 	IRevocationRequestContext interface {
 		IBaseContext
-		GetToken() string
-		GetTokenTypeHint() string
 	}
 	RevocationRequestContextFactory func(request *http.Request) (IRevocationRequestContext, IError)
 	RevocationResponseWriter        func(requestContext IRevocationRequestContext, writer http.ResponseWriter, request *http.Request) error
@@ -30,8 +30,6 @@ type (
 		IBaseContext
 		GetProfile() RequestProfile
 		SetProfile(profile RequestProfile)
-		GetToken() string
-		GetTokenTypeHint() string
 		IsActive() bool
 		SetActive(active bool)
 		GetTokenType() string

@@ -50,3 +50,8 @@ type introspectionResponse struct {
 	Issuer    string   `json:"iss,omitempty"`
 	ID        string   `json:"jti,omitempty"`
 }
+
+func DefaultRevocationResponseWriter(requestContext sdk.IRevocationRequestContext, writer http.ResponseWriter, request *http.Request) error {
+	writer.WriteHeader(200)
+	return nil
+}

@@ -20,7 +20,34 @@ func DefaultIntrospectionRequestContextFactory(request *http.Request) (sdk.IIntr
 	requestContext := DefaultIntrospectionRequestContext{}
 
 	ok := false
-	requestContext.ClientID, requestContext.Secret, ok = request.BasicAuth()
+	requestContext.ClientID, requestContext.ClientSecret, ok = request.BasicAuth()
+	if !ok {
+		return nil, sdkerror.ErrRequestUnauthorized.WithHint("missing basic authorization header")
+	}
+
+	requestContext.RequestID = uuid.New().String()
+	requestContext.RequestedAt = time.Now()
+
+	form := request.PostForm
+	requestContext.Token = util.GetAndRemove(form, "token")
+	requestContext.TokenTypeHint = util.GetAndRemove(form, "token_type_hint")
+	requestContext.Form = &form
+
+	return &requestContext, nil
+}
+
+func DefaultRevocationRequestContextFactory(request *http.Request) (sdk.IRevocationRequestContext, sdk.IError) {
+	if request.Method != http.MethodPost {
+		return nil, sdkerror.ErrInvalidRequest.WithHintf("http method %s is not allowed for revocation", request.Method)
+	}
+	err := request.ParseForm()
+	if err != nil {
+		return nil, sdkerror.ErrInvalidRequest.WithHint(err.Error())
+	}
+	requestContext := DefaultRevocationRequestContext{}
+
+	ok := false
+	requestContext.ClientID, requestContext.ClientSecret, ok = request.BasicAuth()
 	if !ok {
 		return nil, sdkerror.ErrRequestUnauthorized.WithHint("missing basic authorization header")
 	}
