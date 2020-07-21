@@ -44,7 +44,15 @@ func (d *DefaultIDTokenIssuer) HandleTokenEP(_ context.Context, requestContext s
 	return nil
 }
 
-func (d *DefaultIDTokenIssuer) Configure(strategy interface{}, config *sdk.Config, _ ...interface{}) {
-	d.IDTokenStrategy = strategy.(sdk.IIDTokenStrategy)
+func (d *DefaultIDTokenIssuer) Configure(config *sdk.Config, args ...interface{}) {
+	for _, arg := range args {
+		if us, ok := arg.(sdk.IIDTokenStrategy); ok {
+			d.IDTokenStrategy = us
+			break
+		}
+	}
+	if d.IDTokenStrategy == nil {
+		panic("failed to initialize DefaultIDTokenIssuer")
+	}
 	d.Lifespan = config.AccessTokenLifespan
 }

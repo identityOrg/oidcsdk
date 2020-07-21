@@ -5,9 +5,9 @@ import (
 	"github.com/identityOrg/oidcsdk/compose"
 	"github.com/identityOrg/oidcsdk/example/demosession"
 	"github.com/identityOrg/oidcsdk/example/memdbstore"
+	"github.com/identityOrg/oidcsdk/example/secretkey"
 	"github.com/identityOrg/oidcsdk/impl/middleware"
 	"github.com/identityOrg/oidcsdk/impl/strategies"
-	"github.com/identityOrg/oidcsdk/util"
 	"html/template"
 	"log"
 	"net/http"
@@ -17,13 +17,13 @@ import (
 func main() {
 	config := sdk.NewConfig("http://localhost:8080")
 	config.RefreshTokenEntropy = 0
-	private, public := util.GenerateRSAKeyPair()
-	strategy := strategies.NewDefaultStrategy(private, public)
+	strategy := strategies.NewDefaultStrategy()
 	sequence := compose.CreateDefaultSequence()
 	demoStore := memdbstore.NewInMemoryDB(true)
 	demoSessionManager := demosession.NewManager("some-secure-key", "demo-session")
-	sequence = append(sequence, demoStore, demoSessionManager)
-	manager := compose.DefaultManager(config, strategy, sequence...)
+	secretKeyStore := secretkey.NewDefaultMemorySecretStore()
+	sequence = append(sequence, demoStore, demoSessionManager, secretKeyStore, strategy)
+	manager := compose.DefaultManager(config, sequence...)
 	compose.SetLoginPageHandler(manager, renderLogin)
 	compose.SetConsentPageHandler(manager, renderConsent)
 

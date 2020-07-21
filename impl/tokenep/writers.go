@@ -2,9 +2,9 @@ package tokenep
 
 import (
 	"encoding/json"
+	"fmt"
 	sdk "github.com/identityOrg/oidcsdk"
 	"net/http"
-	"strconv"
 	"time"
 )
 
@@ -14,7 +14,8 @@ func DefaultTokenResponseWriter(response sdk.ITokenRequestContext, w http.Respon
 	values := make(map[string]string)
 	if tokens.AccessToken != "" {
 		values["access_token"] = tokens.AccessToken
-		values["expires_in"] = strconv.Itoa(tokens.AccessTokenExpiry.UTC().Round(time.Second).Second())
+		expiry := tokens.AccessTokenExpiry.Unix() - time.Now().Unix()
+		values["expires_in"] = fmt.Sprintf("%d", expiry)
 		values["token_type"] = "bearer"
 		values["scope"] = response.GetProfile().GetScope().String()
 	}

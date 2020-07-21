@@ -10,7 +10,7 @@ import (
 	"net/http"
 )
 
-func DefaultManager(config *sdk.Config, strategy interface{}, args ...interface{}) sdk.IManager {
+func DefaultManager(config *sdk.Config, args ...interface{}) sdk.IManager {
 	dManager := manager.DefaultManager{}
 	dManager.Config = config
 	dManager.TokenRequestContextFactory = tokenep.DefaultTokenRequestContextFactory
@@ -29,13 +29,9 @@ func DefaultManager(config *sdk.Config, strategy interface{}, args ...interface{
 
 	dManager.ErrorStrategy = strategies.DefaultLoggingErrorStrategy
 
-	if configurable, ok := strategy.(sdk.IConfigurable); ok {
-		configurable.Configure(strategy, config, args)
-	}
-
 	for _, arg := range args {
 		if configurable, ok := arg.(sdk.IConfigurable); ok {
-			configurable.Configure(strategy, config, args...)
+			configurable.Configure(config, args...)
 		}
 		if element, ok := arg.(sdk.IAuthEPHandler); ok {
 			dManager.AuthEPHandlers = append(dManager.AuthEPHandlers, element)

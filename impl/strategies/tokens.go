@@ -3,9 +3,9 @@ package strategies
 import (
 	"crypto/hmac"
 	rand2 "crypto/rand"
-	"crypto/rsa"
 	"crypto/sha256"
 	"encoding/base64"
+	"fmt"
 	"github.com/google/uuid"
 	sdk "github.com/identityOrg/oidcsdk"
 	"gopkg.in/square/go-jose.v2"
@@ -14,8 +14,7 @@ import (
 )
 
 type DefaultStrategy struct {
-	PrivateKey               *rsa.PrivateKey
-	PublicKey                *rsa.PublicKey
+	SecretStore              sdk.ISecretStore
 	HmacKey                  string
 	AccessTokenEntropy       int
 	AuthorizationCodeEntropy int
@@ -23,29 +22,43 @@ type DefaultStrategy struct {
 	Issuer                   string
 }
 
-func NewDefaultStrategy(privateKey *rsa.PrivateKey, publicKey *rsa.PublicKey) *DefaultStrategy {
-	return &DefaultStrategy{PrivateKey: privateKey, PublicKey: publicKey}
+func NewDefaultStrategy() *DefaultStrategy {
+	return &DefaultStrategy{}
 }
 
 var b64 = base64.URLEncoding.WithPadding(base64.NoPadding)
 
-func (ds *DefaultStrategy) Configure(_ interface{}, config *sdk.Config, _ ...interface{}) {
+func (ds *DefaultStrategy) Configure(config *sdk.Config, args ...interface{}) {
 	ds.AccessTokenEntropy = config.AccessTokenEntropy
 	ds.AuthorizationCodeEntropy = config.AuthorizationCodeEntropy
 	ds.RefreshTokenEntropy = config.RefreshTokenEntropy
 	if ds.HmacKey == "" {
 		ds.HmacKey = uuid.New().String()
 	}
+	for _, arg := range args {
+		if ss, ok := arg.(sdk.ISecretStore); ok {
+			ds.SecretStore = ss
+		}
+	}
 }
 
 func (ds *DefaultStrategy) GenerateIDToken(profile sdk.RequestProfile, client sdk.IClient, expiry time.Time,
 	transactionClaims map[string]interface{}) (idToken string, err error) {
-	key := jose.SigningKey{
+	signingKey := jose.SigningKey{
 		Algorithm: client.GetIDTokenSigningAlg(),
-		Key:       ds.PrivateKey,
+	}
+	keySet := ds.SecretStore.GetAllSecrets()
+	for _, key := range keySet.Keys {
+		if key.Use == "sign" && key.Algorithm == string(client.GetIDTokenSigningAlg()) {
+			signingKey.Key = key
+		}
+	}
+	if signingKey.Key == nil {
+		err = fmt.Errorf("no key available for algorithm %s", client.GetIDTokenSigningAlg())
+		return
 	}
 
-	signer, err := jose.NewSigner(key, (&jose.SignerOptions{}).WithType("JWT"))
+	signer, err := jose.NewSigner(signingKey, (&jose.SignerOptions{}).WithType("JWT"))
 	if err != nil {
 		return
 	}

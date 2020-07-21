@@ -62,7 +62,7 @@ func CreateManager() sdk.IManager {
 	config := sdk.NewConfig("http://localhost:8080")
 	config.RefreshTokenEntropy = 0
 	private, public := util.GenerateRSAKeyPair()
-	strategy := strategies.NewDefaultStrategy(private, public)
+	strategy := strategies.NewDefaultStrategy()
 	sequence := CreateDefaultSequence()
 	sequence = append(sequence, memdbstore.NewInMemoryDB(true), demosession.NewManager("some-secure-key", "demo-session"))
 	got := DefaultManager(config, strategy, sequence...)

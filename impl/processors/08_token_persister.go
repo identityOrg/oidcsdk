@@ -54,7 +54,7 @@ func (d *DefaultTokenPersister) HandleTokenEP(ctx context.Context, requestContex
 	return nil
 }
 
-func (d *DefaultTokenPersister) Configure(_ interface{}, config *sdk.Config, args ...interface{}) {
+func (d *DefaultTokenPersister) Configure(config *sdk.Config, args ...interface{}) {
 	d.GlobalConsentRequired = config.GlobalConsentRequired
 	for _, arg := range args {
 		if ts, ok := arg.(sdk.ITokenStore); ok {

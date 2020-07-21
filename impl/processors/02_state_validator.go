@@ -10,7 +10,7 @@ type DefaultStateValidator struct {
 	StateParamMinimumEntropy int
 }
 
-func (d *DefaultStateValidator) Configure(_ interface{}, config *sdk.Config, _ ...interface{}) {
+func (d *DefaultStateValidator) Configure(config *sdk.Config, _ ...interface{}) {
 	d.StateParamMinimumEntropy = config.StateParamMinimumEntropy
 }
 

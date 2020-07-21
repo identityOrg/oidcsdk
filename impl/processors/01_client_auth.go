@@ -18,7 +18,7 @@ func (d *DefaultClientAuthenticationProcessor) HandleIntrospectionEP(ctx context
 	return d.authenticateClient(ctx, requestContext)
 }
 
-func (d *DefaultClientAuthenticationProcessor) Configure(_ interface{}, _ *sdk.Config, args ...interface{}) {
+func (d *DefaultClientAuthenticationProcessor) Configure(_ *sdk.Config, args ...interface{}) {
 	for _, arg := range args {
 		if cs, ok := arg.(sdk.IClientStore); ok {
 			d.ClientStore = cs

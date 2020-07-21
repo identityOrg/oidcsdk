@@ -2,10 +2,11 @@ package authep
 
 import (
 	"errors"
+	"fmt"
 	sdk "github.com/identityOrg/oidcsdk"
 	"net/http"
 	"net/url"
-	"strconv"
+	"time"
 )
 
 func DefaultAuthenticationResponseWriter(requestContext sdk.IAuthenticationRequestContext, w http.ResponseWriter, r *http.Request) error {
@@ -38,7 +39,8 @@ func buildSuccessResponseForm(requestContext sdk.IAuthenticationRequestContext) 
 	tokens := requestContext.GetIssuedTokens()
 	if tokens.AccessToken != "" {
 		form.Add("access_token", tokens.AccessToken)
-		form.Add("expires_in", strconv.FormatInt(tokens.AccessTokenExpiry.Unix(), 10))
+		expiry := tokens.AccessTokenExpiry.Unix() - time.Now().Unix()
+		form.Add("expires_in", fmt.Sprintf("%d", expiry))
 		form.Add("type", "bearer")
 	}
 	if tokens.AuthorizationCode != "" {

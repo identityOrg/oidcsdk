@@ -41,7 +41,7 @@ func (d *DefaultClaimProcessor) HandleAuthEP(ctx context.Context, requestContext
 	return nil
 }
 
-func (d *DefaultClaimProcessor) Configure(_ interface{}, _ *sdk.Config, args ...interface{}) {
+func (d *DefaultClaimProcessor) Configure(_ *sdk.Config, args ...interface{}) {
 	for _, arg := range args {
 		if us, ok := arg.(sdk.IUserStore); ok {
 			d.UserStore = us

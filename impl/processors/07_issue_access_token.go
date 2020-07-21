@@ -27,7 +27,12 @@ func (d *DefaultAccessTokenIssuer) HandleTokenEP(_ context.Context, requestConte
 	return nil
 }
 
-func (d *DefaultAccessTokenIssuer) Configure(strategy interface{}, config *sdk.Config, _ ...interface{}) {
-	d.AccessTokenStrategy = strategy.(sdk.IAccessTokenStrategy)
+func (d *DefaultAccessTokenIssuer) Configure(config *sdk.Config, args ...interface{}) {
+	for _, arg := range args {
+		if us, ok := arg.(sdk.IAccessTokenStrategy); ok {
+			d.AccessTokenStrategy = us
+			break
+		}
+	}
 	d.Lifespan = config.AccessTokenLifespan
 }

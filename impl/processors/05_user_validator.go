@@ -87,7 +87,7 @@ func (d *DefaultUserValidator) HandleTokenEP(ctx context.Context, requestContext
 	return nil
 }
 
-func (d *DefaultUserValidator) Configure(_ interface{}, config *sdk.Config, args ...interface{}) {
+func (d *DefaultUserValidator) Configure(config *sdk.Config, args ...interface{}) {
 	d.GlobalConsentRequired = config.GlobalConsentRequired
 	for _, arg := range args {
 		if us, ok := arg.(sdk.IUserStore); ok {

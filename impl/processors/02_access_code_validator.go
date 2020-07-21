@@ -32,15 +32,16 @@ func (d *DefaultAccessCodeValidator) HandleTokenEP(ctx context.Context, requestC
 	return nil
 }
 
-func (d *DefaultAccessCodeValidator) Configure(strategy interface{}, _ *sdk.Config, args ...interface{}) {
-	d.AuthCodeStrategy = strategy.(sdk.IAuthorizationCodeStrategy)
+func (d *DefaultAccessCodeValidator) Configure(_ *sdk.Config, args ...interface{}) {
 	for _, arg := range args {
 		if ts, ok := arg.(sdk.ITokenStore); ok {
 			d.TokenStore = ts
-			break
+		}
+		if ts, ok := arg.(sdk.IAuthorizationCodeStrategy); ok {
+			d.AuthCodeStrategy = ts
 		}
 	}
-	if d.TokenStore == nil {
+	if d.TokenStore == nil || d.AuthCodeStrategy == nil {
 		panic("failed in init of DefaultAccessCodeValidator")
 	}
 }

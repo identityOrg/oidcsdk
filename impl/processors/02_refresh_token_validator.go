@@ -32,15 +32,16 @@ func (d *DefaultRefreshTokenValidator) HandleTokenEP(ctx context.Context, reques
 	return nil
 }
 
-func (d *DefaultRefreshTokenValidator) Configure(strategy interface{}, _ *sdk.Config, args ...interface{}) {
-	d.RefreshTokenStrategy = strategy.(sdk.IRefreshTokenStrategy)
+func (d *DefaultRefreshTokenValidator) Configure(_ *sdk.Config, args ...interface{}) {
 	for _, arg := range args {
 		if ts, ok := arg.(sdk.ITokenStore); ok {
 			d.TokenStore = ts
-			break
+		}
+		if us, ok := arg.(sdk.IRefreshTokenStrategy); ok {
+			d.RefreshTokenStrategy = us
 		}
 	}
-	if d.TokenStore == nil {
+	if d.TokenStore == nil || d.RefreshTokenStrategy == nil {
 		panic("failed in init of DefaultRefreshTokenValidator")
 	}
 }

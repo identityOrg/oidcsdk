@@ -79,7 +79,7 @@ func (i *InMemoryDB) FetchClientProfile(ctx context.Context, username string) sd
 	return profile
 }
 
-func (i *InMemoryDB) Configure(interface{}, *sdk.Config, ...interface{}) {
+func (i *InMemoryDB) Configure(*sdk.Config, ...interface{}) {
 	db, err := memdb.NewMemDB(schema)
 	if err != nil {
 		panic("failed to init InMemoryDB" + err.Error())

@@ -22,7 +22,15 @@ func (d *DefaultRefreshTokenIssuer) HandleTokenEP(_ context.Context, requestCont
 	return nil
 }
 
-func (d *DefaultRefreshTokenIssuer) Configure(strategy interface{}, config *sdk.Config, _ ...interface{}) {
-	d.RefreshTokenStrategy = strategy.(sdk.IRefreshTokenStrategy)
+func (d *DefaultRefreshTokenIssuer) Configure(config *sdk.Config, args ...interface{}) {
+	for _, arg := range args {
+		if us, ok := arg.(sdk.IRefreshTokenStrategy); ok {
+			d.RefreshTokenStrategy = us
+			break
+		}
+	}
+	if d.RefreshTokenStrategy == nil {
+		panic("failed to initialize DefaultRefreshTokenIssuer")
+	}
 	d.Lifespan = config.RefreshTokenLifespan
 }

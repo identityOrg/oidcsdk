@@ -1,6 +1,9 @@
 package oidcsdk
 
-import "context"
+import (
+	"context"
+	"gopkg.in/square/go-jose.v2"
+)
 
 type (
 	ITokenStore interface {
@@ -28,6 +31,10 @@ type (
 		StartTransaction(ctx context.Context)
 		CommitTransaction(ctx context.Context)
 		RollbackTransaction(ctx context.Context)
+	}
+
+	ISecretStore interface {
+		GetAllSecrets() *jose.JSONWebKeySet
 	}
 )
 

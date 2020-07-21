@@ -17,7 +17,7 @@ type (
 		GlobalConsentRequired    bool
 	}
 	IConfigurable interface {
-		Configure(strategy interface{}, config *Config, arg ...interface{})
+		Configure(config *Config, arg ...interface{})
 	}
 
 	IError interface {

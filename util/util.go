@@ -40,8 +40,8 @@ func GetAndRemove(values url.Values, key string) string {
 	return values.Get(key)
 }
 
-func GenerateRSAKeyPair() (*rsa.PrivateKey, *rsa.PublicKey) {
-	key, err := rsa.GenerateKey(rand2.Reader, 2048)
+func GenerateRSAKeyPair(size int) (*rsa.PrivateKey, *rsa.PublicKey) {
+	key, err := rsa.GenerateKey(rand2.Reader, size)
 	if err != nil {
 		panic(err)
 	}
