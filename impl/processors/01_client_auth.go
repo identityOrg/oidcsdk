@@ -40,6 +40,7 @@ func (d *DefaultClientAuthenticationProcessor) HandleAuthEP(ctx context.Context,
 		return sdkerror.ErrInvalidClient.WithDescription(err.Error())
 	}
 	requestContext.SetClient(client)
+	requestContext.GetProfile().SetClientID(clientId)
 	return nil
 }
 

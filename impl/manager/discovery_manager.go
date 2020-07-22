@@ -33,7 +33,10 @@ func (d *DefaultManager) ProcessDiscoveryEP(writer http.ResponseWriter, _ *http.
 
 	writer.Header().Add(sdk.HeaderContentType, sdk.ContentTypeJson)
 	writer.WriteHeader(http.StatusOK)
-	log.Print(json.NewEncoder(writer).Encode(metadata))
+	err = json.NewEncoder(writer).Encode(metadata)
+	if err != nil {
+		log.Println(err)
+	}
 }
 
 func combinePath(issuerUrl url.URL, appendPath string) string {

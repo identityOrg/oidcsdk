@@ -19,6 +19,8 @@ func (d *DefaultIDTokenIssuer) HandleAuthEP(_ context.Context, requestContext sd
 		expiry := requestContext.GetRequestedAt().UTC().Add(d.Lifespan).Round(time.Second)
 		profile := requestContext.GetProfile()
 		client := requestContext.GetClient()
+		nonce := requestContext.GetNonce()
+		profile.SetNonce(nonce)
 		var tClaims map[string]interface{}
 		token, err := d.IDTokenStrategy.GenerateIDToken(profile, client, expiry, tClaims)
 		if err != nil {

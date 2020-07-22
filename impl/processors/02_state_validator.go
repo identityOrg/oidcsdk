@@ -19,6 +19,7 @@ func (d *DefaultStateValidator) HandleAuthEP(_ context.Context, requestContext s
 		return sdkerror.ErrInsufficientEntropy.WithHintf("state parameter entropy is less then %d",
 			d.StateParamMinimumEntropy)
 	}
+	requestContext.GetProfile().SetState(requestContext.GetState())
 	return nil
 }
 

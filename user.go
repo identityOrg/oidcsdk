@@ -20,11 +20,11 @@ func (r RequestProfile) SetUsername(username string) {
 }
 
 func (r RequestProfile) GetClientID() string {
-	return r["username"]
+	return r["client_id"]
 }
 
 func (r RequestProfile) SetClientID(username string) {
-	r["username"] = username
+	r["client_id"] = username
 }
 
 func (r RequestProfile) GetState() string {

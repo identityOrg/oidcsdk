@@ -79,6 +79,7 @@ func (d *DefaultUserValidator) HandleTokenEP(ctx context.Context, requestContext
 		profile := requestContext.GetProfile()
 		user := d.UserStore.FetchUserProfile(ctx, username)
 		profile.SetUsername(user.GetUsername())
+		profile.SetScope(requestContext.GetRequestedScopes())
 	} else if grantType == sdk.GrantClientCredentials {
 		profile := requestContext.GetProfile()
 		client := d.ClientStore.FetchClientProfile(ctx, requestContext.GetClientID())

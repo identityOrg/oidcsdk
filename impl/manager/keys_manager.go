@@ -16,5 +16,8 @@ func (d *DefaultManager) ProcessKeysEP(writer http.ResponseWriter, _ *http.Reque
 	for _, key := range secrets.Keys {
 		publicKeys.Keys = append(publicKeys.Keys, key.Public())
 	}
-	log.Println(json.NewEncoder(writer).Encode(publicKeys))
+	err := json.NewEncoder(writer).Encode(publicKeys)
+	if err != nil {
+		log.Println(err)
+	}
 }

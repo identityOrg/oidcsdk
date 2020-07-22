@@ -11,6 +11,7 @@ func CreateDefaultSequence() []interface{} {
 	sequence = append(sequence, &processors.DefaultAccessCodeValidator{})
 	sequence = append(sequence, &processors.DefaultRefreshTokenValidator{})
 	sequence = append(sequence, &processors.DefaultRedirectURIValidator{})
+	sequence = append(sequence, &processors.DefaultAudienceValidationProcessor{})
 	sequence = append(sequence, &processors.DefaultScopeValidator{})
 	sequence = append(sequence, &processors.DefaultUserValidator{})
 	sequence = append(sequence, &processors.DefaultClaimProcessor{})

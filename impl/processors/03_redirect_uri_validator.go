@@ -32,12 +32,15 @@ func (d *DefaultRedirectURIValidator) HandleAuthEP(_ context.Context, requestCon
 		redirectURI := requestContext.GetRedirectURI()
 		if redirectURI == "" && !oidc {
 			if len(client.GetRedirectURIs()) > 0 {
-				requestContext.SetRedirectURI(client.GetRedirectURIs()[0])
+				derivedRedirectUri := client.GetRedirectURIs()[0]
+				requestContext.SetRedirectURI(derivedRedirectUri)
+				requestContext.GetProfile().SetRedirectURI(derivedRedirectUri)
 				return nil
 			}
 		}
 		for _, uri := range client.GetRedirectURIs() {
 			if redirectURI == uri {
+				requestContext.GetProfile().SetRedirectURI(redirectURI)
 				return nil
 			}
 		}

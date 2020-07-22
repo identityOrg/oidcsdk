@@ -10,24 +10,21 @@ type DefaultScopeValidator struct {
 }
 
 func (d *DefaultScopeValidator) HandleAuthEP(_ context.Context, requestContext sdk.IAuthenticationRequestContext) sdk.IError {
-	if client := requestContext.GetClient(); client == nil {
-		return sdkerror.ErrUnauthorizedClient.WithDescription("client not resolved")
-	} else {
-		requestedScopes := requestContext.GetRequestedScopes()
-		approvedScopes := client.GetApprovedScopes()
-		for _, scope := range requestedScopes {
-			found := false
-			for _, approved := range approvedScopes {
-				if scope == approved {
-					found = true
-				}
-			}
-			if !found {
-				return sdkerror.ErrInvalidScope.WithDescription("un-approved or invalid scope requested")
+	client := requestContext.GetClient()
+	requestedScopes := requestContext.GetRequestedScopes()
+	approvedScopes := client.GetApprovedScopes()
+	for _, scope := range requestedScopes {
+		found := false
+		for _, approved := range approvedScopes {
+			if scope == approved {
+				found = true
 			}
 		}
-		return nil
+		if !found {
+			return sdkerror.ErrInvalidScope.WithDescription("un-approved or invalid scope requested")
+		}
 	}
+	return nil
 }
 
 func (d *DefaultScopeValidator) HandleTokenEP(_ context.Context, requestContext sdk.ITokenRequestContext) sdk.IError {
