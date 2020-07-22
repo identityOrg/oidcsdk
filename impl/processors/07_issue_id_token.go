@@ -15,12 +15,11 @@ type DefaultIDTokenIssuer struct {
 func (d *DefaultIDTokenIssuer) HandleAuthEP(_ context.Context, requestContext sdk.IAuthenticationRequestContext) sdk.IError {
 	idTokenRequired := requestContext.GetResponseType().Has(sdk.ResponseTypeIdToken)
 	openID := requestContext.GetProfile().GetScope().Has(sdk.ScopeOpenid)
+	profile := requestContext.GetProfile()
+	profile.SetNonce(requestContext.GetNonce())
 	if openID && idTokenRequired {
 		expiry := requestContext.GetRequestedAt().UTC().Add(d.Lifespan).Round(time.Second)
-		profile := requestContext.GetProfile()
 		client := requestContext.GetClient()
-		nonce := requestContext.GetNonce()
-		profile.SetNonce(nonce)
 		var tClaims map[string]interface{}
 		token, err := d.IDTokenStrategy.GenerateIDToken(profile, client, expiry, tClaims)
 		if err != nil {

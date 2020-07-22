@@ -16,7 +16,7 @@ func (d *DefaultRefreshTokenIssuer) HandleTokenEP(_ context.Context, requestCont
 	refreshGrant := requestContext.GetClient().GetApprovedGrantTypes().Has(sdk.GrantRefreshToken)
 	if refreshScope || refreshGrant {
 		token, signature := d.RefreshTokenStrategy.GenerateRefreshToken()
-		expiry := requestContext.GetRequestedAt().UTC().Add(d.Lifespan).Round(time.Second)
+		expiry := requestContext.GetRequestedAt().Add(d.Lifespan).Round(time.Second)
 		requestContext.IssueRefreshToken(token, signature, expiry)
 	}
 	return nil

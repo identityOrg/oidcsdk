@@ -13,7 +13,7 @@ type DefaultAuthCodeIssuer struct {
 
 func (d *DefaultAuthCodeIssuer) HandleAuthEP(_ context.Context, requestContext sdk.IAuthenticationRequestContext) sdk.IError {
 	if requestContext.GetResponseType().Has(sdk.ResponseTypeCode) {
-		expiry := requestContext.GetRequestedAt().UTC().Add(d.Lifespan).Round(time.Second)
+		expiry := requestContext.GetRequestedAt().Add(d.Lifespan).Round(time.Second)
 		code, signature := d.AuthCodeStrategy.GenerateAuthCode()
 		requestContext.IssueAuthorizationCode(code, signature, expiry)
 	}

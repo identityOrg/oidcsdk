@@ -14,7 +14,7 @@ type DefaultAccessTokenIssuer struct {
 func (d *DefaultAccessTokenIssuer) HandleAuthEP(_ context.Context, requestContext sdk.IAuthenticationRequestContext) sdk.IError {
 	if requestContext.GetResponseType().Has(sdk.ResponseTypeToken) {
 		token, signature := d.AccessTokenStrategy.GenerateAccessToken()
-		expiry := requestContext.GetRequestedAt().UTC().Add(d.Lifespan).Round(time.Second)
+		expiry := requestContext.GetRequestedAt().Add(d.Lifespan).Round(time.Second)
 		requestContext.IssueAccessToken(token, signature, expiry)
 	}
 	return nil
@@ -22,7 +22,7 @@ func (d *DefaultAccessTokenIssuer) HandleAuthEP(_ context.Context, requestContex
 
 func (d *DefaultAccessTokenIssuer) HandleTokenEP(_ context.Context, requestContext sdk.ITokenRequestContext) sdk.IError {
 	token, signature := d.AccessTokenStrategy.GenerateAccessToken()
-	expiry := requestContext.GetRequestedAt().UTC().Add(d.Lifespan).Round(time.Second)
+	expiry := requestContext.GetRequestedAt().Add(d.Lifespan).Round(time.Second)
 	requestContext.IssueAccessToken(token, signature, expiry)
 	return nil
 }
