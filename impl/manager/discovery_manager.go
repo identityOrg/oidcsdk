@@ -17,12 +17,12 @@ func (d *DefaultManager) ProcessDiscoveryEP(writer http.ResponseWriter, _ *http.
 	}
 	metadata := DiscoveryMetadata{
 		Issuer:                            issuerUrl.String(),
-		AuthorizationEndpoint:             combinePath(*issuerUrl, "authorize"),
-		TokenEndpoint:                     combinePath(*issuerUrl, "token"),
-		IntrospectionEndpoint:             combinePath(*issuerUrl, "introspect"),
-		RevocationEndpoint:                combinePath(*issuerUrl, "revoke"),
-		UserInfoEndpoint:                  combinePath(*issuerUrl, "me"),
-		JwksUri:                           combinePath(*issuerUrl, "keys"),
+		AuthorizationEndpoint:             combinePath(*issuerUrl, "oauth2/authorize"),
+		TokenEndpoint:                     combinePath(*issuerUrl, "oauth2/token"),
+		IntrospectionEndpoint:             combinePath(*issuerUrl, "oauth2/introspect"),
+		RevocationEndpoint:                combinePath(*issuerUrl, "oauth2/revoke"),
+		UserInfoEndpoint:                  combinePath(*issuerUrl, "oauth2/me"),
+		JwksUri:                           combinePath(*issuerUrl, "oauth2/keys"),
 		SubjectTypesSupported:             []string{"public"},
 		GrantTypesSupported:               []string{"authorization_code", "password", "refresh_token", "client_credentials", "implicit"},
 		ResponseModesSupported:            []string{"query", "fragment"},

@@ -27,19 +27,14 @@ func main() {
 	compose.SetLoginPageHandler(manager, renderLogin)
 	compose.SetConsentPageHandler(manager, renderConsent)
 
-	http.HandleFunc("/token", middleware.NoCache(manager.ProcessTokenEP))
-	http.HandleFunc("/authorize", middleware.NoCache(manager.ProcessAuthorizationEP))
-	http.HandleFunc("/introspect", middleware.NoCache(manager.ProcessIntrospectionEP))
-	http.HandleFunc("/revoke", middleware.NoCache(manager.ProcessRevocationEP))
-	http.HandleFunc("/keys", middleware.NoCache(manager.ProcessKeysEP))
-	http.HandleFunc(sdk.UrlOidcDiscovery, middleware.NoCache(manager.ProcessDiscoveryEP))
-	http.HandleFunc("/login", middleware.NoCache(processLogin(demoStore, demoSessionManager)))
+	router := compose.CreateNewRouter(manager)
+	router.Methods(http.MethodPost).Path("/login").Handler(middleware.NoCache(processLogin(demoStore, demoSessionManager)))
 
-	log.Println(http.ListenAndServe("localhost:8080", nil))
+	log.Println(http.ListenAndServe("localhost:8080", router))
 }
 
-func processLogin(demoStore *memdbstore.InMemoryDB, manager *demosession.Manager) func(writer http.ResponseWriter, request *http.Request) {
-	return func(writer http.ResponseWriter, request *http.Request) {
+func processLogin(demoStore *memdbstore.InMemoryDB, manager *demosession.Manager) http.Handler {
+	return http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
 		_ = request.ParseForm()
 		username := request.PostForm.Get("username")
 		password := request.PostForm.Get("password")
@@ -60,10 +55,10 @@ func processLogin(demoStore *memdbstore.InMemoryDB, manager *demosession.Manager
 				http.Redirect(writer, request, requestUrl, http.StatusFound)
 			}
 		}
-	}
+	})
 }
 
-func renderConsent(writer http.ResponseWriter, request *http.Request) {
+func renderConsent(writer http.ResponseWriter, _ *http.Request) {
 	writer.Header().Set(sdk.HeaderContentType, sdk.ContentTypeHtml)
 	writer.WriteHeader(200)
 	_, _ = writer.Write([]byte(ConsentPage))
