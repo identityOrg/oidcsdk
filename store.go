@@ -3,6 +3,7 @@ package oidcsdk
 import (
 	"context"
 	"gopkg.in/square/go-jose.v2"
+	"time"
 )
 
 type (
@@ -12,6 +13,16 @@ type (
 		GetProfileWithAccessTokenSign(ctx context.Context, signature string) (profile RequestProfile, reqId string, err error)
 		GetProfileWithRefreshTokenSign(ctx context.Context, signature string) (profile RequestProfile, reqId string, err error)
 		InvalidateWithRequestID(ctx context.Context, reqID string, what uint8) (err error)
+	}
+
+	ITokenStoreNew interface {
+		StoreAuthorizationCode(ctx context.Context, reqId string, sign string, expiry time.Time, profile RequestProfile) (err error)
+		StoreAccessToken(ctx context.Context, reqId string, sign string, expiry time.Time, profile RequestProfile) (err error)
+		StoreRefreshToken(ctx context.Context, reqId string, sign string, expiry time.Time, profile RequestProfile) (err error)
+		InvalidateAuthorizationCode(ctx context.Context, reqId string) (err error)
+		InvalidateAccessToken(ctx context.Context, reqId string) (err error)
+		InvalidateRefreshToken(ctx context.Context, reqId string) (err error)
+		FindAuthorizationCode(ctx context.Context, sign string)
 	}
 
 	IUserStore interface {

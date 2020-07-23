@@ -86,3 +86,19 @@ func (r RequestProfile) GetDomain() string {
 func (r RequestProfile) SetDomain(domain string) {
 	r["domain"] = domain
 }
+
+func (r RequestProfile) GetCodeChallenge() string {
+	return r["code_challenge"]
+}
+
+func (r RequestProfile) SetCodeChallenge(challenge string) {
+	r["code_challenge"] = challenge
+}
+
+func (r RequestProfile) GetCodeChallengeMethod() string {
+	return r["code_challenge_method"]
+}
+
+func (r RequestProfile) SetCodeChallengeMethod(challengeMethod string) {
+	r["code_challenge_method"] = challengeMethod
+}

@@ -1,7 +1,6 @@
 package tokenep
 
 import (
-	"encoding/base64"
 	"github.com/google/uuid"
 	sdk "github.com/identityOrg/oidcsdk"
 	"github.com/identityOrg/oidcsdk/impl/sdkerror"
@@ -35,20 +34,12 @@ func DefaultTokenRequestContextFactory(r *http.Request) (sdk.ITokenRequestContex
 	reqStruct.ClientSecret = util.GetAndRemove(form, "client_secret")
 
 	// check basic authorization
-	authorization := r.Header.Get(sdk.HeaderAuthorization)
-	parts := strings.SplitN(authorization, " ", 2)
-	if strings.ToLower(parts[0]) == "basic" && len(parts) == 2 {
-		decodeString, err := base64.StdEncoding.DecodeString(parts[1])
-		if err != nil {
-			return nil, sdkerror.ErrInvalidRequest.WithDescription(err.Error())
-		}
-		parts = strings.SplitN(string(decodeString), ":", 2)
-		if len(parts) != 2 {
-			return nil, sdkerror.ErrInvalidRequest.WithDescription("invalid basic authorization header")
-		}
-		reqStruct.ClientId = parts[0]
-		reqStruct.ClientSecret = parts[1]
+	var ok bool
+	if reqStruct.ClientId, reqStruct.ClientSecret, ok = r.BasicAuth(); !ok {
+		return nil, sdkerror.ErrUnauthorizedClient.WithHint("client authorization basic header not found")
 	}
+
+	reqStruct.Form = &form
 
 	reqStruct.RequestID = uuid.New().String()
 	reqStruct.RequestedAt = time.Now()

@@ -15,6 +15,7 @@ type (
 		RefreshTokenEntropy      int
 		StateParamMinimumEntropy int
 		GlobalConsentRequired    bool
+		PKCEPlainEnabled         bool
 	}
 	IConfigurable interface {
 		Configure(config *Config, arg ...interface{})
@@ -42,5 +43,6 @@ func NewConfig(issuer string) *Config {
 	config.AccessTokenLifespan = time.Minute * 60
 	config.RefreshTokenLifespan = time.Hour * 24 * 30
 	config.GlobalConsentRequired = true
+	config.PKCEPlainEnabled = true
 	return config
 }
