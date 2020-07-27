@@ -2,30 +2,20 @@ package compose
 
 import (
 	sdk "github.com/identityOrg/oidcsdk"
-	"github.com/identityOrg/oidcsdk/impl/authep"
-	"github.com/identityOrg/oidcsdk/impl/introrevoke"
+	"github.com/identityOrg/oidcsdk/impl/factories"
 	"github.com/identityOrg/oidcsdk/impl/manager"
 	"github.com/identityOrg/oidcsdk/impl/strategies"
-	"github.com/identityOrg/oidcsdk/impl/tokenep"
+	"github.com/identityOrg/oidcsdk/impl/writers"
 	"net/http"
 )
 
 func DefaultManager(config *sdk.Config, args ...interface{}) sdk.IManager {
 	dManager := manager.DefaultManager{}
 	dManager.Config = config
-	dManager.TokenRequestContextFactory = tokenep.DefaultTokenRequestContextFactory
-	dManager.TokenResponseWriter = tokenep.DefaultTokenResponseWriter
-	dManager.JsonErrorWriter = tokenep.DefaultJsonErrorWriter
 
-	dManager.AuthenticationRequestContextFactory = authep.DefaultAuthenticationRequestContextFactory
-	dManager.AuthenticationResponseWriter = authep.DefaultAuthenticationResponseWriter
-	dManager.RedirectErrorWriter = authep.DefaultRedirectErrorWriter
-
-	dManager.IntrospectionRequestContextFactory = introrevoke.DefaultIntrospectionRequestContextFactory
-	dManager.IntrospectionResponseWriter = introrevoke.DefaultIntrospectionResponseWriter
-
-	dManager.RevocationRequestContextFactory = introrevoke.DefaultRevocationRequestContextFactory
-	dManager.RevocationResponseWriter = introrevoke.DefaultRevocationResponseWriter
+	dManager.ErrorWriter = writers.NewDefaultErrorWriter()
+	dManager.ResponseWriter = writers.NewDefaultResponseWriter()
+	dManager.RequestContextFactory = factories.NewDefaultRequestContextFactory()
 
 	dManager.ErrorStrategy = strategies.DefaultLoggingErrorStrategy
 
@@ -50,6 +40,15 @@ func DefaultManager(config *sdk.Config, args ...interface{}) sdk.IManager {
 		}
 		if element, ok := arg.(sdk.ISecretStore); ok {
 			dManager.SecretStore = element
+		}
+		if element, ok := arg.(sdk.IRequestContextFactory); ok {
+			dManager.RequestContextFactory = element
+		}
+		if element, ok := arg.(sdk.IResponseWriter); ok {
+			dManager.ResponseWriter = element
+		}
+		if element, ok := arg.(sdk.IErrorWriter); ok {
+			dManager.ErrorWriter = element
 		}
 	}
 

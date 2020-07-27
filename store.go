@@ -16,13 +16,32 @@ type (
 	}
 
 	ITokenStoreNew interface {
-		StoreAuthorizationCode(ctx context.Context, reqId string, sign string, expiry time.Time, profile RequestProfile) (err error)
-		StoreAccessToken(ctx context.Context, reqId string, sign string, expiry time.Time, profile RequestProfile) (err error)
-		StoreRefreshToken(ctx context.Context, reqId string, sign string, expiry time.Time, profile RequestProfile) (err error)
-		InvalidateAuthorizationCode(ctx context.Context, reqId string) (err error)
-		InvalidateAccessToken(ctx context.Context, reqId string) (err error)
-		InvalidateRefreshToken(ctx context.Context, reqId string) (err error)
-		FindAuthorizationCode(ctx context.Context, sign string)
+		IAuthorizationCodeStore
+		IAccessTokenStore
+		IRefreshTokenStore
+		IJTIStore
+	}
+
+	IAuthorizationCodeStore interface {
+		StoreAuthorizationCode(ctx context.Context, sign string, expiry time.Time, profile RequestProfile) (err error)
+		FindAuthorizationCode(ctx context.Context, sign string) (profile RequestProfile, expiry time.Time, err error)
+		InvalidateAuthorizationCode(ctx context.Context, sign string) (err error)
+	}
+
+	IAccessTokenStore interface {
+		StoreAccessToken(ctx context.Context, sign string, expiry time.Time, profile RequestProfile) (err error)
+		FindAccessToken(ctx context.Context, sign string) (profile RequestProfile, expiry time.Time, err error)
+		InvalidateAccessToken(ctx context.Context, sign string) (err error)
+	}
+
+	IRefreshTokenStore interface {
+		StoreRefreshToken(ctx context.Context, sign string, expiry time.Time, profile RequestProfile) (err error)
+		FindRefreshToken(ctx context.Context, sign string) (profile RequestProfile, expiry time.Time, err error)
+		InvalidateRefreshToken(ctx context.Context, sign string) (err error)
+	}
+
+	IJTIStore interface {
+		ValidateAndStoreJTI(ctx context.Context, id string, expiry time.Time) (err error)
 	}
 
 	IUserStore interface {

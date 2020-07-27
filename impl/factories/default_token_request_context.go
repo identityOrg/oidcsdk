@@ -1,4 +1,4 @@
-package tokenep
+package factories
 
 import (
 	sdk "github.com/identityOrg/oidcsdk"

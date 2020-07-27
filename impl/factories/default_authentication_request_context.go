@@ -1,4 +1,4 @@
-package authep
+package factories
 
 import (
 	sdk "github.com/identityOrg/oidcsdk"
