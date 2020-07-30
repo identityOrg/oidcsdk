@@ -24,10 +24,12 @@ func (d *DefaultStateValidator) HandleAuthEP(_ context.Context, requestContext s
 }
 
 func (d *DefaultStateValidator) HandleTokenEP(_ context.Context, requestContext sdk.ITokenRequestContext) sdk.IError {
-	profile := requestContext.GetProfile()
-	state := requestContext.GetState()
-	if profile.GetState() != "" && profile.GetState() != state {
-		return sdkerror.ErrInvalidState.WithHint("state doesnt match with previous value")
+	if requestContext.GetGrantType() == sdk.GrantAuthorizationCode {
+		profile := requestContext.GetProfile()
+		state := requestContext.GetState()
+		if profile.GetState() != "" && profile.GetState() != state {
+			return sdkerror.ErrInvalidState.WithHint("state doesnt match with previous value")
+		}
 	}
 	return nil
 }
