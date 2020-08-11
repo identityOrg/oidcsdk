@@ -12,6 +12,7 @@ type (
 		ProcessRevocationEP(writer http.ResponseWriter, request *http.Request)
 		ProcessDiscoveryEP(writer http.ResponseWriter, request *http.Request)
 		ProcessKeysEP(writer http.ResponseWriter, request *http.Request)
+		ProcessUserInfoEP(writer http.ResponseWriter, request *http.Request)
 	}
 	ErrorStrategy func(err error, w http.ResponseWriter)
 )

@@ -18,4 +18,8 @@ type (
 	IRevocationEPHandler interface {
 		HandleRevocationEP(ctx context.Context, requestContext IRevocationRequestContext) IError
 	}
+
+	IUserInfoEPHandler interface {
+		HandleUserInfoEP(ctx context.Context, requestContext IUserInfoRequestContext) IError
+	}
 )

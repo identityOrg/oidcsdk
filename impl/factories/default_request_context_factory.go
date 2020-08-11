@@ -13,6 +13,22 @@ import (
 type DefaultRequestContextFactory struct {
 }
 
+func (d DefaultRequestContextFactory) BuildUserInfoRequestContext(request *http.Request) (sdk.IUserInfoRequestContext, sdk.IError) {
+	rContext := &DefaultUserInfoRequestContext{
+		Claims: make(map[string]interface{}),
+	}
+	if request.Method != http.MethodGet {
+		return nil, sdkerror.ErrInvalidRequest.WithHintf("http method %s is not supported", request.Method)
+	}
+	authHeader := request.Header.Get(sdk.HeaderAuthorization)
+	if !strings.HasPrefix(authHeader, "Bearer ") {
+		return nil, sdkerror.ErrInvalidRequest.WithHint("missing bearer token in 'Authorization' header")
+	} else {
+		rContext.BearerToken = authHeader[7:]
+		return rContext, nil
+	}
+}
+
 func NewDefaultRequestContextFactory() *DefaultRequestContextFactory {
 	return &DefaultRequestContextFactory{}
 }

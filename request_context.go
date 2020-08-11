@@ -60,6 +60,7 @@ type (
 		BuildAuthorizationRequestContext(request *http.Request) (IAuthenticationRequestContext, IError)
 		BuildRevocationRequestContext(request *http.Request) (IRevocationRequestContext, IError)
 		BuildIntrospectionRequestContext(request *http.Request) (IIntrospectionRequestContext, IError)
+		BuildUserInfoRequestContext(request *http.Request) (IUserInfoRequestContext, IError)
 	}
 
 	IErrorWriter interface {
@@ -73,6 +74,7 @@ type (
 		WriteAuthorizationResponse(requestContext IAuthenticationRequestContext, w http.ResponseWriter, r *http.Request) error
 		WriteIntrospectionResponse(requestContext IIntrospectionRequestContext, w http.ResponseWriter, r *http.Request) error
 		WriteRevocationResponse(w http.ResponseWriter, r *http.Request) error
+		WriteUserInfoResponse(requestContext IUserInfoRequestContext, w http.ResponseWriter, r *http.Request) error
 	}
 
 	IRevocationRequestContext interface {
@@ -97,5 +99,17 @@ type (
 		SetActive(active bool)
 		GetTokenType() string
 		SetTokenType(tokenType string)
+	}
+
+	IUserInfoRequestContext interface {
+		GetBearerToken() string
+		GetUsername() string
+		SetUsername(username string)
+		GetClaims() map[string]interface{}
+		AddClaim(claimId string, value interface{})
+		GetApprovedScopes() Arguments
+		SetApprovedScopes(scopes Arguments)
+		GetRequestedClaims() []string
+		SetRequestedClaims(claimIds []string)
 	}
 )

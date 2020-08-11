@@ -14,6 +14,13 @@ import (
 type DefaultResponseWriter struct {
 }
 
+func (d DefaultResponseWriter) WriteUserInfoResponse(requestContext sdk.IUserInfoRequestContext, w http.ResponseWriter, r *http.Request) error {
+	w.Header().Set(sdk.HeaderContentType, sdk.ContentTypeJson)
+	w.WriteHeader(200)
+	err := json.NewEncoder(w).Encode(requestContext.GetClaims())
+	return err
+}
+
 func NewDefaultResponseWriter() *DefaultResponseWriter {
 	return &DefaultResponseWriter{}
 }

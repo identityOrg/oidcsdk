@@ -16,6 +16,7 @@ func CreateNewRouter(sdkManager sdk.IManager) *mux.Router {
 	subRouter.Methods(http.MethodPost).Path("/introspect").HandlerFunc(sdkManager.ProcessIntrospectionEP)
 	subRouter.Methods(http.MethodPost).Path("/revoke").HandlerFunc(sdkManager.ProcessRevocationEP)
 	subRouter.Methods(http.MethodGet).Path("/keys").HandlerFunc(sdkManager.ProcessKeysEP)
+	subRouter.Methods(http.MethodGet).Path("/me").HandlerFunc(sdkManager.ProcessUserInfoEP)
 	router.Methods(http.MethodGet).Path(sdk.UrlOidcDiscovery).Handler(middleware.NoCache(http.HandlerFunc(sdkManager.ProcessDiscoveryEP)))
 	return router
 }

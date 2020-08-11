@@ -54,8 +54,10 @@ func (i *InMemoryDB) Authenticate(ctx context.Context, username string, credenti
 	}
 }
 
-func (i *InMemoryDB) GetClaims(context.Context, string, sdk.Arguments, []string) (map[string]interface{}, error) {
-	return make(map[string]interface{}), nil
+func (i *InMemoryDB) GetClaims(_ context.Context, username string, _ sdk.Arguments, _ []string) (map[string]interface{}, error) {
+	claims := make(map[string]interface{})
+	claims["username"] = username
+	return claims, nil
 }
 
 func (i *InMemoryDB) IsConsentRequired(context.Context, string, string, sdk.Arguments) bool {

@@ -15,6 +15,7 @@ type (
 		TokenEPHandlers         []sdk.ITokenEPHandler
 		IntrospectionEPHandlers []sdk.IIntrospectionEPHandler
 		RevocationEPHandlers    []sdk.IRevocationEPHandler
+		UserInfoEPHandlers      []sdk.IUserInfoEPHandler
 		ErrorStrategy           sdk.ErrorStrategy
 		UserSessionManager      sdk.ISessionManager
 		LoginPageHandler        http.HandlerFunc

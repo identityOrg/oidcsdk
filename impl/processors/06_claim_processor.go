@@ -10,6 +10,20 @@ type DefaultClaimProcessor struct {
 	UserStore sdk.IUserStore
 }
 
+func (d *DefaultClaimProcessor) HandleUserInfoEP(ctx context.Context, requestContext sdk.IUserInfoRequestContext) sdk.IError {
+	username := requestContext.GetUsername()
+	scopes := requestContext.GetApprovedScopes()
+	claimIds := requestContext.GetRequestedClaims()
+	claims, err := d.UserStore.GetClaims(ctx, username, scopes, claimIds)
+	if err != nil {
+		return sdkerror.ErrServerError.WithHint("failed to fetch user claims").WithDebug(err.Error())
+	}
+	for s, _ := range claims {
+		requestContext.AddClaim(s, claims[s])
+	}
+	return nil
+}
+
 func (d *DefaultClaimProcessor) HandleTokenEP(ctx context.Context, requestContext sdk.ITokenRequestContext) sdk.IError {
 	openidReq := requestContext.GetProfile().GetScope().Has(sdk.ScopeOpenid)
 	if openidReq && !requestContext.GetProfile().IsClient() {

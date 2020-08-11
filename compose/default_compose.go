@@ -5,6 +5,7 @@ import "github.com/identityOrg/oidcsdk/impl/processors"
 func CreateDefaultSequence() []interface{} {
 	var sequence []interface{}
 
+	sequence = append(sequence, &processors.DefaultBearerUserAuthProcessor{})
 	sequence = append(sequence, &processors.DefaultClientAuthenticationProcessor{})
 	sequence = append(sequence, &processors.DefaultGrantTypeValidator{})
 	sequence = append(sequence, &processors.DefaultResponseTypeValidator{})

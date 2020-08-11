@@ -35,6 +35,9 @@ func DefaultManager(config *sdk.Config, args ...interface{}) sdk.IManager {
 		if element, ok := arg.(sdk.IRevocationEPHandler); ok {
 			dManager.RevocationEPHandlers = append(dManager.RevocationEPHandlers, element)
 		}
+		if element, ok := arg.(sdk.IUserInfoEPHandler); ok {
+			dManager.UserInfoEPHandlers = append(dManager.UserInfoEPHandlers, element)
+		}
 		if element, ok := arg.(sdk.ISessionManager); ok {
 			dManager.UserSessionManager = element
 		}
