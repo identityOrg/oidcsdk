@@ -45,7 +45,12 @@ func (d *DefaultClientAuthenticationProcessor) HandleAuthEP(ctx context.Context,
 }
 
 func (d *DefaultClientAuthenticationProcessor) HandleTokenEP(ctx context.Context, requestContext sdk.ITokenRequestContext) sdk.IError {
-	return d.authenticateClient(ctx, requestContext)
+	if iError := d.authenticateClient(ctx, requestContext); iError != nil {
+		return iError
+	} else {
+		requestContext.GetProfile().SetClientID(requestContext.GetClient().GetID())
+		return nil
+	}
 }
 
 func (d *DefaultClientAuthenticationProcessor) authenticateClient(ctx context.Context, requestContext sdk.IClientCredentialContext) sdk.IError {
