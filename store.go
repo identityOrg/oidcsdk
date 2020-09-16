@@ -7,7 +7,7 @@ import (
 
 type (
 	ITokenStore interface {
-		StoreTokenProfile(ctx context.Context, reqId string, signatures TokenSignatures, profile RequestProfile) (err error)
+		StoreTokenProfile(ctx context.Context, reqId string, signatures ITokenSignatures, profile RequestProfile) (err error)
 		GetProfileWithAuthCodeSign(ctx context.Context, signature string) (profile RequestProfile, reqId string, err error)
 		GetProfileWithAccessTokenSign(ctx context.Context, signature string) (profile RequestProfile, reqId string, err error)
 		GetProfileWithRefreshTokenSign(ctx context.Context, signature string) (profile RequestProfile, reqId string, err error)

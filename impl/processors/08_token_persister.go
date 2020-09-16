@@ -22,7 +22,7 @@ func (d *DefaultTokenPersister) HandleAuthEP(ctx context.Context, requestContext
 			return sdkerror.ErrInvalidRequest //todo change error
 		}
 	}
-	err := d.TokenStore.StoreTokenProfile(ctx, reqId, tokens.TokenSignatures, profile)
+	err := d.TokenStore.StoreTokenProfile(ctx, reqId, &tokens.TokenSignatures, profile)
 	if err != nil {
 		return sdkerror.ErrInvalidRequest //todo change error
 	}
@@ -33,7 +33,7 @@ func (d *DefaultTokenPersister) HandleTokenEP(ctx context.Context, requestContex
 	tokens := requestContext.GetIssuedTokens()
 	profile := requestContext.GetProfile()
 	reqId := requestContext.GetRequestID()
-	err := d.TokenStore.StoreTokenProfile(ctx, reqId, tokens.TokenSignatures, profile)
+	err := d.TokenStore.StoreTokenProfile(ctx, reqId, &tokens.TokenSignatures, profile)
 	if err != nil {
 		return sdkerror.ErrInvalidRequest //todo change error
 	}

@@ -100,11 +100,18 @@ func (i *InMemoryDB) Configure(*sdk.Config, ...interface{}) {
 	}
 }
 
-func (i *InMemoryDB) StoreTokenProfile(ctx context.Context, reqId string, signatures sdk.TokenSignatures, profile sdk.RequestProfile) (err error) {
+func (i *InMemoryDB) StoreTokenProfile(ctx context.Context, reqId string, signatures sdk.ITokenSignatures, profile sdk.RequestProfile) (err error) {
 	row := &TokenTable{
-		RequestID:       reqId,
-		TokenSignatures: signatures,
-		Profile:         profile,
+		RequestID: reqId,
+		TokenSignatures: sdk.TokenSignatures{
+			AuthorizationCodeSignature: signatures.GetACSignature(),
+			AccessTokenSignature:       signatures.GetATSignature(),
+			RefreshTokenSignature:      signatures.GetRTSignature(),
+			RefreshTokenExpiry:         signatures.GetRTExpiry(),
+			AccessTokenExpiry:          signatures.GetATExpiry(),
+			AuthorizationCodeExpiry:    signatures.GetACExpiry(),
+		},
+		Profile: profile,
 	}
 
 	txn := i.Db.Txn(true)
