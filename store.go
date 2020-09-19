@@ -57,9 +57,9 @@ type (
 	}
 
 	ITransactionalStore interface {
-		StartTransaction(ctx context.Context)
-		CommitTransaction(ctx context.Context)
-		RollbackTransaction(ctx context.Context)
+		BeginTransaction(ctx context.Context, readOnly bool) context.Context
+		CommitTransaction(ctx context.Context) context.Context
+		RollbackTransaction(ctx context.Context) context.Context
 	}
 
 	ISecretStore interface {
