@@ -11,6 +11,10 @@ type DefaultRefreshTokenValidator struct {
 	TokenStore           sdk.ITokenStore
 }
 
+func NewDefaultRefreshTokenValidator(refreshTokenStrategy sdk.IRefreshTokenStrategy, tokenStore sdk.ITokenStore) *DefaultRefreshTokenValidator {
+	return &DefaultRefreshTokenValidator{RefreshTokenStrategy: refreshTokenStrategy, TokenStore: tokenStore}
+}
+
 func (d *DefaultRefreshTokenValidator) HandleTokenEP(ctx context.Context, requestContext sdk.ITokenRequestContext) sdk.IError {
 	if requestContext.GetGrantType() == sdk.GrantRefreshToken {
 		if requestContext.GetRefreshToken() == "" {
@@ -30,18 +34,4 @@ func (d *DefaultRefreshTokenValidator) HandleTokenEP(ctx context.Context, reques
 		}
 	}
 	return nil
-}
-
-func (d *DefaultRefreshTokenValidator) Configure(_ *sdk.Config, args ...interface{}) {
-	for _, arg := range args {
-		if ts, ok := arg.(sdk.ITokenStore); ok {
-			d.TokenStore = ts
-		}
-		if us, ok := arg.(sdk.IRefreshTokenStrategy); ok {
-			d.RefreshTokenStrategy = us
-		}
-	}
-	if d.TokenStore == nil || d.RefreshTokenStrategy == nil {
-		panic("failed in init of DefaultRefreshTokenValidator")
-	}
 }

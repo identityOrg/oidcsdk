@@ -3,6 +3,7 @@ package demosession
 import (
 	"github.com/gorilla/sessions"
 	sdk "github.com/identityOrg/oidcsdk"
+	"github.com/identityOrg/oidcsdk/example/config"
 	"github.com/identityOrg/oidcsdk/util"
 	"net/http"
 	"strings"
@@ -14,10 +15,10 @@ type Manager struct {
 	CookieName   string
 }
 
-func NewManager(encKey string, cookieName string) *Manager {
+func NewManager(config *config.DemoConfig) *Manager {
 	return &Manager{
-		SessionStore: sessions.NewCookieStore([]byte(encKey)),
-		CookieName:   cookieName,
+		SessionStore: sessions.NewCookieStore([]byte(config.SessionEncKey)),
+		CookieName:   config.SessionCookieName,
 	}
 }
 

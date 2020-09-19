@@ -9,6 +9,10 @@ import (
 type DefaultRedirectURIValidator struct {
 }
 
+func NewDefaultRedirectURIValidator() *DefaultRedirectURIValidator {
+	return &DefaultRedirectURIValidator{}
+}
+
 func (d *DefaultRedirectURIValidator) HandleTokenEP(_ context.Context, requestContext sdk.ITokenRequestContext) sdk.IError {
 	if requestContext.GetGrantType() == sdk.GrantAuthorizationCode {
 		if profile := requestContext.GetProfile(); profile != nil {
@@ -47,7 +51,3 @@ func (d *DefaultRedirectURIValidator) HandleAuthEP(_ context.Context, requestCon
 		return sdkerror.ErrInvalidRequest.WithDescription("invalid redirect uri")
 	}
 }
-
-//func (d *DefaultRedirectURIValidator) Configure(_ sdk.IManager, config *sdk.Config, arg ...interface{}) {
-//	panic("implement me")
-//}

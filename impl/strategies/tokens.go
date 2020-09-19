@@ -14,33 +14,20 @@ import (
 )
 
 type DefaultStrategy struct {
-	SecretStore              sdk.ISecretStore
-	HmacKey                  string
-	AccessTokenEntropy       int
-	AuthorizationCodeEntropy int
-	RefreshTokenEntropy      int
-	Issuer                   string
+	SecretStore sdk.ISecretStore
+	Config      *sdk.Config
+	HmacKey     string
 }
 
-func NewDefaultStrategy() *DefaultStrategy {
-	return &DefaultStrategy{}
+func NewDefaultStrategy(secretStore sdk.ISecretStore, config *sdk.Config) *DefaultStrategy {
+	return &DefaultStrategy{
+		SecretStore: secretStore,
+		Config:      config,
+		HmacKey:     uuid.New().String(),
+	}
 }
 
 var b64 = base64.URLEncoding.WithPadding(base64.NoPadding)
-
-func (ds *DefaultStrategy) Configure(config *sdk.Config, args ...interface{}) {
-	ds.AccessTokenEntropy = config.AccessTokenEntropy
-	ds.AuthorizationCodeEntropy = config.AuthorizationCodeEntropy
-	ds.RefreshTokenEntropy = config.RefreshTokenEntropy
-	if ds.HmacKey == "" {
-		ds.HmacKey = uuid.New().String()
-	}
-	for _, arg := range args {
-		if ss, ok := arg.(sdk.ISecretStore); ok {
-			ds.SecretStore = ss
-		}
-	}
-}
 
 func (ds *DefaultStrategy) GenerateIDToken(profile sdk.RequestProfile, client sdk.IClient, expiry time.Time,
 	transactionClaims map[string]interface{}) (idToken string, err error) {
@@ -66,7 +53,7 @@ func (ds *DefaultStrategy) GenerateIDToken(profile sdk.RequestProfile, client sd
 	currentTime := time.Now()
 
 	standardClaims := jwt.Claims{
-		Issuer:    ds.Issuer,
+		Issuer:    ds.Config.Issuer,
 		Subject:   profile.GetUsername(),
 		Audience:  []string(profile.GetAudience()),
 		NotBefore: jwt.NewNumericDate(currentTime),
@@ -79,7 +66,7 @@ func (ds *DefaultStrategy) GenerateIDToken(profile sdk.RequestProfile, client sd
 }
 
 func (ds *DefaultStrategy) GenerateRefreshToken() (token string, signature string) {
-	return ds.generateAndSign(ds.RefreshTokenEntropy)
+	return ds.generateAndSign(ds.Config.RefreshTokenEntropy)
 }
 
 func (ds *DefaultStrategy) SignRefreshToken(token string) (signature string, err error) {
@@ -93,7 +80,7 @@ func (ds *DefaultStrategy) SignRefreshToken(token string) (signature string, err
 }
 
 func (ds *DefaultStrategy) GenerateAccessToken() (token string, signature string) {
-	return ds.generateAndSign(ds.AccessTokenEntropy)
+	return ds.generateAndSign(ds.Config.AccessTokenEntropy)
 }
 
 func (ds *DefaultStrategy) SignAccessToken(token string) (signature string, err error) {
@@ -107,7 +94,7 @@ func (ds *DefaultStrategy) SignAccessToken(token string) (signature string, err 
 }
 
 func (ds *DefaultStrategy) GenerateAuthCode() (code string, signature string) {
-	return ds.generateAndSign(ds.AuthorizationCodeEntropy)
+	return ds.generateAndSign(ds.Config.AuthorizationCodeEntropy)
 }
 
 func (ds *DefaultStrategy) generateAndSign(length int) (code string, signature string) {

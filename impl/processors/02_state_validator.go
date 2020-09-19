@@ -10,8 +10,8 @@ type DefaultStateValidator struct {
 	StateParamMinimumEntropy int
 }
 
-func (d *DefaultStateValidator) Configure(config *sdk.Config, _ ...interface{}) {
-	d.StateParamMinimumEntropy = config.StateParamMinimumEntropy
+func NewDefaultStateValidator(config *sdk.Config) *DefaultStateValidator {
+	return &DefaultStateValidator{StateParamMinimumEntropy: config.StateParamMinimumEntropy}
 }
 
 func (d *DefaultStateValidator) HandleAuthEP(_ context.Context, requestContext sdk.IAuthenticationRequestContext) sdk.IError {

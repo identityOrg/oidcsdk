@@ -14,18 +14,18 @@ import (
 type DefaultResponseWriter struct {
 }
 
-func (d DefaultResponseWriter) WriteUserInfoResponse(requestContext sdk.IUserInfoRequestContext, w http.ResponseWriter, r *http.Request) error {
+func NewDefaultResponseWriter() *DefaultResponseWriter {
+	return &DefaultResponseWriter{}
+}
+
+func (*DefaultResponseWriter) WriteUserInfoResponse(requestContext sdk.IUserInfoRequestContext, w http.ResponseWriter, r *http.Request) error {
 	w.Header().Set(sdk.HeaderContentType, sdk.ContentTypeJson)
 	w.WriteHeader(200)
 	err := json.NewEncoder(w).Encode(requestContext.GetClaims())
 	return err
 }
 
-func NewDefaultResponseWriter() *DefaultResponseWriter {
-	return &DefaultResponseWriter{}
-}
-
-func (d DefaultResponseWriter) WriteTokenResponse(requestContext sdk.ITokenRequestContext, w http.ResponseWriter, r *http.Request) error {
+func (*DefaultResponseWriter) WriteTokenResponse(requestContext sdk.ITokenRequestContext, w http.ResponseWriter, r *http.Request) error {
 	w.Header().Set(sdk.HeaderContentType, sdk.ContentTypeJson)
 	tokens := requestContext.GetIssuedTokens()
 	values := make(map[string]string)
@@ -47,7 +47,7 @@ func (d DefaultResponseWriter) WriteTokenResponse(requestContext sdk.ITokenReque
 	return err
 }
 
-func (d DefaultResponseWriter) WriteAuthorizationResponse(requestContext sdk.IAuthenticationRequestContext, w http.ResponseWriter, r *http.Request) error {
+func (*DefaultResponseWriter) WriteAuthorizationResponse(requestContext sdk.IAuthenticationRequestContext, w http.ResponseWriter, r *http.Request) error {
 	mode := requestContext.GetResponseMode()
 	switch mode {
 	case sdk.ResponseModeFragment:
@@ -89,7 +89,7 @@ func buildSuccessResponseForm(tokens sdk.Tokens) url.Values {
 	return form
 }
 
-func (d DefaultResponseWriter) WriteIntrospectionResponse(requestContext sdk.IIntrospectionRequestContext, w http.ResponseWriter, r *http.Request) error {
+func (*DefaultResponseWriter) WriteIntrospectionResponse(requestContext sdk.IIntrospectionRequestContext, w http.ResponseWriter, r *http.Request) error {
 	var resp introspectionResponse
 	if requestContext.IsActive() {
 		profile := requestContext.GetProfile()
@@ -133,7 +133,7 @@ type introspectionResponse struct {
 	ID        string   `json:"jti,omitempty"`
 }
 
-func (d DefaultResponseWriter) WriteRevocationResponse(w http.ResponseWriter, r *http.Request) error {
+func (*DefaultResponseWriter) WriteRevocationResponse(w http.ResponseWriter, r *http.Request) error {
 	w.WriteHeader(200)
 	return nil
 }

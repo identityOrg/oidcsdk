@@ -12,6 +12,10 @@ type DefaultTokenPersister struct {
 	GlobalConsentRequired bool
 }
 
+func NewDefaultTokenPersister(tokenStore sdk.ITokenStore, userStore sdk.IUserStore, config *sdk.Config) *DefaultTokenPersister {
+	return &DefaultTokenPersister{TokenStore: tokenStore, UserStore: userStore, GlobalConsentRequired: config.GlobalConsentRequired}
+}
+
 func (d *DefaultTokenPersister) HandleAuthEP(ctx context.Context, requestContext sdk.IAuthenticationRequestContext) sdk.IError {
 	tokens := requestContext.GetIssuedTokens()
 	profile := requestContext.GetProfile()
@@ -52,19 +56,4 @@ func (d *DefaultTokenPersister) HandleTokenEP(ctx context.Context, requestContex
 		}
 	}
 	return nil
-}
-
-func (d *DefaultTokenPersister) Configure(config *sdk.Config, args ...interface{}) {
-	d.GlobalConsentRequired = config.GlobalConsentRequired
-	for _, arg := range args {
-		if ts, ok := arg.(sdk.ITokenStore); ok {
-			d.TokenStore = ts
-		}
-		if us, ok := arg.(sdk.IUserStore); ok {
-			d.UserStore = us
-		}
-	}
-	if d.TokenStore == nil || d.UserStore == nil {
-		panic("failed to init DefaultTokenPersister")
-	}
 }

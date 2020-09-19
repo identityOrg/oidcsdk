@@ -9,6 +9,10 @@ import (
 type DefaultScopeValidator struct {
 }
 
+func NewDefaultScopeValidator() *DefaultScopeValidator {
+	return &DefaultScopeValidator{}
+}
+
 func (d *DefaultScopeValidator) HandleAuthEP(_ context.Context, requestContext sdk.IAuthenticationRequestContext) sdk.IError {
 	client := requestContext.GetClient()
 	requestedScopes := requestContext.GetRequestedScopes()

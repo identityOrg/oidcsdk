@@ -10,6 +10,10 @@ type DefaultClaimProcessor struct {
 	UserStore sdk.IUserStore
 }
 
+func NewDefaultClaimProcessor(userStore sdk.IUserStore) *DefaultClaimProcessor {
+	return &DefaultClaimProcessor{UserStore: userStore}
+}
+
 func (d *DefaultClaimProcessor) HandleUserInfoEP(ctx context.Context, requestContext sdk.IUserInfoRequestContext) sdk.IError {
 	username := requestContext.GetUsername()
 	scopes := requestContext.GetApprovedScopes()
@@ -54,22 +58,3 @@ func (d *DefaultClaimProcessor) HandleAuthEP(ctx context.Context, requestContext
 	}
 	return nil
 }
-
-func (d *DefaultClaimProcessor) Configure(_ *sdk.Config, args ...interface{}) {
-	for _, arg := range args {
-		if us, ok := arg.(sdk.IUserStore); ok {
-			d.UserStore = us
-			break
-		}
-	}
-	if d.UserStore == nil {
-		panic("failed to initialize DefaultClaimProcessor")
-	}
-}
-
-//var (
-//	phoneScopeClaims   = strings.Split("phone_number_verified", ",")
-//	emailScopeClaims   = strings.Split("phone_number,email,email_verified", ",")
-//	profileScopeClaims = strings.Split("name,family_name,given_name,middle_name,nickname,preferred_username," +
-//		"profile,picture,website,gender,birthdate,zoneinfo,locale,updated_at", ",")
-//)

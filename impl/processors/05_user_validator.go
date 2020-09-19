@@ -14,6 +14,14 @@ type DefaultUserValidator struct {
 	GlobalConsentRequired bool
 }
 
+func NewDefaultUserValidator(userStore sdk.IUserStore, clientStore sdk.IClientStore, config *sdk.Config) *DefaultUserValidator {
+	return &DefaultUserValidator{
+		UserStore:             userStore,
+		ClientStore:           clientStore,
+		GlobalConsentRequired: config.GlobalConsentRequired,
+	}
+}
+
 func (d *DefaultUserValidator) HandleAuthEP(ctx context.Context, requestContext sdk.IAuthenticationRequestContext) sdk.IError {
 	session := requestContext.GetUserSession()
 	isOidc := requestContext.GetRequestedScopes().Has(sdk.ScopeOpenid)
@@ -86,19 +94,4 @@ func (d *DefaultUserValidator) HandleTokenEP(ctx context.Context, requestContext
 		profile.SetUsername(client.GetUsername())
 	}
 	return nil
-}
-
-func (d *DefaultUserValidator) Configure(config *sdk.Config, args ...interface{}) {
-	d.GlobalConsentRequired = config.GlobalConsentRequired
-	for _, arg := range args {
-		if us, ok := arg.(sdk.IUserStore); ok {
-			d.UserStore = us
-		}
-		if cs, ok := arg.(sdk.IClientStore); ok {
-			d.ClientStore = cs
-		}
-	}
-	if d.UserStore == nil || d.ClientStore == nil {
-		panic("failed to init DefaultUserValidator")
-	}
 }

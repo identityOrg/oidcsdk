@@ -12,6 +12,10 @@ type DefaultTokenRevocationProcessor struct {
 	RefreshTokenStrategy sdk.IRefreshTokenStrategy
 }
 
+func NewDefaultTokenRevocationProcessor(tokenStore sdk.ITokenStore, accessTokenStrategy sdk.IAccessTokenStrategy, refreshTokenStrategy sdk.IRefreshTokenStrategy) *DefaultTokenRevocationProcessor {
+	return &DefaultTokenRevocationProcessor{TokenStore: tokenStore, AccessTokenStrategy: accessTokenStrategy, RefreshTokenStrategy: refreshTokenStrategy}
+}
+
 func (d *DefaultTokenRevocationProcessor) HandleRevocationEP(ctx context.Context, requestContext sdk.IRevocationRequestContext) sdk.IError {
 	if requestContext.GetToken() == "" {
 		return nil // no error needed
@@ -60,21 +64,4 @@ func (d *DefaultTokenRevocationProcessor) HandleRevocationEP(ctx context.Context
 	}
 
 	return nil
-}
-
-func (d *DefaultTokenRevocationProcessor) Configure(_ *sdk.Config, args ...interface{}) {
-	for _, arg := range args {
-		if store, ok := arg.(sdk.ITokenStore); ok {
-			d.TokenStore = store
-		}
-		if ts, ok := arg.(sdk.IAccessTokenStrategy); ok {
-			d.AccessTokenStrategy = ts
-		}
-		if us, ok := arg.(sdk.IRefreshTokenStrategy); ok {
-			d.RefreshTokenStrategy = us
-		}
-	}
-	if d.TokenStore == nil || d.AccessTokenStrategy == nil || d.RefreshTokenStrategy == nil {
-		panic("DefaultTokenRevocationProcessor configuration failed")
-	}
 }

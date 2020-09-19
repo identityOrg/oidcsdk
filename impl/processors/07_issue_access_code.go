@@ -11,6 +11,10 @@ type DefaultAuthCodeIssuer struct {
 	Lifespan         time.Duration
 }
 
+func NewDefaultAuthCodeIssuer(authCodeStrategy sdk.IAuthorizationCodeStrategy, config *sdk.Config) *DefaultAuthCodeIssuer {
+	return &DefaultAuthCodeIssuer{AuthCodeStrategy: authCodeStrategy, Lifespan: config.AuthCodeLifespan}
+}
+
 func (d *DefaultAuthCodeIssuer) HandleAuthEP(_ context.Context, requestContext sdk.IAuthenticationRequestContext) sdk.IError {
 	if requestContext.GetResponseType().Has(sdk.ResponseTypeCode) {
 		expiry := requestContext.GetRequestedAt().Add(d.Lifespan).Round(time.Second)
@@ -18,17 +22,4 @@ func (d *DefaultAuthCodeIssuer) HandleAuthEP(_ context.Context, requestContext s
 		requestContext.IssueAuthorizationCode(code, signature, expiry)
 	}
 	return nil
-}
-
-func (d *DefaultAuthCodeIssuer) Configure(config *sdk.Config, args ...interface{}) {
-	for _, arg := range args {
-		if us, ok := arg.(sdk.IAuthorizationCodeStrategy); ok {
-			d.AuthCodeStrategy = us
-			break
-		}
-	}
-	d.Lifespan = config.AuthCodeLifespan
-	if d.AuthCodeStrategy == nil {
-		panic("configuration failed for DefaultAuthCodeIssuer")
-	}
 }

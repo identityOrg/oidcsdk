@@ -9,6 +9,10 @@ import (
 type DefaultGrantTypeValidator struct {
 }
 
+func NewDefaultGrantTypeValidator() *DefaultGrantTypeValidator {
+	return &DefaultGrantTypeValidator{}
+}
+
 func (d *DefaultGrantTypeValidator) HandleTokenEP(_ context.Context, requestContext sdk.ITokenRequestContext) sdk.IError {
 	grantType := requestContext.GetGrantType()
 	client := requestContext.GetClient()

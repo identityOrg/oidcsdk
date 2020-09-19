@@ -15,7 +15,7 @@ func NewDefaultErrorWriter() *DefaultErrorWriter {
 	return &DefaultErrorWriter{}
 }
 
-func (d DefaultErrorWriter) WriteJsonError(pError sdk.IError, additionalValues url.Values, writer http.ResponseWriter, r *http.Request) error {
+func (*DefaultErrorWriter) WriteJsonError(pError sdk.IError, additionalValues url.Values, writer http.ResponseWriter, r *http.Request) error {
 	writer.Header().Set(sdk.HeaderContentType, sdk.ContentTypeJson)
 	writer.WriteHeader(pError.GetStatusCode())
 
@@ -23,7 +23,7 @@ func (d DefaultErrorWriter) WriteJsonError(pError sdk.IError, additionalValues u
 	return err
 }
 
-func (d DefaultErrorWriter) WriteRedirectError(requestContext sdk.IAuthenticationRequestContext, writer http.ResponseWriter, request *http.Request) error {
+func (*DefaultErrorWriter) WriteRedirectError(requestContext sdk.IAuthenticationRequestContext, writer http.ResponseWriter, request *http.Request) error {
 	mode := requestContext.GetResponseMode()
 	switch mode {
 	case sdk.ResponseModeFragment:
@@ -48,7 +48,7 @@ func (d DefaultErrorWriter) WriteRedirectError(requestContext sdk.IAuthenticatio
 	return errors.New("invalid response mode")
 }
 
-func (d DefaultErrorWriter) WriteBearerError(pError sdk.IError, additionalValues url.Values, writer http.ResponseWriter, request *http.Request) error {
+func (*DefaultErrorWriter) WriteBearerError(pError sdk.IError, additionalValues url.Values, writer http.ResponseWriter, request *http.Request) error {
 	panic("implement me")
 }
 

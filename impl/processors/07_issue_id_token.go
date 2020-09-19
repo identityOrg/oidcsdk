@@ -12,6 +12,10 @@ type DefaultIDTokenIssuer struct {
 	Lifespan        time.Duration
 }
 
+func NewDefaultIDTokenIssuer(IDTokenStrategy sdk.IIDTokenStrategy, config *sdk.Config) *DefaultIDTokenIssuer {
+	return &DefaultIDTokenIssuer{IDTokenStrategy: IDTokenStrategy, Lifespan: config.AccessTokenLifespan}
+}
+
 func (d *DefaultIDTokenIssuer) HandleAuthEP(_ context.Context, requestContext sdk.IAuthenticationRequestContext) sdk.IError {
 	idTokenRequired := requestContext.GetResponseType().Has(sdk.ResponseTypeIdToken)
 	openID := requestContext.GetProfile().GetScope().Has(sdk.ScopeOpenid)
@@ -43,17 +47,4 @@ func (d *DefaultIDTokenIssuer) HandleTokenEP(_ context.Context, requestContext s
 		requestContext.IssueIDToken(token)
 	}
 	return nil
-}
-
-func (d *DefaultIDTokenIssuer) Configure(config *sdk.Config, args ...interface{}) {
-	for _, arg := range args {
-		if us, ok := arg.(sdk.IIDTokenStrategy); ok {
-			d.IDTokenStrategy = us
-			break
-		}
-	}
-	if d.IDTokenStrategy == nil {
-		panic("failed to initialize DefaultIDTokenIssuer")
-	}
-	d.Lifespan = config.AccessTokenLifespan
 }

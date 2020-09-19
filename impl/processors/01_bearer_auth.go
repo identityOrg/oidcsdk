@@ -12,21 +12,8 @@ type DefaultBearerUserAuthProcessor struct {
 	AccessTokenStrategy sdk.IAccessTokenStrategy
 }
 
-func (d *DefaultBearerUserAuthProcessor) Configure(config *sdk.Config, args ...interface{}) {
-	for _, arg := range args {
-		if ts, ok := arg.(sdk.ITokenStore); ok {
-			d.TokenStore = ts
-		}
-		if us, ok := arg.(sdk.IUserStore); ok {
-			d.UserStore = us
-		}
-		if ats, ok := arg.(sdk.IAccessTokenStrategy); ok {
-			d.AccessTokenStrategy = ats
-		}
-	}
-	if d.TokenStore == nil || d.UserStore == nil || d.AccessTokenStrategy == nil {
-		panic("DefaultBearerUserAuthProcessor configuration failed")
-	}
+func NewDefaultBearerUserAuthProcessor(tokenStore sdk.ITokenStore, userStore sdk.IUserStore, accessTokenStrategy sdk.IAccessTokenStrategy) *DefaultBearerUserAuthProcessor {
+	return &DefaultBearerUserAuthProcessor{TokenStore: tokenStore, UserStore: userStore, AccessTokenStrategy: accessTokenStrategy}
 }
 
 func (d *DefaultBearerUserAuthProcessor) HandleUserInfoEP(ctx context.Context, requestContext sdk.IUserInfoRequestContext) sdk.IError {

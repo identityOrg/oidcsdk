@@ -13,6 +13,10 @@ type (
 		ProcessDiscoveryEP(writer http.ResponseWriter, request *http.Request)
 		ProcessKeysEP(writer http.ResponseWriter, request *http.Request)
 		ProcessUserInfoEP(writer http.ResponseWriter, request *http.Request)
+
+		SetLoginPageHandler(pageHandler http.HandlerFunc)
+		SetConsentPageHandler(pageHandler http.HandlerFunc)
+		SetErrorStrategy(strategy ErrorStrategy)
 	}
 	ErrorStrategy func(err error, w http.ResponseWriter)
 )

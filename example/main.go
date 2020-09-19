@@ -1,11 +1,11 @@
 package main
 
 import (
+	"github.com/gorilla/mux"
 	sdk "github.com/identityOrg/oidcsdk"
-	"github.com/identityOrg/oidcsdk/compose"
+	config2 "github.com/identityOrg/oidcsdk/example/config"
 	"github.com/identityOrg/oidcsdk/example/demosession"
 	"github.com/identityOrg/oidcsdk/example/memdbstore"
-	"github.com/identityOrg/oidcsdk/example/secretkey"
 	"github.com/identityOrg/oidcsdk/impl/middleware"
 	"github.com/identityOrg/oidcsdk/impl/strategies"
 	"html/template"
@@ -17,20 +17,35 @@ import (
 func main() {
 	config := sdk.NewConfig("http://localhost:8080")
 	config.RefreshTokenEntropy = 0
-	strategy := strategies.NewDefaultStrategy()
-	sequence := compose.CreateDefaultSequence()
-	demoStore := memdbstore.NewInMemoryDB(true)
-	demoSessionManager := demosession.NewManager("some-secure-key", "demo-session")
-	secretKeyStore := secretkey.NewDefaultMemorySecretStore()
-	sequence = append(sequence, demoStore, demoSessionManager, secretKeyStore, strategy)
-	manager := compose.DefaultManager(config, sequence...)
-	compose.SetLoginPageHandler(manager, renderLogin)
-	compose.SetConsentPageHandler(manager, renderConsent)
+	demoConfig := &config2.DemoConfig{
+		SessionEncKey:     "some-secure-key",
+		SessionCookieName: "demo-session",
+	}
+	newManager := ComposeNewManager(config, true, demoConfig)
+	newManager.SetErrorStrategy(strategies.DefaultLoggingErrorStrategy)
+	newManager.SetLoginPageHandler(renderLogin)
+	newManager.SetConsentPageHandler(renderConsent)
 
-	router := compose.CreateNewRouter(manager)
-	router.Methods(http.MethodPost).Path("/login").Handler(middleware.NoCache(processLogin(demoStore, demoSessionManager)))
+	router := CreateNewRouter(newManager)
+	sessionManager := ComposeSessionStore(demoConfig)
+	store := ComposeDemoStore(demoConfig, true)
+	router.Methods(http.MethodPost).Path("/login").Handler(middleware.NoCache(processLogin(store, sessionManager)))
 
 	log.Println(http.ListenAndServe("localhost:8080", router))
+}
+
+func CreateNewRouter(sdkManager sdk.IManager) *mux.Router {
+	router := mux.NewRouter()
+	subRouter := router.PathPrefix("/oauth2").Subrouter()
+	subRouter.Use(middleware.NoCache)
+	subRouter.Methods(http.MethodPost).Path("/token").HandlerFunc(sdkManager.ProcessTokenEP)
+	subRouter.Methods(http.MethodGet).Path("/authorize").HandlerFunc(sdkManager.ProcessAuthorizationEP)
+	subRouter.Methods(http.MethodPost).Path("/introspection").HandlerFunc(sdkManager.ProcessIntrospectionEP)
+	subRouter.Methods(http.MethodPost).Path("/revocation").HandlerFunc(sdkManager.ProcessRevocationEP)
+	subRouter.Methods(http.MethodGet).Path("/keys").HandlerFunc(sdkManager.ProcessKeysEP)
+	subRouter.Methods(http.MethodGet).Path("/me").HandlerFunc(sdkManager.ProcessUserInfoEP)
+	router.Methods(http.MethodGet).Path(sdk.UrlOidcDiscovery).Handler(middleware.NoCache(http.HandlerFunc(sdkManager.ProcessDiscoveryEP)))
+	return router
 }
 
 func processLogin(demoStore *memdbstore.InMemoryDB, manager *demosession.Manager) http.Handler {

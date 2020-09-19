@@ -9,6 +9,10 @@ import (
 type DefaultAudienceValidationProcessor struct {
 }
 
+func NewDefaultAudienceValidationProcessor() *DefaultAudienceValidationProcessor {
+	return &DefaultAudienceValidationProcessor{}
+}
+
 func (d *DefaultAudienceValidationProcessor) HandleTokenEP(ctx context.Context, requestContext sdk.ITokenRequestContext) sdk.IError {
 	if requestContext.GetGrantType() == sdk.GrantResourceOwnerPassword || requestContext.GetGrantType() == sdk.GrantClientCredentials {
 		requestedAudience := requestContext.GetRequestedAudience()

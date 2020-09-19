@@ -12,6 +12,10 @@ type DefaultPKCEValidator struct {
 	IsPKCEPlainEnabled bool
 }
 
+func NewDefaultPKCEValidator(config *sdk.Config) *DefaultPKCEValidator {
+	return &DefaultPKCEValidator{IsPKCEPlainEnabled: config.PKCEPlainEnabled}
+}
+
 var b64 = base64.URLEncoding.WithPadding(base64.NoPadding)
 
 func (d *DefaultPKCEValidator) HandleTokenEP(_ context.Context, requestContext sdk.ITokenRequestContext) sdk.IError {
@@ -55,8 +59,4 @@ func (d *DefaultPKCEValidator) HandleAuthEP(_ context.Context, requestContext sd
 		profile.SetCodeChallengeMethod(codeChallengeMethod)
 	}
 	return nil
-}
-
-func (d *DefaultPKCEValidator) Configure(config *sdk.Config, _ ...interface{}) {
-	d.IsPKCEPlainEnabled = config.PKCEPlainEnabled
 }

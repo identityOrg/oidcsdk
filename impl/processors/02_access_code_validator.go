@@ -11,6 +11,10 @@ type DefaultAccessCodeValidator struct {
 	AuthCodeStrategy sdk.IAuthorizationCodeStrategy
 }
 
+func NewDefaultAccessCodeValidator(tokenStore sdk.ITokenStore, authCodeStrategy sdk.IAuthorizationCodeStrategy) *DefaultAccessCodeValidator {
+	return &DefaultAccessCodeValidator{TokenStore: tokenStore, AuthCodeStrategy: authCodeStrategy}
+}
+
 func (d *DefaultAccessCodeValidator) HandleTokenEP(ctx context.Context, requestContext sdk.ITokenRequestContext) sdk.IError {
 	if requestContext.GetGrantType() == sdk.GrantAuthorizationCode {
 		if requestContext.GetAuthorizationCode() == "" {
@@ -30,18 +34,4 @@ func (d *DefaultAccessCodeValidator) HandleTokenEP(ctx context.Context, requestC
 		}
 	}
 	return nil
-}
-
-func (d *DefaultAccessCodeValidator) Configure(_ *sdk.Config, args ...interface{}) {
-	for _, arg := range args {
-		if ts, ok := arg.(sdk.ITokenStore); ok {
-			d.TokenStore = ts
-		}
-		if ts, ok := arg.(sdk.IAuthorizationCodeStrategy); ok {
-			d.AuthCodeStrategy = ts
-		}
-	}
-	if d.TokenStore == nil || d.AuthCodeStrategy == nil {
-		panic("failed in init of DefaultAccessCodeValidator")
-	}
 }

@@ -31,6 +31,23 @@ func NewInMemoryDB(demo bool) *InMemoryDB {
 		i.demo = make(map[string]interface{})
 		i.demo["client"] = &client
 	}
+	db, err := memdb.NewMemDB(schema)
+	if err != nil {
+		panic("failed to init InMemoryDB" + err.Error())
+	}
+	i.Db = db
+	if len(i.demo) > 0 {
+		txn := i.Db.Txn(true)
+		for k, v := range i.demo {
+			err := txn.Insert(k, v)
+			if err != nil {
+				txn.Abort()
+				panic("failed to create demo data " + err.Error())
+			}
+		}
+		txn.Commit()
+	}
+	i.Db = db
 	return i
 }
 
@@ -79,25 +96,6 @@ func (i *InMemoryDB) FetchClientProfile(ctx context.Context, username string) sd
 	profile := sdk.RequestProfile{}
 	profile.SetUsername(username)
 	return profile
-}
-
-func (i *InMemoryDB) Configure(*sdk.Config, ...interface{}) {
-	db, err := memdb.NewMemDB(schema)
-	if err != nil {
-		panic("failed to init InMemoryDB" + err.Error())
-	}
-	i.Db = db
-	if len(i.demo) > 0 {
-		txn := i.Db.Txn(true)
-		for k, v := range i.demo {
-			err := txn.Insert(k, v)
-			if err != nil {
-				txn.Abort()
-				panic("failed to create demo data " + err.Error())
-			}
-		}
-		txn.Commit()
-	}
 }
 
 func (i *InMemoryDB) StoreTokenProfile(ctx context.Context, reqId string, signatures sdk.ITokenSignatures, profile sdk.RequestProfile) (err error) {

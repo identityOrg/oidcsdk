@@ -10,24 +10,16 @@ type DefaultClientAuthenticationProcessor struct {
 	ClientStore sdk.IClientStore
 }
 
+func NewDefaultClientAuthenticationProcessor(clientStore sdk.IClientStore) *DefaultClientAuthenticationProcessor {
+	return &DefaultClientAuthenticationProcessor{ClientStore: clientStore}
+}
+
 func (d *DefaultClientAuthenticationProcessor) HandleRevocationEP(ctx context.Context, requestContext sdk.IRevocationRequestContext) sdk.IError {
 	return d.authenticateClient(ctx, requestContext)
 }
 
 func (d *DefaultClientAuthenticationProcessor) HandleIntrospectionEP(ctx context.Context, requestContext sdk.IIntrospectionRequestContext) sdk.IError {
 	return d.authenticateClient(ctx, requestContext)
-}
-
-func (d *DefaultClientAuthenticationProcessor) Configure(_ *sdk.Config, args ...interface{}) {
-	for _, arg := range args {
-		if cs, ok := arg.(sdk.IClientStore); ok {
-			d.ClientStore = cs
-			break
-		}
-	}
-	if d.ClientStore == nil {
-		panic("failed in init of DefaultClientAuthenticationProcessor")
-	}
 }
 
 func (d *DefaultClientAuthenticationProcessor) HandleAuthEP(ctx context.Context, requestContext sdk.IAuthenticationRequestContext) sdk.IError {

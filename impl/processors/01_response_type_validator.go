@@ -9,6 +9,10 @@ import (
 type DefaultResponseTypeValidator struct {
 }
 
+func NewDefaultResponseTypeValidator() *DefaultResponseTypeValidator {
+	return &DefaultResponseTypeValidator{}
+}
+
 func (d *DefaultResponseTypeValidator) HandleAuthEP(_ context.Context, requestContext sdk.IAuthenticationRequestContext) sdk.IError {
 	responseTypes := requestContext.GetResponseType()
 	if len(responseTypes) == 0 {

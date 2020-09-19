@@ -17,9 +17,9 @@ type (
 		GlobalConsentRequired    bool
 		PKCEPlainEnabled         bool
 	}
-	IConfigurable interface {
-		Configure(config *Config, arg ...interface{})
-	}
+	//IConfigurable interface {
+	//	Configure(config *Config, arg ...interface{})
+	//}
 
 	IError interface {
 		error

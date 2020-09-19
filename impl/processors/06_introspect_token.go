@@ -12,21 +12,8 @@ type DefaultTokenIntrospectionProcessor struct {
 	RefreshTokenStrategy sdk.IRefreshTokenStrategy
 }
 
-func (d *DefaultTokenIntrospectionProcessor) Configure(_ *sdk.Config, args ...interface{}) {
-	for _, arg := range args {
-		if store, ok := arg.(sdk.ITokenStore); ok {
-			d.TokenStore = store
-		}
-		if store, ok := arg.(sdk.IAccessTokenStrategy); ok {
-			d.AccessTokenStrategy = store
-		}
-		if store, ok := arg.(sdk.IRefreshTokenStrategy); ok {
-			d.RefreshTokenStrategy = store
-		}
-	}
-	if d.TokenStore == nil || d.RefreshTokenStrategy == nil || d.AccessTokenStrategy == nil {
-		panic("DefaultTokenIntrospectionProcessor configuration failed")
-	}
+func NewDefaultTokenIntrospectionProcessor(tokenStore sdk.ITokenStore, accessTokenStrategy sdk.IAccessTokenStrategy, refreshTokenStrategy sdk.IRefreshTokenStrategy) *DefaultTokenIntrospectionProcessor {
+	return &DefaultTokenIntrospectionProcessor{TokenStore: tokenStore, AccessTokenStrategy: accessTokenStrategy, RefreshTokenStrategy: refreshTokenStrategy}
 }
 
 func (d *DefaultTokenIntrospectionProcessor) HandleIntrospectionEP(ctx context.Context, requestContext sdk.IIntrospectionRequestContext) sdk.IError {

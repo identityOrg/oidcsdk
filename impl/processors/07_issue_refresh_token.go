@@ -11,6 +11,10 @@ type DefaultRefreshTokenIssuer struct {
 	Lifespan             time.Duration
 }
 
+func NewDefaultRefreshTokenIssuer(refreshTokenStrategy sdk.IRefreshTokenStrategy, config *sdk.Config) *DefaultRefreshTokenIssuer {
+	return &DefaultRefreshTokenIssuer{RefreshTokenStrategy: refreshTokenStrategy, Lifespan: config.RefreshTokenLifespan}
+}
+
 func (d *DefaultRefreshTokenIssuer) HandleTokenEP(_ context.Context, requestContext sdk.ITokenRequestContext) sdk.IError {
 	refreshScope := requestContext.GetProfile().GetScope().Has(sdk.ScopeOfflineAccess)
 	refreshGrant := requestContext.GetClient().GetApprovedGrantTypes().Has(sdk.GrantRefreshToken)
@@ -20,17 +24,4 @@ func (d *DefaultRefreshTokenIssuer) HandleTokenEP(_ context.Context, requestCont
 		requestContext.IssueRefreshToken(token, signature, expiry)
 	}
 	return nil
-}
-
-func (d *DefaultRefreshTokenIssuer) Configure(config *sdk.Config, args ...interface{}) {
-	for _, arg := range args {
-		if us, ok := arg.(sdk.IRefreshTokenStrategy); ok {
-			d.RefreshTokenStrategy = us
-			break
-		}
-	}
-	if d.RefreshTokenStrategy == nil {
-		panic("failed to initialize DefaultRefreshTokenIssuer")
-	}
-	d.Lifespan = config.RefreshTokenLifespan
 }
