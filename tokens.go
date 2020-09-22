@@ -1,6 +1,9 @@
 package oidcsdk
 
-import "time"
+import (
+	"context"
+	"time"
+)
 
 type (
 	Tokens struct {
@@ -32,7 +35,7 @@ type (
 		SignRefreshToken(token string) (signature string, err error)
 	}
 	IIDTokenStrategy interface {
-		GenerateIDToken(profile RequestProfile, client IClient, expiry time.Time,
+		GenerateIDToken(ctx context.Context, profile RequestProfile, client IClient, expiry time.Time,
 			transactionClaims map[string]interface{}) (idToken string, err error)
 	}
 	ITokenSignatures interface {

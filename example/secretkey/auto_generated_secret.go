@@ -1,6 +1,7 @@
 package secretkey
 
 import (
+	"context"
 	"github.com/google/uuid"
 	"github.com/identityOrg/oidcsdk/util"
 	"gopkg.in/square/go-jose.v2"
@@ -8,6 +9,10 @@ import (
 
 type DefaultMemorySecretStore struct {
 	Keys *jose.JSONWebKeySet
+}
+
+func (d *DefaultMemorySecretStore) GetAllSecrets(ctx context.Context) (*jose.JSONWebKeySet, error) {
+	return d.Keys, nil
 }
 
 func NewDefaultMemorySecretStore() *DefaultMemorySecretStore {
@@ -23,8 +28,4 @@ func NewDefaultMemorySecretStore() *DefaultMemorySecretStore {
 			Keys: []jose.JSONWebKey{key},
 		},
 	}
-}
-
-func (d *DefaultMemorySecretStore) GetAllSecrets() *jose.JSONWebKeySet {
-	return d.Keys
 }

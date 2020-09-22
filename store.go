@@ -56,14 +56,14 @@ type (
 		FetchClientProfile(ctx context.Context, clientID string) RequestProfile
 	}
 
-	ITransactionalStore interface {
+	ITransactionManager interface {
 		BeginTransaction(ctx context.Context, readOnly bool) context.Context
 		CommitTransaction(ctx context.Context) context.Context
 		RollbackTransaction(ctx context.Context) context.Context
 	}
 
 	ISecretStore interface {
-		GetAllSecrets() *jose.JSONWebKeySet
+		GetAllSecrets(ctx context.Context) (*jose.JSONWebKeySet, error)
 	}
 )
 

@@ -1,6 +1,7 @@
 package strategies
 
 import (
+	"context"
 	"crypto/hmac"
 	rand2 "crypto/rand"
 	"crypto/sha256"
@@ -29,12 +30,15 @@ func NewDefaultStrategy(secretStore sdk.ISecretStore, config *sdk.Config) *Defau
 
 var b64 = base64.URLEncoding.WithPadding(base64.NoPadding)
 
-func (ds *DefaultStrategy) GenerateIDToken(profile sdk.RequestProfile, client sdk.IClient, expiry time.Time,
-	transactionClaims map[string]interface{}) (idToken string, err error) {
+func (ds *DefaultStrategy) GenerateIDToken(ctx context.Context, profile sdk.RequestProfile, client sdk.IClient, expiry time.Time,
+	transactionClaims map[string]interface{}) (string, error) {
 	signingKey := jose.SigningKey{
 		Algorithm: client.GetIDTokenSigningAlg(),
 	}
-	keySet := ds.SecretStore.GetAllSecrets()
+	keySet, err := ds.SecretStore.GetAllSecrets(ctx)
+	if err != nil {
+		return "", err
+	}
 	for _, key := range keySet.Keys {
 		if key.Use == "sign" && key.Algorithm == string(client.GetIDTokenSigningAlg()) {
 			signingKey.Key = key
@@ -42,12 +46,12 @@ func (ds *DefaultStrategy) GenerateIDToken(profile sdk.RequestProfile, client sd
 	}
 	if signingKey.Key == nil {
 		err = fmt.Errorf("no key available for algorithm %s", client.GetIDTokenSigningAlg())
-		return
+		return "", err
 	}
 
 	signer, err := jose.NewSigner(signingKey, (&jose.SignerOptions{}).WithType("JWT"))
 	if err != nil {
-		return
+		return "", err
 	}
 
 	currentTime := time.Now()
@@ -61,8 +65,7 @@ func (ds *DefaultStrategy) GenerateIDToken(profile sdk.RequestProfile, client sd
 		Expiry:    jwt.NewNumericDate(expiry),
 		ID:        uuid.New().String(),
 	}
-	idToken, err = jwt.Signed(signer).Claims(standardClaims).Claims(transactionClaims).CompactSerialize()
-	return
+	return jwt.Signed(signer).Claims(standardClaims).Claims(transactionClaims).CompactSerialize()
 }
 
 func (ds *DefaultStrategy) GenerateRefreshToken() (token string, signature string) {
