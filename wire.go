@@ -1,8 +1,7 @@
-package impl
+package oidcsdk
 
 import (
 	"github.com/google/wire"
-	"github.com/identityOrg/oidcsdk"
 	"github.com/identityOrg/oidcsdk/impl/factories"
 	"github.com/identityOrg/oidcsdk/impl/manager"
 	"github.com/identityOrg/oidcsdk/impl/processors"
@@ -40,12 +39,13 @@ var DefaultManagerSet = wire.NewSet(
 	writers.NewDefaultResponseWriter,
 	strategies.NewDefaultStrategy,
 	factories.NewDefaultRequestContextFactory,
-	wire.Bind(new(oidcsdk.IErrorWriter), new(*writers.DefaultErrorWriter)),
-	wire.Bind(new(oidcsdk.IResponseWriter), new(*writers.DefaultResponseWriter)),
-	wire.Bind(new(oidcsdk.IAccessTokenStrategy), new(*strategies.DefaultStrategy)),
-	wire.Bind(new(oidcsdk.IAuthorizationCodeStrategy), new(*strategies.DefaultStrategy)),
-	wire.Bind(new(oidcsdk.IRefreshTokenStrategy), new(*strategies.DefaultStrategy)),
-	wire.Bind(new(oidcsdk.IIDTokenStrategy), new(*strategies.DefaultStrategy)),
-	wire.Bind(new(oidcsdk.IRequestContextFactory), new(*factories.DefaultRequestContextFactory)),
 	manager.NewDefaultManager,
+	wire.Bind(new(IErrorWriter), new(*writers.DefaultErrorWriter)),
+	wire.Bind(new(IResponseWriter), new(*writers.DefaultResponseWriter)),
+	wire.Bind(new(IAccessTokenStrategy), new(*strategies.DefaultStrategy)),
+	wire.Bind(new(IAuthorizationCodeStrategy), new(*strategies.DefaultStrategy)),
+	wire.Bind(new(IRefreshTokenStrategy), new(*strategies.DefaultStrategy)),
+	wire.Bind(new(IIDTokenStrategy), new(*strategies.DefaultStrategy)),
+	wire.Bind(new(IRequestContextFactory), new(*factories.DefaultRequestContextFactory)),
+	wire.Bind(new(IManager), new(*manager.DefaultManager)),
 )

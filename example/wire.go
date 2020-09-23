@@ -9,7 +9,6 @@ import (
 	"github.com/identityOrg/oidcsdk/example/demosession"
 	"github.com/identityOrg/oidcsdk/example/memdbstore"
 	"github.com/identityOrg/oidcsdk/example/secretkey"
-	"github.com/identityOrg/oidcsdk/impl"
 	"github.com/identityOrg/oidcsdk/impl/manager"
 )
 
@@ -25,7 +24,7 @@ var DefaultStoreSet = wire.NewSet(
 )
 
 func ComposeNewManager(config *oidcsdk.Config, demo bool, demoConfig *config.DemoConfig) *manager.DefaultManager {
-	wire.Build(impl.DefaultManagerSet, impl.DefaultProcessorSet, DefaultStoreSet)
+	wire.Build(oidcsdk.DefaultManagerSet, oidcsdk.DefaultProcessorSet, DefaultStoreSet)
 	return nil
 }
 
