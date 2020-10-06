@@ -51,7 +51,7 @@ func (*DefaultResponseWriter) WriteAuthorizationResponse(requestContext sdk.IAut
 	mode := requestContext.GetResponseMode()
 	switch mode {
 	case sdk.ResponseModeFragment:
-		form := buildSuccessResponseForm(requestContext.GetIssuedTokens())
+		form := buildSuccessResponseForm(requestContext.GetIssuedTokens(), requestContext.GetProfile())
 		redirectUri, err := url.Parse(requestContext.GetRedirectURI())
 		if err != nil {
 			return err
@@ -60,7 +60,7 @@ func (*DefaultResponseWriter) WriteAuthorizationResponse(requestContext sdk.IAut
 		http.Redirect(w, r, redirectUri.String(), http.StatusFound)
 		return nil
 	case sdk.ResponseModeQuery:
-		form := buildSuccessResponseForm(requestContext.GetIssuedTokens())
+		form := buildSuccessResponseForm(requestContext.GetIssuedTokens(), requestContext.GetProfile())
 		redirectUri, err := url.Parse(requestContext.GetRedirectURI())
 		if err != nil {
 			return err
@@ -72,7 +72,7 @@ func (*DefaultResponseWriter) WriteAuthorizationResponse(requestContext sdk.IAut
 	return errors.New("invalid response mode")
 }
 
-func buildSuccessResponseForm(tokens sdk.Tokens) url.Values {
+func buildSuccessResponseForm(tokens sdk.Tokens, profile sdk.RequestProfile) url.Values {
 	form := url.Values{}
 	if tokens.AccessToken != "" {
 		form.Add("access_token", tokens.AccessToken)
@@ -85,6 +85,9 @@ func buildSuccessResponseForm(tokens sdk.Tokens) url.Values {
 	}
 	if tokens.IDToken != "" {
 		form.Add("id_token", tokens.IDToken)
+	}
+	if profile.GetState() != "" {
+		form.Add("state", profile.GetState())
 	}
 	return form
 }

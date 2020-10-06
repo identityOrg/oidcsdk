@@ -21,7 +21,7 @@ func NewDefaultMemorySecretStore() *DefaultMemorySecretStore {
 		Key:       private,
 		KeyID:     uuid.New().String(),
 		Algorithm: "RS256",
-		Use:       "sign",
+		Use:       "sig",
 	}
 	return &DefaultMemorySecretStore{
 		Keys: &jose.JSONWebKeySet{

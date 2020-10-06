@@ -15,7 +15,7 @@ import (
 )
 
 func main() {
-	config := sdk.NewConfig("http://localhost:8080")
+	config := sdk.NewConfig("http://localhost:8081")
 	config.RefreshTokenEntropy = 0
 	demoConfig := &config2.DemoConfig{
 		SessionEncKey:     "some-secure-key",
@@ -31,7 +31,7 @@ func main() {
 	store := ComposeDemoStore(demoConfig, true)
 	router.Methods(http.MethodPost).Path("/login").Handler(middleware.NoCache(processLogin(store, sessionManager)))
 
-	log.Println(http.ListenAndServe("localhost:8080", router))
+	log.Println(http.ListenAndServe("localhost:8081", router))
 }
 
 func CreateNewRouter(sdkManager sdk.IManager) *mux.Router {

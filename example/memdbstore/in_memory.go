@@ -20,11 +20,14 @@ func NewInMemoryDB(demo bool) *InMemoryDB {
 	i := &InMemoryDB{}
 	if demo {
 		client := client2.DefaultClient{
-			ID:                 "client",
-			Secret:             "client",
-			Public:             false,
-			IDTokenSigningAlg:  jose.RS256,
-			RedirectURIs:       []string{"http://localhost:8080/redirect"},
+			ID:                "client",
+			Secret:            "client",
+			Public:            false,
+			IDTokenSigningAlg: jose.RS256,
+			RedirectURIs: []string{
+				"http://localhost:8080/redirect",
+				"http://client.localhost:4200/login/oauth2/code/goid",
+			},
 			ApprovedScopes:     []string{sdk.ScopeOpenid},
 			ApprovedGrantTypes: []string{sdk.GrantAuthorizationCode, sdk.GrantImplicit, sdk.GrantResourceOwnerPassword, sdk.GrantRefreshToken, sdk.GrantClientCredentials},
 		}

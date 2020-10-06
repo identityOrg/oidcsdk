@@ -40,7 +40,7 @@ func (ds *DefaultStrategy) GenerateIDToken(ctx context.Context, profile sdk.Requ
 		return "", err
 	}
 	for _, key := range keySet.Keys {
-		if key.Use == "sign" && key.Algorithm == string(client.GetIDTokenSigningAlg()) {
+		if key.Use == "sig" && key.Algorithm == string(client.GetIDTokenSigningAlg()) {
 			signingKey.Key = key
 		}
 	}
@@ -59,11 +59,19 @@ func (ds *DefaultStrategy) GenerateIDToken(ctx context.Context, profile sdk.Requ
 	standardClaims := jwt.Claims{
 		Issuer:    ds.Config.Issuer,
 		Subject:   profile.GetUsername(),
-		Audience:  []string(profile.GetAudience()),
 		NotBefore: jwt.NewNumericDate(currentTime),
 		IssuedAt:  jwt.NewNumericDate(currentTime),
 		Expiry:    jwt.NewNumericDate(expiry),
 		ID:        uuid.New().String(),
+	}
+	if len(profile.GetAudience()) > 0 {
+		standardClaims.Audience = []string(profile.GetAudience())
+	}
+	if profile.GetNonce() != "" {
+		if transactionClaims == nil {
+			transactionClaims = make(map[string]interface{}, 0)
+		}
+		transactionClaims["nonce"] = profile.GetNonce()
 	}
 	return jwt.Signed(signer).Claims(standardClaims).Claims(transactionClaims).CompactSerialize()
 }

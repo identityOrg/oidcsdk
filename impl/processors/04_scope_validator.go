@@ -34,7 +34,7 @@ func (d *DefaultScopeValidator) HandleAuthEP(_ context.Context, requestContext s
 func (d *DefaultScopeValidator) HandleTokenEP(_ context.Context, requestContext sdk.ITokenRequestContext) sdk.IError {
 	grantType := requestContext.GetGrantType()
 	requestedScopes := requestContext.GetRequestedScopes()
-	if grantType == sdk.GrantAuthorizationCode {
+	if grantType == sdk.GrantAuthorizationCode && len(requestedScopes) > 0 {
 		profile := requestContext.GetProfile()
 		if profile.GetScope().MatchesExact(requestedScopes...) {
 			return nil

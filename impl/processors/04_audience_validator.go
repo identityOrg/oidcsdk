@@ -18,9 +18,11 @@ func (d *DefaultAudienceValidationProcessor) HandleTokenEP(ctx context.Context, 
 		requestedAudience := requestContext.GetRequestedAudience()
 		client := requestContext.GetClient()
 		if len(requestedAudience) == 0 {
+			requestContext.GetProfile().SetAudience([]string{requestContext.GetClientID()})
 			return nil
 		} else {
 			if client.GetApprovedScopes().Has(requestedAudience...) {
+				requestedAudience = append(requestedAudience, requestContext.GetClientID())
 				requestContext.GetProfile().SetAudience(requestedAudience)
 			} else {
 				return sdkerror.ErrInvalidRequest.WithHint("un-approved audience requested")
@@ -34,9 +36,11 @@ func (d *DefaultAudienceValidationProcessor) HandleAuthEP(_ context.Context, req
 	requestedAudience := requestContext.GetRequestedAudience()
 	client := requestContext.GetClient()
 	if len(requestedAudience) == 0 {
+		requestContext.GetProfile().SetAudience([]string{requestContext.GetClientID()})
 		return nil
 	} else {
 		if client.GetApprovedScopes().Has(requestedAudience...) {
+			requestedAudience = append(requestedAudience, requestContext.GetClientID())
 			requestContext.GetProfile().SetAudience(requestedAudience)
 			return nil
 		} else {
