@@ -27,7 +27,7 @@ func (d *DefaultManager) ProcessDiscoveryEP(writer http.ResponseWriter, _ *http.
 		GrantTypesSupported:               []string{"authorization_code", "password", "refresh_token", "client_credentials", "implicit"},
 		ResponseModesSupported:            []string{"query", "fragment"},
 		ResponseTypesSupported:            []string{"code", "token", "id_token", "code id_token", "code token", "token id_token", "code token id_token"},
-		TokenEndpointAuthMethodsSupported: []string{"basic", "forms"},
+		TokenEndpointAuthMethodsSupported: []string{"client_secret_basic", "client_secret_post"},
 		IdTokenSigningAlgValuesSupported:  []string{"RS256"},
 	}
 
