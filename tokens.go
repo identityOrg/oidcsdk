@@ -36,7 +36,7 @@ type (
 	}
 	IIDTokenStrategy interface {
 		GenerateIDToken(ctx context.Context, profile RequestProfile, client IClient, expiry time.Time,
-			transactionClaims map[string]interface{}) (idToken string, err error)
+			transactionClaims map[string]interface{}, tokens Tokens) (idToken string, err error)
 	}
 	ITokenSignatures interface {
 		GetACSignature() string

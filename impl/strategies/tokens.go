@@ -5,12 +5,14 @@ import (
 	"crypto/hmac"
 	rand2 "crypto/rand"
 	"crypto/sha256"
+	"crypto/sha512"
 	"encoding/base64"
 	"fmt"
 	"github.com/google/uuid"
 	sdk "github.com/identityOrg/oidcsdk"
 	"gopkg.in/square/go-jose.v2"
 	"gopkg.in/square/go-jose.v2/jwt"
+	"hash"
 	"time"
 )
 
@@ -31,7 +33,7 @@ func NewDefaultStrategy(secretStore sdk.ISecretStore, config *sdk.Config) *Defau
 var b64 = base64.URLEncoding.WithPadding(base64.NoPadding)
 
 func (ds *DefaultStrategy) GenerateIDToken(ctx context.Context, profile sdk.RequestProfile, client sdk.IClient, expiry time.Time,
-	transactionClaims map[string]interface{}) (string, error) {
+	transactionClaims map[string]interface{}, tokens sdk.Tokens) (string, error) {
 	signingKey := jose.SigningKey{
 		Algorithm: client.GetIDTokenSigningAlg(),
 	}
@@ -73,7 +75,44 @@ func (ds *DefaultStrategy) GenerateIDToken(ctx context.Context, profile sdk.Requ
 		}
 		transactionClaims["nonce"] = profile.GetNonce()
 	}
+
+	transactionClaims["azp"] = client.GetID()
+	if tokens.AccessToken != "" {
+		rtHash := createHashOctet(signingKey.Algorithm, tokens.AccessToken)
+		transactionClaims["at_hash"] = rtHash
+	}
+
 	return jwt.Signed(signer).Claims(standardClaims).Claims(transactionClaims).CompactSerialize()
+}
+
+func createHashOctet(algorithm jose.SignatureAlgorithm, token string) string {
+	var h hash.Hash
+	switch algorithm {
+	case jose.RS256:
+		fallthrough
+	case jose.ES256:
+		fallthrough
+	case jose.PS256:
+		h = sha256.New()
+	case jose.RS512:
+		fallthrough
+	case jose.ES512:
+		fallthrough
+	case jose.PS512:
+		h = sha512.New()
+	case jose.PS384:
+		fallthrough
+	case jose.ES384:
+		fallthrough
+	case jose.RS384:
+		h = sha512.New384()
+	default:
+		return ""
+	}
+	_, _ = h.Write([]byte(token))
+	sum := h.Sum(nil)
+	half := sum[:len(sum)/2]
+	return b64.EncodeToString(half)
 }
 
 func (ds *DefaultStrategy) GenerateRefreshToken() (token string, signature string) {

@@ -20,12 +20,12 @@ func (d *DefaultIDTokenIssuer) HandleAuthEP(ctx context.Context, requestContext 
 	idTokenRequired := requestContext.GetResponseType().Has(sdk.ResponseTypeIdToken)
 	openID := requestContext.GetProfile().GetScope().Has(sdk.ScopeOpenid)
 	profile := requestContext.GetProfile()
-	profile.SetNonce(requestContext.GetNonce())
 	if openID && idTokenRequired {
 		expiry := requestContext.GetRequestedAt().UTC().Add(d.Lifespan).Round(time.Second)
 		client := requestContext.GetClient()
+		tokens := requestContext.GetIssuedTokens()
 		var tClaims map[string]interface{}
-		token, err := d.IDTokenStrategy.GenerateIDToken(ctx, profile, client, expiry, tClaims)
+		token, err := d.IDTokenStrategy.GenerateIDToken(ctx, profile, client, expiry, tClaims, tokens)
 		if err != nil {
 			return sdkerror.ErrMisconfiguration.WithHint(err.Error())
 		}
@@ -39,8 +39,9 @@ func (d *DefaultIDTokenIssuer) HandleTokenEP(ctx context.Context, requestContext
 		expiry := requestContext.GetRequestedAt().UTC().Add(d.Lifespan).Round(time.Second)
 		profile := requestContext.GetProfile()
 		client := requestContext.GetClient()
+		tokens := requestContext.GetIssuedTokens()
 		var tClaims map[string]interface{}
-		token, err := d.IDTokenStrategy.GenerateIDToken(ctx, profile, client, expiry, tClaims)
+		token, err := d.IDTokenStrategy.GenerateIDToken(ctx, profile, client, expiry, tClaims, tokens)
 		if err != nil {
 			return sdkerror.ErrMisconfiguration.WithHint(err.Error())
 		}
