@@ -77,6 +77,7 @@ func (ds *DefaultStrategy) GenerateIDToken(ctx context.Context, profile sdk.Requ
 	}
 
 	transactionClaims["azp"] = client.GetID()
+	transactionClaims["typ"] = "ID"
 	if tokens.AccessToken != "" {
 		rtHash := createHashOctet(signingKey.Algorithm, tokens.AccessToken)
 		transactionClaims["at_hash"] = rtHash
