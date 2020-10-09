@@ -69,10 +69,10 @@ func (ds *DefaultStrategy) GenerateIDToken(ctx context.Context, profile sdk.Requ
 	if len(profile.GetAudience()) > 0 {
 		standardClaims.Audience = []string(profile.GetAudience())
 	}
+	if transactionClaims == nil {
+		transactionClaims = make(map[string]interface{}, 0)
+	}
 	if profile.GetNonce() != "" {
-		if transactionClaims == nil {
-			transactionClaims = make(map[string]interface{}, 0)
-		}
 		transactionClaims["nonce"] = profile.GetNonce()
 	}
 
