@@ -30,7 +30,7 @@ func (d *DefaultResponseTypeValidator) HandleAuthEP(_ context.Context, requestCo
 				return sdkerror.ErrUnsupportedResponseType.WithDebug("'implicit' grant not approved for client")
 			}
 			if responseType == sdk.ResponseTypeIdToken {
-				nonce := requestContext.GetForm().Get("nonce")
+				nonce := requestContext.GetNonce()
 				if nonce == "" {
 					return sdkerror.ErrUnsupportedResponseType.WithHint("'nonce' is required for 'id_token' response")
 				} else {
