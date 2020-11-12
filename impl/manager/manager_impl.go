@@ -3,7 +3,6 @@ package manager
 import (
 	sdk "github.com/identityOrg/oidcsdk"
 	"github.com/identityOrg/oidcsdk/impl/strategies"
-	"net/http"
 )
 
 type (
@@ -12,26 +11,18 @@ type (
 		RequestContextFactory   sdk.IRequestContextFactory
 		ErrorWriter             sdk.IErrorWriter
 		ResponseWriter          sdk.IResponseWriter
+		ErrorStrategy           sdk.ErrorStrategy
+		UserSessionManager      sdk.ISessionManager
+		SecretStore             sdk.ISecretStore
+		PageResponseHandler     sdk.IPageResponseHandler
+		RPILogoutEPHandlers     []sdk.IRPILogoutEPHandler
 		AuthEPHandlers          []sdk.IAuthEPHandler
 		TokenEPHandlers         []sdk.ITokenEPHandler
 		IntrospectionEPHandlers []sdk.IIntrospectionEPHandler
 		RevocationEPHandlers    []sdk.IRevocationEPHandler
 		UserInfoEPHandlers      []sdk.IUserInfoEPHandler
-		ErrorStrategy           sdk.ErrorStrategy
-		UserSessionManager      sdk.ISessionManager
-		LoginPageHandler        http.HandlerFunc
-		ConsentPageHandler      http.HandlerFunc
-		SecretStore             sdk.ISecretStore
 	}
 )
-
-func (d *DefaultManager) SetLoginPageHandler(pageHandler http.HandlerFunc) {
-	d.LoginPageHandler = pageHandler
-}
-
-func (d *DefaultManager) SetConsentPageHandler(pageHandler http.HandlerFunc) {
-	d.ConsentPageHandler = pageHandler
-}
 
 func (d *DefaultManager) SetErrorStrategy(strategy sdk.ErrorStrategy) {
 	d.ErrorStrategy = strategy
@@ -45,6 +36,7 @@ func NewDefaultManager(config *sdk.Config, options *Options) *DefaultManager {
 		ResponseWriter:        options.ResponseWriter,
 		UserSessionManager:    options.UserSessionManager,
 		SecretStore:           options.SecretStore,
+		PageResponseHandler:   options.PageResponseHandler,
 	}
 	for _, arg := range options.Sequence {
 		if element, ok := arg.(sdk.IAuthEPHandler); ok {
@@ -62,12 +54,16 @@ func NewDefaultManager(config *sdk.Config, options *Options) *DefaultManager {
 		if element, ok := arg.(sdk.IUserInfoEPHandler); ok {
 			manager.UserInfoEPHandlers = append(manager.UserInfoEPHandlers, element)
 		}
+		if element, ok := arg.(sdk.IRPILogoutEPHandler); ok {
+			manager.RPILogoutEPHandlers = append(manager.RPILogoutEPHandlers, element)
+		}
 	}
 	manager.ErrorStrategy = strategies.DefaultLoggingErrorStrategy
 	return manager
 }
 
 type Options struct {
+	PageResponseHandler   sdk.IPageResponseHandler
 	RequestContextFactory sdk.IRequestContextFactory
 	ErrorWriter           sdk.IErrorWriter
 	ResponseWriter        sdk.IResponseWriter

@@ -11,6 +11,7 @@ import (
 	"github.com/identityOrg/oidcsdk/example/config"
 	"github.com/identityOrg/oidcsdk/example/demosession"
 	"github.com/identityOrg/oidcsdk/example/memdbstore"
+	"github.com/identityOrg/oidcsdk/example/pages"
 	"github.com/identityOrg/oidcsdk/example/secretkey"
 	"github.com/identityOrg/oidcsdk/impl/factories"
 	"github.com/identityOrg/oidcsdk/impl/manager"
@@ -22,6 +23,7 @@ import (
 // Injectors from wire.go:
 
 func ComposeNewManager(config2 *oidcsdk.Config, demo bool, demoConfig *config.DemoConfig) *manager.DefaultManager {
+	pageRenderer := pages.NewPageRenderer()
 	defaultRequestContextFactory := factories.NewDefaultRequestContextFactory()
 	defaultErrorWriter := writers.NewDefaultErrorWriter()
 	defaultResponseWriter := writers.NewDefaultResponseWriter()
@@ -51,6 +53,7 @@ func ComposeNewManager(config2 *oidcsdk.Config, demo bool, demoConfig *config.De
 	defaultTokenPersister := processors.NewDefaultTokenPersister(inMemoryDB, inMemoryDB, config2)
 	v := processors.NewProcessorSequence(defaultBearerUserAuthProcessor, defaultClientAuthenticationProcessor, defaultGrantTypeValidator, defaultResponseTypeValidator, defaultAccessCodeValidator, defaultRefreshTokenValidator, defaultStateValidator, defaultPKCEValidator, defaultRedirectURIValidator, defaultAudienceValidationProcessor, defaultScopeValidator, defaultUserValidator, defaultClaimProcessor, defaultTokenIntrospectionProcessor, defaultTokenRevocationProcessor, defaultAuthCodeIssuer, defaultAccessTokenIssuer, defaultIDTokenIssuer, defaultRefreshTokenIssuer, defaultTokenPersister)
 	options := &manager.Options{
+		PageResponseHandler:   pageRenderer,
 		RequestContextFactory: defaultRequestContextFactory,
 		ErrorWriter:           defaultErrorWriter,
 		ResponseWriter:        defaultResponseWriter,
@@ -74,4 +77,4 @@ func ComposeDemoStore(demoConfig *config.DemoConfig, demo bool) *memdbstore.InMe
 
 // wire.go:
 
-var DefaultStoreSet = wire.NewSet(memdbstore.NewInMemoryDB, demosession.NewManager, secretkey.NewDefaultMemorySecretStore, wire.Bind(new(oidcsdk.ISecretStore), new(*secretkey.DefaultMemorySecretStore)), wire.Bind(new(oidcsdk.ITokenStore), new(*memdbstore.InMemoryDB)), wire.Bind(new(oidcsdk.IUserStore), new(*memdbstore.InMemoryDB)), wire.Bind(new(oidcsdk.IClientStore), new(*memdbstore.InMemoryDB)), wire.Bind(new(oidcsdk.ISessionManager), new(*demosession.Manager)))
+var DefaultStoreSet = wire.NewSet(memdbstore.NewInMemoryDB, demosession.NewManager, secretkey.NewDefaultMemorySecretStore, pages.NewPageRenderer, wire.Bind(new(oidcsdk.ISecretStore), new(*secretkey.DefaultMemorySecretStore)), wire.Bind(new(oidcsdk.ITokenStore), new(*memdbstore.InMemoryDB)), wire.Bind(new(oidcsdk.IUserStore), new(*memdbstore.InMemoryDB)), wire.Bind(new(oidcsdk.IClientStore), new(*memdbstore.InMemoryDB)), wire.Bind(new(oidcsdk.ISessionManager), new(*demosession.Manager)), wire.Bind(new(oidcsdk.IPageResponseHandler), new(*pages.PageRenderer)))

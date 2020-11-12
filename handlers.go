@@ -22,4 +22,8 @@ type (
 	IUserInfoEPHandler interface {
 		HandleUserInfoEP(ctx context.Context, requestContext IUserInfoRequestContext) IError
 	}
+
+	IRPILogoutEPHandler interface {
+		HandleRPILogoutEP(ctx context.Context, requestContext IRPILogoutRequestContext) IError
+	}
 )

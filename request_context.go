@@ -61,6 +61,7 @@ type (
 		BuildRevocationRequestContext(request *http.Request) (IRevocationRequestContext, IError)
 		BuildIntrospectionRequestContext(request *http.Request) (IIntrospectionRequestContext, IError)
 		BuildUserInfoRequestContext(request *http.Request) (IUserInfoRequestContext, IError)
+		BuildRPILogoutRequestContext(request *http.Request) (IRPILogoutRequestContext, IError)
 	}
 
 	IErrorWriter interface {
@@ -111,5 +112,15 @@ type (
 		SetApprovedScopes(scopes Arguments)
 		GetRequestedClaims() []string
 		SetRequestedClaims(claimIds []string)
+	}
+
+	IRPILogoutRequestContext interface {
+		GetPostLogoutRedirectUri() string
+		SetPostLogoutRedirectUri(uri string)
+		GetIdTokenHint() string
+		GetState() string
+		GetCSRFToken() string
+		GetUserSession() ISession
+		SetUserSession(session ISession)
 	}
 )

@@ -23,6 +23,7 @@ func (d *DefaultManager) ProcessDiscoveryEP(writer http.ResponseWriter, _ *http.
 		RevocationEndpoint:                combinePath(*issuerUrl, "oauth2/revoke"),
 		UserInfoEndpoint:                  combinePath(*issuerUrl, "oauth2/me"),
 		JwksUri:                           combinePath(*issuerUrl, "oauth2/keys"),
+		LogoutUri:                         combinePath(*issuerUrl, "oauth2/logout"),
 		SubjectTypesSupported:             []string{"public"},
 		GrantTypesSupported:               []string{"authorization_code", "password", "refresh_token", "client_credentials", "implicit"},
 		ResponseModesSupported:            []string{"query", "fragment"},
@@ -52,6 +53,7 @@ type DiscoveryMetadata struct {
 	RevocationEndpoint                string   `json:"revocation_endpoint,omitempty"`
 	UserInfoEndpoint                  string   `json:"user_info_endpoint,omitempty"`
 	JwksUri                           string   `json:"jwks_uri,omitempty"`
+	LogoutUri                         string   `json:"end_session_endpoint,omitempty"`
 	ScopesSupported                   []string `json:"scopes_supported,omitempty"`
 	ResponseTypesSupported            []string `json:"response_types_supported,omitempty"`
 	ResponseModesSupported            []string `json:"response_modes_supported,omitempty"`

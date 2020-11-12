@@ -13,6 +13,21 @@ import (
 type DefaultRequestContextFactory struct {
 }
 
+func (d DefaultRequestContextFactory) BuildRPILogoutRequestContext(request *http.Request) (sdk.IRPILogoutRequestContext, sdk.IError) {
+	rContext := &DefaultRPILogoutRequestContext{}
+	err := request.ParseForm()
+	if err != nil {
+		return nil, sdkerror.ErrRequestNotSupported.WithHint(err.Error())
+	}
+	rContext.RedirectUri = request.FormValue("post_logout_redirect_uri")
+	rContext.Token = request.FormValue("id_token_hint")
+	rContext.State = request.FormValue("state")
+	if request.Method == http.MethodPost {
+		rContext.CSRFToken = request.FormValue("csrf_token")
+	}
+	return rContext, nil
+}
+
 func (d DefaultRequestContextFactory) BuildUserInfoRequestContext(request *http.Request) (sdk.IUserInfoRequestContext, sdk.IError) {
 	rContext := &DefaultUserInfoRequestContext{
 		Claims: make(map[string]interface{}),

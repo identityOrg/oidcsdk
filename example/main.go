@@ -6,6 +6,7 @@ import (
 	config2 "github.com/identityOrg/oidcsdk/example/config"
 	"github.com/identityOrg/oidcsdk/example/demosession"
 	"github.com/identityOrg/oidcsdk/example/memdbstore"
+	"github.com/identityOrg/oidcsdk/example/pages"
 	"github.com/identityOrg/oidcsdk/impl/middleware"
 	"github.com/identityOrg/oidcsdk/impl/strategies"
 	"html/template"
@@ -23,8 +24,6 @@ func main() {
 	}
 	newManager := ComposeNewManager(config, true, demoConfig)
 	newManager.SetErrorStrategy(strategies.DefaultLoggingErrorStrategy)
-	newManager.SetLoginPageHandler(renderLogin)
-	newManager.SetConsentPageHandler(renderConsent)
 
 	router := CreateNewRouter(newManager)
 	sessionManager := ComposeSessionStore(demoConfig)
@@ -40,6 +39,7 @@ func CreateNewRouter(sdkManager sdk.IManager) *mux.Router {
 	subRouter.Use(middleware.NoCache)
 	subRouter.Methods(http.MethodPost).Path("/token").HandlerFunc(sdkManager.ProcessTokenEP)
 	subRouter.Methods(http.MethodGet).Path("/authorize").HandlerFunc(sdkManager.ProcessAuthorizationEP)
+	subRouter.Methods(http.MethodGet, http.MethodPost).Path("/logout").HandlerFunc(sdkManager.ProcessRPILogoutEP)
 	subRouter.Methods(http.MethodPost).Path("/introspection").HandlerFunc(sdkManager.ProcessIntrospectionEP)
 	subRouter.Methods(http.MethodPost).Path("/revocation").HandlerFunc(sdkManager.ProcessRevocationEP)
 	subRouter.Methods(http.MethodGet).Path("/keys").HandlerFunc(sdkManager.ProcessKeysEP)
@@ -55,7 +55,9 @@ func processLogin(demoStore *memdbstore.InMemoryDB, manager *demosession.Manager
 		password := request.PostForm.Get("password")
 		err := demoStore.Authenticate(request.Context(), username, []byte(password))
 		if err != nil {
-			renderLogin(writer, request)
+			writer.Header().Set(sdk.HeaderContentType, sdk.ContentTypeHtml)
+			writer.WriteHeader(200)
+			_ = template.Must(template.New("login").Parse(pages.LoginPage)).Execute(writer, request.URL.String())
 		} else {
 			sess := demosession.DefaultSession{}
 			now := time.Now()
@@ -72,57 +74,3 @@ func processLogin(demoStore *memdbstore.InMemoryDB, manager *demosession.Manager
 		}
 	})
 }
-
-func renderConsent(writer http.ResponseWriter, _ *http.Request) {
-	writer.Header().Set(sdk.HeaderContentType, sdk.ContentTypeHtml)
-	writer.WriteHeader(200)
-	_, _ = writer.Write([]byte(ConsentPage))
-}
-
-func renderLogin(writer http.ResponseWriter, request *http.Request) {
-	writer.Header().Set(sdk.HeaderContentType, sdk.ContentTypeHtml)
-	writer.WriteHeader(200)
-	_ = template.Must(template.New("login").Parse(LoginPage)).Execute(writer, request.URL.String())
-}
-
-const (
-	LoginPage = `
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Login</title>
-</head>
-<body>
-<form action="/login" method="post">
-    <label for="u-name">Username</label>
-    <input type="text" name="username" id="u-name">
-    <label for="u-pass">Password</label>
-    <input type="text" name="password" id="u-pass">
-    <input type="submit">
-    <input type="hidden" name="request" value="{{.}}">
-</form>
-</body>
-</html>
-`
-	ConsentPage = `
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Login</title>
-</head>
-<body>
-<form action="" method="post">
-    <p>Consent Required</p>
-</form>
-</body>
-</html>
-`
-)
