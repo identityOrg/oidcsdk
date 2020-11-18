@@ -28,6 +28,10 @@ func NewInMemoryDB(demo bool) *InMemoryDB {
 				"http://localhost:8080/redirect",
 				"http://client.localhost:4200/login/oauth2/code/oidcsdk",
 			},
+			PostLogoutRedirectURIs: []string{
+				"http://localhost:8080",
+				"http://client.localhost:4200",
+			},
 			ApprovedScopes:     []string{sdk.ScopeOpenid},
 			ApprovedGrantTypes: []string{sdk.GrantAuthorizationCode, sdk.GrantImplicit, sdk.GrantResourceOwnerPassword, sdk.GrantRefreshToken, sdk.GrantClientCredentials},
 		}

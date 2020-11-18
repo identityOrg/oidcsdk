@@ -4,6 +4,7 @@ func NewProcessorSequence(
 	arg1 *DefaultBearerUserAuthProcessor,
 	arg2 *DefaultClientAuthenticationProcessor,
 	arg3 *DefaultGrantTypeValidator,
+	argL1 *DefaultRPILogoutIDTokenValidator,
 	arg4 *DefaultResponseTypeValidator,
 	arg5 *DefaultAccessCodeValidator,
 	arg6 *DefaultRefreshTokenValidator,
@@ -23,7 +24,7 @@ func NewProcessorSequence(
 	arg20 *DefaultTokenPersister,
 ) []interface{} {
 	seq := make([]interface{}, 0)
-	seq = append(seq, arg1, arg2, arg3, arg4, arg5, arg6, arg7)
+	seq = append(seq, arg1, arg2, arg3, argL1, arg4, arg5, arg6, arg7)
 	seq = append(seq, arg8, arg9, arg10, arg11, arg12, arg13)
 	seq = append(seq, arg14, arg15, arg16, arg17, arg18, arg19, arg20)
 	return seq

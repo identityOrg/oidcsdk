@@ -76,6 +76,7 @@ type (
 		WriteIntrospectionResponse(requestContext IIntrospectionRequestContext, w http.ResponseWriter, r *http.Request) error
 		WriteRevocationResponse(w http.ResponseWriter, r *http.Request) error
 		WriteUserInfoResponse(requestContext IUserInfoRequestContext, w http.ResponseWriter, r *http.Request) error
+		WriteRPILogoutResponse(requestContext IRPILogoutRequestContext, w http.ResponseWriter, r *http.Request)
 	}
 
 	IRevocationRequestContext interface {
@@ -118,6 +119,10 @@ type (
 		GetPostLogoutRedirectUri() string
 		SetPostLogoutRedirectUri(uri string)
 		GetIdTokenHint() string
+		GetClient() IClient
+		SetClient(id IClient)
+		SetUsername(username string)
+		GetUserName() string
 		GetState() string
 		GetCSRFToken() string
 		GetUserSession() ISession

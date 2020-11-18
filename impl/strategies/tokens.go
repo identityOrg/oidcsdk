@@ -22,6 +22,35 @@ type DefaultStrategy struct {
 	HmacKey     string
 }
 
+type keyExtractor struct {
+	Client string `json:"azp"`
+}
+
+func (ds *DefaultStrategy) ValidateOwnJWTToken(ctx context.Context, token string) (clientId string, username string, err error) {
+	signed, err := jwt.ParseSigned(token)
+	if err != nil {
+		return "", "", err
+	}
+	keySet, err := ds.SecretStore.GetAllSecrets(ctx)
+	if err != nil {
+		return "", "", err
+	}
+	keys := make([]jose.JSONWebKey, 0)
+	for _, key := range keySet.Keys {
+		keys = append(keys, key.Public())
+	}
+	publicSet := &jose.JSONWebKeySet{Keys: keys}
+	claims := &jwt.Claims{}
+	ext := &keyExtractor{}
+	err = signed.Claims(publicSet, claims, ext)
+	expect := jwt.Expected{
+		Issuer: ds.Config.Issuer,
+		Time:   time.Now(),
+	}
+	err = claims.ValidateWithLeeway(expect, time.Second*10)
+	return ext.Client, claims.Subject, err
+}
+
 func NewDefaultStrategy(secretStore sdk.ISecretStore, config *sdk.Config) *DefaultStrategy {
 	return &DefaultStrategy{
 		SecretStore: secretStore,

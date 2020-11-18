@@ -34,6 +34,7 @@ func ComposeNewManager(config2 *oidcsdk.Config, demo bool, demoConfig *config.De
 	defaultBearerUserAuthProcessor := processors.NewDefaultBearerUserAuthProcessor(inMemoryDB, inMemoryDB, defaultStrategy)
 	defaultClientAuthenticationProcessor := processors.NewDefaultClientAuthenticationProcessor(inMemoryDB)
 	defaultGrantTypeValidator := processors.NewDefaultGrantTypeValidator()
+	defaultRPILogoutIDTokenValidator := processors.NewDefaultRPILogoutIDTokenValidator(defaultStrategy, inMemoryDB)
 	defaultResponseTypeValidator := processors.NewDefaultResponseTypeValidator()
 	defaultAccessCodeValidator := processors.NewDefaultAccessCodeValidator(inMemoryDB, defaultStrategy)
 	defaultRefreshTokenValidator := processors.NewDefaultRefreshTokenValidator(defaultStrategy, inMemoryDB)
@@ -51,7 +52,7 @@ func ComposeNewManager(config2 *oidcsdk.Config, demo bool, demoConfig *config.De
 	defaultIDTokenIssuer := processors.NewDefaultIDTokenIssuer(defaultStrategy, config2)
 	defaultRefreshTokenIssuer := processors.NewDefaultRefreshTokenIssuer(defaultStrategy, config2)
 	defaultTokenPersister := processors.NewDefaultTokenPersister(inMemoryDB, inMemoryDB, config2)
-	v := processors.NewProcessorSequence(defaultBearerUserAuthProcessor, defaultClientAuthenticationProcessor, defaultGrantTypeValidator, defaultResponseTypeValidator, defaultAccessCodeValidator, defaultRefreshTokenValidator, defaultStateValidator, defaultPKCEValidator, defaultRedirectURIValidator, defaultAudienceValidationProcessor, defaultScopeValidator, defaultUserValidator, defaultClaimProcessor, defaultTokenIntrospectionProcessor, defaultTokenRevocationProcessor, defaultAuthCodeIssuer, defaultAccessTokenIssuer, defaultIDTokenIssuer, defaultRefreshTokenIssuer, defaultTokenPersister)
+	v := processors.NewProcessorSequence(defaultBearerUserAuthProcessor, defaultClientAuthenticationProcessor, defaultGrantTypeValidator, defaultRPILogoutIDTokenValidator, defaultResponseTypeValidator, defaultAccessCodeValidator, defaultRefreshTokenValidator, defaultStateValidator, defaultPKCEValidator, defaultRedirectURIValidator, defaultAudienceValidationProcessor, defaultScopeValidator, defaultUserValidator, defaultClaimProcessor, defaultTokenIntrospectionProcessor, defaultTokenRevocationProcessor, defaultAuthCodeIssuer, defaultAccessTokenIssuer, defaultIDTokenIssuer, defaultRefreshTokenIssuer, defaultTokenPersister)
 	options := &manager.Options{
 		PageResponseHandler:   pageRenderer,
 		RequestContextFactory: defaultRequestContextFactory,

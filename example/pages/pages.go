@@ -4,6 +4,7 @@ import (
 	sdk "github.com/identityOrg/oidcsdk"
 	"html/template"
 	"net/http"
+	"net/url"
 )
 
 type PageRenderer struct {
@@ -13,16 +14,32 @@ func NewPageRenderer() *PageRenderer {
 	return &PageRenderer{}
 }
 
-func (p *PageRenderer) DisplayLogoutConsentPage(w http.ResponseWriter, r *http.Request) {
-	panic("implement me")
+type LCModel struct {
+	CSRFToken string
+	Params    url.Values
 }
 
-func (p *PageRenderer) DisplayLogoutStatusPage(w http.ResponseWriter, r *http.Request) {
-	panic("implement me")
+func (p *PageRenderer) DisplayLogoutConsentPage(writer http.ResponseWriter, r *http.Request) {
+	_ = r.ParseForm()
+	params := LCModel{
+		CSRFToken: "asdd",
+		Params:    r.Form,
+	}
+	writer.Header().Set(sdk.HeaderContentType, sdk.ContentTypeHtml)
+	writer.WriteHeader(200)
+	_ = template.Must(template.New("logout_consent").Parse(LogoutConsent)).Execute(writer, params)
 }
 
-func (p *PageRenderer) DisplayErrorPage(err error, w http.ResponseWriter, r *http.Request) {
-	panic("implement me")
+func (p *PageRenderer) DisplayLogoutStatusPage(writer http.ResponseWriter, _ *http.Request) {
+	writer.Header().Set(sdk.HeaderContentType, sdk.ContentTypeHtml)
+	writer.WriteHeader(200)
+	_, _ = writer.Write([]byte(LogoutStatus))
+}
+
+func (p *PageRenderer) DisplayErrorPage(err error, writer http.ResponseWriter, _ *http.Request) {
+	writer.Header().Set(sdk.HeaderContentType, sdk.ContentTypeHtml)
+	writer.WriteHeader(200)
+	_ = template.Must(template.New("error").Parse(ErrorPage)).Execute(writer, err)
 }
 
 func (p *PageRenderer) DisplayLoginPage(writer http.ResponseWriter, request *http.Request) {
@@ -38,6 +55,53 @@ func (p *PageRenderer) DisplayConsentPage(writer http.ResponseWriter, _ *http.Re
 }
 
 const (
+	LogoutConsent = `
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Error</title>
+</head>
+<body>
+<h2>Logout has been initiated without id_token</h2>
+<form action="/oauth2/logout" method="post">
+    <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+    {{range $i, $v := .Params}}
+    <input type="hidden" name="{{$i}}" value="{{$v}}">
+    {{end}}
+    <input type="submit" value="Logout">
+</form>
+</body>
+</html>
+`
+	LogoutStatus = `
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Error</title>
+</head>
+<body>
+<h2>You have been logged out</h2>
+</body>
+</html>
+`
+	ErrorPage = `
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Error</title>
+</head>
+<body>
+<h2>An error has occurred</h2>
+{{if .Name}}
+<h2>{{.Name}}</h2>
+<h3>{{.Description}}</h3>
+<h4>{{.Hint}}</h4>
+{{else}}
+<h3>{{.}}</h3>
+{{end}}
+</body>
+</html>
+`
 	LoginPage = `
 <!doctype html>
 <html lang="en">

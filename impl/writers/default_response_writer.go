@@ -18,6 +18,22 @@ func NewDefaultResponseWriter() *DefaultResponseWriter {
 	return &DefaultResponseWriter{}
 }
 
+func (w2 *DefaultResponseWriter) WriteRPILogoutResponse(requestContext sdk.IRPILogoutRequestContext, w http.ResponseWriter, r *http.Request) {
+	if requestContext.GetState() != "" {
+		parse, err := url.Parse(requestContext.GetPostLogoutRedirectUri())
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		query := url.Values{}
+		query.Set("state", requestContext.GetState())
+		parse.RawQuery = query.Encode()
+		http.Redirect(w, r, parse.String(), http.StatusFound)
+	} else {
+		http.Redirect(w, r, requestContext.GetPostLogoutRedirectUri(), http.StatusFound)
+	}
+}
+
 func (*DefaultResponseWriter) WriteUserInfoResponse(requestContext sdk.IUserInfoRequestContext, w http.ResponseWriter, r *http.Request) error {
 	w.Header().Set(sdk.HeaderContentType, sdk.ContentTypeJson)
 	w.WriteHeader(200)

@@ -7,9 +7,27 @@ import (
 type DefaultRPILogoutRequestContext struct {
 	RedirectUri string
 	State       string
+	Client      sdk.IClient
+	Username    string
 	CSRFToken   string
 	Token       string
 	Session     sdk.ISession
+}
+
+func (d *DefaultRPILogoutRequestContext) GetClient() sdk.IClient {
+	return d.Client
+}
+
+func (d *DefaultRPILogoutRequestContext) SetClient(client sdk.IClient) {
+	d.Client = client
+}
+
+func (d *DefaultRPILogoutRequestContext) SetUsername(username string) {
+	d.Username = username
+}
+
+func (d *DefaultRPILogoutRequestContext) GetUserName() string {
+	return d.Username
 }
 
 func (d *DefaultRPILogoutRequestContext) SetUserSession(session sdk.ISession) {

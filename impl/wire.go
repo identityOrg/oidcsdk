@@ -32,6 +32,7 @@ var DefaultProcessorSet = wire.NewSet(
 	processors.NewDefaultIDTokenIssuer,
 	processors.NewDefaultRefreshTokenIssuer,
 	processors.NewDefaultTokenPersister,
+	processors.NewDefaultRPILogoutIDTokenValidator,
 )
 
 var DefaultManagerSet = wire.NewSet(
@@ -47,6 +48,7 @@ var DefaultManagerSet = wire.NewSet(
 	wire.Bind(new(oidcsdk.IAuthorizationCodeStrategy), new(*strategies.DefaultStrategy)),
 	wire.Bind(new(oidcsdk.IRefreshTokenStrategy), new(*strategies.DefaultStrategy)),
 	wire.Bind(new(oidcsdk.IIDTokenStrategy), new(*strategies.DefaultStrategy)),
+	wire.Bind(new(oidcsdk.IJWTValidator), new(*strategies.DefaultStrategy)),
 	wire.Bind(new(oidcsdk.IRequestContextFactory), new(*factories.DefaultRequestContextFactory)),
 	wire.Bind(new(oidcsdk.IManager), new(*manager.DefaultManager)),
 )

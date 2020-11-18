@@ -6,13 +6,18 @@ import (
 )
 
 type DefaultClient struct {
-	ID                 string
-	Secret             string
-	Public             bool
-	IDTokenSigningAlg  jose.SignatureAlgorithm
-	RedirectURIs       []string
-	ApprovedScopes     sdk.Arguments
-	ApprovedGrantTypes sdk.Arguments
+	ID                     string
+	Secret                 string
+	Public                 bool
+	IDTokenSigningAlg      jose.SignatureAlgorithm
+	RedirectURIs           []string
+	PostLogoutRedirectURIs []string
+	ApprovedScopes         sdk.Arguments
+	ApprovedGrantTypes     sdk.Arguments
+}
+
+func (d *DefaultClient) GetPostLogoutRedirectURIs() []string {
+	return d.PostLogoutRedirectURIs
 }
 
 func (d *DefaultClient) GetID() string {

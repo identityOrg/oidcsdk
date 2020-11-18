@@ -9,6 +9,23 @@ import (
 type DefaultRedirectURIValidator struct {
 }
 
+func (d *DefaultRedirectURIValidator) HandleRPILogoutEP(ctx context.Context, requestContext sdk.IRPILogoutRequestContext) sdk.IError {
+	logoutRedirectUri := requestContext.GetPostLogoutRedirectUri()
+	if logoutRedirectUri != "" {
+		client := requestContext.GetClient()
+		if client == nil {
+			return sdkerror.ErrInvalidRequest.WithHint("post logout is not allowed without id_token hint")
+		}
+		for _, redUri := range client.GetPostLogoutRedirectURIs() {
+			if logoutRedirectUri == redUri {
+				return nil
+			}
+		}
+		return sdkerror.ErrInvalidRequest.WithHint("invalid post logout redirect uri")
+	}
+	return nil
+}
+
 func NewDefaultRedirectURIValidator() *DefaultRedirectURIValidator {
 	return &DefaultRedirectURIValidator{}
 }

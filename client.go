@@ -8,6 +8,7 @@ type IClient interface {
 	IsPublic() bool
 	GetIDTokenSigningAlg() jose.SignatureAlgorithm
 	GetRedirectURIs() []string
+	GetPostLogoutRedirectURIs() []string
 	GetApprovedScopes() Arguments
 	GetApprovedGrantTypes() Arguments
 }

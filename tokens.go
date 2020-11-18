@@ -38,6 +38,9 @@ type (
 		GenerateIDToken(ctx context.Context, profile RequestProfile, client IClient, expiry time.Time,
 			transactionClaims map[string]interface{}, tokens Tokens) (idToken string, err error)
 	}
+	IJWTValidator interface {
+		ValidateOwnJWTToken(ctx context.Context, token string) (clientId string, username string, err error)
+	}
 	ITokenSignatures interface {
 		GetACSignature() string
 		GetATSignature() string

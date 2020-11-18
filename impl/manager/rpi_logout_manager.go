@@ -22,8 +22,9 @@ func (d *DefaultManager) ProcessRPILogoutEP(w http.ResponseWriter, r *http.Reque
 				return
 			}
 		}
+		//todo actual logout
 		if requestContext.GetPostLogoutRedirectUri() != "" {
-			http.Redirect(w, r, requestContext.GetPostLogoutRedirectUri(), http.StatusFound)
+			d.ResponseWriter.WriteRPILogoutResponse(requestContext, w, r)
 		} else {
 			d.PageResponseHandler.DisplayLogoutStatusPage(w, r)
 		}
