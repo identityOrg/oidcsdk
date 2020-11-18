@@ -9,7 +9,7 @@ func (d *DefaultManager) ProcessRPILogoutEP(w http.ResponseWriter, r *http.Reque
 	if requestContext, iError := d.RequestContextFactory.BuildRPILogoutRequestContext(r); iError != nil {
 		d.PageResponseHandler.DisplayErrorPage(iError, w, r)
 	} else {
-		if sess, err := d.UserSessionManager.RetrieveUserSession(r); err == nil {
+		if sess, err := d.UserSessionManager.RetrieveUserSession(w, r); err == nil {
 			requestContext.SetUserSession(sess)
 		}
 		ctx := r.Context()
@@ -22,7 +22,12 @@ func (d *DefaultManager) ProcessRPILogoutEP(w http.ResponseWriter, r *http.Reque
 				return
 			}
 		}
-		//todo actual logout
+		requestContext.GetUserSession().Logout()
+		if err := requestContext.GetUserSession().Save(); err != nil {
+			d.PageResponseHandler.DisplayErrorPage(err, w, r)
+			return
+		}
+
 		if requestContext.GetPostLogoutRedirectUri() != "" {
 			d.ResponseWriter.WriteRPILogoutResponse(requestContext, w, r)
 		} else {

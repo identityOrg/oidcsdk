@@ -59,18 +59,24 @@ func processLogin(demoStore *memdbstore.InMemoryDB, manager *demosession.Manager
 			writer.WriteHeader(200)
 			_ = template.Must(template.New("login").Parse(pages.LoginPage)).Execute(writer, request.URL.String())
 		} else {
-			sess := demosession.DefaultSession{}
-			now := time.Now()
-			sess.LoginTime = &now
-			sess.Username = username
-			requestUrl := request.PostForm.Get("request")
-			err = manager.StoreUserSession(writer, request, sess)
+			sess, err := manager.RetrieveUserSession(writer, request)
 			if err != nil {
 				writer.WriteHeader(500)
 				_, _ = writer.Write([]byte(err.Error()))
-			} else {
-				http.Redirect(writer, request, requestUrl, http.StatusFound)
+				return
 			}
+			demoSess := sess.(*demosession.DefaultSession)
+			now := time.Now()
+			demoSess.SetAttribute(demosession.LoginTimeAttribute, &now)
+			demoSess.SetAttribute(demosession.UsernameAttribute, username)
+			err = demoSess.Save()
+			if err != nil {
+				writer.WriteHeader(500)
+				_, _ = writer.Write([]byte(err.Error()))
+				return
+			}
+			requestUrl := request.PostForm.Get("request")
+			http.Redirect(writer, request, requestUrl, http.StatusFound)
 		}
 	})
 }

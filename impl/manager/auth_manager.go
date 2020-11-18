@@ -18,7 +18,7 @@ func (d *DefaultManager) ProcessAuthorizationEP(w http.ResponseWriter, r *http.R
 			d.ErrorStrategy(iError, w)
 		}
 	} else {
-		if sess, err := d.UserSessionManager.RetrieveUserSession(r); err == nil {
+		if sess, err := d.UserSessionManager.RetrieveUserSession(w, r); err == nil {
 			authRequestContext.SetUserSession(sess)
 		}
 		for _, handler := range d.AuthEPHandlers {

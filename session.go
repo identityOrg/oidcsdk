@@ -13,9 +13,11 @@ type (
 		IsLoginDone() bool
 		GetApprovedScopes() Arguments
 		GetScope() string
+		Logout()
+		Save() error
 	}
 
 	ISessionManager interface {
-		RetrieveUserSession(r *http.Request) (ISession, error)
+		RetrieveUserSession(w http.ResponseWriter, r *http.Request) (ISession, error)
 	}
 )
