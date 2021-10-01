@@ -35,9 +35,9 @@ func (d *DefaultIDTokenIssuer) HandleAuthEP(ctx context.Context, requestContext 
 }
 
 func (d *DefaultIDTokenIssuer) HandleTokenEP(ctx context.Context, requestContext sdk.ITokenRequestContext) sdk.IError {
-	if requestContext.GetProfile().GetScope().Has(sdk.ScopeOpenid) {
+	profile := requestContext.GetProfile()
+	if profile.GetScope().Has(sdk.ScopeOpenid) && profile.GetGrantType() != sdk.GrantClientCredentials {
 		expiry := requestContext.GetRequestedAt().UTC().Add(d.Lifespan).Round(time.Second)
-		profile := requestContext.GetProfile()
 		client := requestContext.GetClient()
 		tokens := requestContext.GetIssuedTokens()
 		var tClaims map[string]interface{}

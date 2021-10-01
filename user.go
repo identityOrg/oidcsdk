@@ -102,3 +102,10 @@ func (r RequestProfile) GetCodeChallengeMethod() string {
 func (r RequestProfile) SetCodeChallengeMethod(challengeMethod string) {
 	r["code_challenge_method"] = challengeMethod
 }
+func (r RequestProfile) GetGrantType() string {
+	return r["grant_type"]
+}
+
+func (r RequestProfile) SetGrantType(challengeMethod string) {
+	r["grant_type"] = challengeMethod
+}

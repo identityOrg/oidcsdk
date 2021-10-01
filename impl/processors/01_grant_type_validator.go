@@ -25,5 +25,6 @@ func (d *DefaultGrantTypeValidator) HandleTokenEP(_ context.Context, requestCont
 	if grantType == sdk.GrantResourceOwnerPassword && client.IsPublic() {
 		return sdkerror.ErrUnsupportedGrantType.WithDescription("'password' grant not allowed for public client")
 	}
+	requestContext.GetProfile().SetGrantType(grantType)
 	return nil
 }

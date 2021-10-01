@@ -25,10 +25,12 @@ func (d *DefaultResponseTypeValidator) HandleAuthEP(_ context.Context, requestCo
 			if !approvedGrantTypes.Has(sdk.GrantAuthorizationCode) {
 				return sdkerror.ErrUnsupportedResponseType.WithDescription("'authorization_code' grant not approved")
 			}
+			requestContext.GetProfile().SetGrantType(sdk.GrantAuthorizationCode)
 		} else if responseType == sdk.ResponseTypeToken || responseType == sdk.ResponseTypeIdToken {
 			if !approvedGrantTypes.Has(sdk.GrantImplicit) {
 				return sdkerror.ErrUnsupportedResponseType.WithDebug("'implicit' grant not approved for client")
 			}
+			requestContext.GetProfile().SetGrantType(sdk.GrantImplicit)
 			if responseType == sdk.ResponseTypeIdToken {
 				nonce := requestContext.GetNonce()
 				if nonce == "" {

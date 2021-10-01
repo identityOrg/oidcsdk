@@ -9,7 +9,7 @@ import (
 type DefaultRedirectURIValidator struct {
 }
 
-func (d *DefaultRedirectURIValidator) HandleRPILogoutEP(ctx context.Context, requestContext sdk.IRPILogoutRequestContext) sdk.IError {
+func (d *DefaultRedirectURIValidator) HandleRPILogoutEP(_ context.Context, requestContext sdk.IRPILogoutRequestContext) sdk.IError {
 	logoutRedirectUri := requestContext.GetPostLogoutRedirectUri()
 	if logoutRedirectUri != "" {
 		client := requestContext.GetClient()
